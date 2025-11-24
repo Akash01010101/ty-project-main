@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Plus, Trash2, Edit, ExternalLink, Calendar, Tag } from 'lucide-react';
+import { getPortfolio, addPortfolioItem } from '../api/dashboard';
 
 // Portfolio Card Component - moved outside to prevent re-creation
 const PortfolioCard = ({ item, onDelete }) => (
@@ -20,7 +21,7 @@ const PortfolioCard = ({ item, onDelete }) => (
         alt={item.title}
         className="w-full h-full object-cover"
         onError={(e) => {
-          e.target.src = `https://picsum.photos/400/300?random=${item.id}`;
+          e.target.src = `https://picsum.photos/400/300?random=${item._id}`;
         }}
       />
       <div className="absolute top-3 right-3 flex space-x-2">
@@ -39,7 +40,7 @@ const PortfolioCard = ({ item, onDelete }) => (
           </a>
         )}
         <button
-          onClick={() => onDelete(item.id)}
+          onClick={() => onDelete(item._id)}
           className="p-2 hover:text-red-400 rounded-lg transition-colors duration-200"
           style={{ 
             backgroundColor: 'var(--button-secondary)', 
@@ -56,7 +57,7 @@ const PortfolioCard = ({ item, onDelete }) => (
         <h3 className="text-lg font-semibold mb-2 sm:mb-0" style={{ color: 'var(--text-primary)' }}>{item.title}</h3>
         <div className="flex items-center text-xs" style={{ color: 'var(--text-secondary)' }}>
           <Calendar className="w-3 h-3 mr-1" />
-          {item.createdAt}
+          {new Date(item.createdAt).toLocaleDateString()}
         </div>
       </div>
       
@@ -68,7 +69,7 @@ const PortfolioCard = ({ item, onDelete }) => (
       </div>
       
       <div className="flex flex-wrap gap-2">
-        {item.technologies.map((tech, index) => (
+        {item.skills.map((skill, index) => (
           <span
             key={index}
             className="px-2 py-1 text-xs rounded-full"
@@ -77,7 +78,7 @@ const PortfolioCard = ({ item, onDelete }) => (
               color: 'var(--accent-text)' 
             }}
           >
-            {tech}
+            {skill}
           </span>
         ))}
       </div>
@@ -87,56 +88,71 @@ const PortfolioCard = ({ item, onDelete }) => (
 
 const Portfolio = () => {
   const [portfolioItems, setPortfolioItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    technologies: '',
+    skills: '',
     imageUrl: '',
     projectUrl: '',
     category: 'Web Development'
   });
 
-  // Load portfolio items from localStorage on component mount
   useEffect(() => {
-    const savedPortfolio = JSON.parse(localStorage.getItem('userPortfolio') || '[]');
-    setPortfolioItems(savedPortfolio);
+    const fetchPortfolio = async () => {
+      try {
+        const data = await getPortfolio();
+        setPortfolioItems(data);
+      } catch (error) {
+        console.error('Error fetching portfolio:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPortfolio();
   }, []);
 
-  const handleDeleteItem = useCallback((itemId) => {
-    const updatedItems = portfolioItems.filter(item => item.id !== itemId);
-    setPortfolioItems(updatedItems);
-    localStorage.setItem('userPortfolio', JSON.stringify(updatedItems));
+  const handleDeleteItem = useCallback(async (itemId) => {
+    // try {
+    //   await deletePortfolioItem(itemId);
+    //   const updatedItems = portfolioItems.filter(item => item._id !== itemId);
+    //   setPortfolioItems(updatedItems);
+    // } catch (error) {
+    //   console.error('Error deleting portfolio item:', error);
+    // }
   }, [portfolioItems]);
 
-  const handleCreateItem = useCallback((e) => {
+  const handleCreateItem = useCallback(async (e) => {
     e.preventDefault();
     
     const newItem = {
-      id: Date.now(),
       title: formData.title,
       description: formData.description,
       category: formData.category,
       projectUrl: formData.projectUrl,
-      technologies: formData.technologies.split(',').map(tech => tech.trim()),
-      createdAt: new Date().toLocaleDateString(),
+      skills: formData.skills.split(',').map(skill => skill.trim()),
       imageUrl: formData.imageUrl || `https://picsum.photos/400/300?random=${Date.now()}`
     };
-    
-    const updatedItems = [...portfolioItems, newItem];
-    setPortfolioItems(updatedItems);
-    localStorage.setItem('userPortfolio', JSON.stringify(updatedItems));
-    
-    // Reset form
-    setFormData({
-      title: '',
-      description: '',
-      technologies: '',
-      imageUrl: '',
-      projectUrl: '',
-      category: 'Web Development'
-    });
-    setShowCreateForm(false);
+
+    try {
+      const createdItem = await addPortfolioItem(newItem);
+      setPortfolioItems([...portfolioItems, createdItem]);
+      
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        skills: '',
+        imageUrl: '',
+        projectUrl: '',
+        category: 'Web Development'
+      });
+      setShowCreateForm(false);
+    } catch (error) {
+      console.error('Error creating portfolio item:', error);
+    }
   }, [formData, portfolioItems]);
 
   const handleInputChange = useCallback((e) => {
@@ -357,13 +373,17 @@ const Portfolio = () => {
 
       {/* Portfolio Content */}
       <div className="backdrop-blur-lg rounded-lg border min-h-[400px]" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
-        {portfolioItems.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <p style={{ color: 'var(--text-primary)' }}>Loading...</p>
+          </div>
+        ) : portfolioItems.length === 0 ? (
           <EmptyState />
         ) : (
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {portfolioItems.map((item) => (
-                <PortfolioCard key={item.id} item={item} onDelete={handleDeleteItem} />
+                <PortfolioCard key={item._id} item={item} onDelete={handleDeleteItem} />
               ))}
             </div>
           </div>

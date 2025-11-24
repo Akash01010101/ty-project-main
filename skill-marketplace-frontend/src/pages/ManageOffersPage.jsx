@@ -13,7 +13,7 @@ const ManageOffersPage = () => {
         const decoded = jwtDecode(token);
         setCurrentUser(decoded.user);
       } catch (error) {
-        console.error('Failed to decode token', error);
+        // console.error('Failed to decode token', error);
       }
     }
 
@@ -28,10 +28,10 @@ const ManageOffersPage = () => {
         if (response.ok) {
           setOffers(data);
         } else {
-          console.error('Failed to fetch offers', data);
+          // console.error('Failed to fetch offers', data);
         }
       } catch (error) {
-        console.error('Error fetching offers', error);
+        // console.error('Error fetching offers', error);
       }
     };
 
@@ -50,14 +50,14 @@ const ManageOffersPage = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        console.log('Offer accepted', data);
+        // console.log('Offer accepted', data);
         setOffers(offers.map(offer => offer._id === offerId ? { ...offer, status: 'accepted' } : offer));
         // Optionally, navigate to the newly created team page or show a success message
       } else {
-        console.error('Failed to accept offer', data);
+        // console.error('Failed to accept offer', data);
       }
     } catch (error) {
-      console.error('Error accepting offer', error);
+      // console.error('Error accepting offer', error);
     }
   };
 
@@ -71,13 +71,13 @@ const ManageOffersPage = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        console.log('Offer rejected', data);
+        // console.log('Offer rejected', data);
         setOffers(offers.map(offer => offer._id === offerId ? { ...offer, status: 'rejected' } : offer));
       } else {
-        console.error('Failed to reject offer', data);
+        // console.error('Failed to reject offer', data);
       }
     } catch (error) {
-      console.error('Error rejecting offer', error);
+      // console.error('Error rejecting offer', error);
     }
   };
 
@@ -138,5 +138,4 @@ const ManageOffersPage = () => {
     </div>
   );
 };
-
 export default ManageOffersPage;

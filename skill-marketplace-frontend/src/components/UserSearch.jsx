@@ -1,6 +1,7 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, User, MapPin, Star, MessageCircle, UserPlus, Filter } from 'lucide-react';
+import { searchUsers } from '../api/dashboard';
 
 // User Item Component
 const UserItem = ({ user, onMessage, onFollow }) => {
@@ -19,7 +20,7 @@ const UserItem = ({ user, onMessage, onFollow }) => {
       <div className="flex items-start space-x-4 mb-4">
         <img
           src={user.avatar}
-          alt={user.username}
+          alt={user.name}
           className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover ring-2 flex-shrink-0"
           style={{ ringColor: 'var(--button-secondary)' }}
         />
@@ -27,7 +28,7 @@ const UserItem = ({ user, onMessage, onFollow }) => {
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2">
             <div className="mb-2 sm:mb-0">
               <h3 className="font-semibold text-base sm:text-lg truncate" style={{ color: 'var(--text-primary)' }}>
-                @{user.username}
+                @{user.name}
               </h3>
               <p className="font-medium text-sm sm:text-base" style={{ color: 'var(--text-secondary)' }}>{user.name}</p>
             </div>
@@ -42,7 +43,7 @@ const UserItem = ({ user, onMessage, onFollow }) => {
           
           <div className="flex items-center text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
             <MapPin className="w-4 h-4 mr-1" />
-            <span>{user.location}</span>
+            <span>{user.university}</span>
           </div>
           
           <p className="text-sm line-clamp-2 mb-3" style={{ color: 'var(--text-secondary)' }}>
@@ -93,88 +94,33 @@ const UserItem = ({ user, onMessage, onFollow }) => {
 const UserSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSkill, setSelectedSkill] = useState('all');
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Mock user data for demonstration
-  const [users] = useState([
-    {
-      id: 1,
-      username: 'ananya_dev',
-      name: 'Ananya Singh',
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      location: 'IIT Delhi',
-      rating: 4.9,
-      reviewCount: 47,
-      bio: 'Full-stack developer specializing in React and Node.js. I love building innovative web applications and teaching others.',
-      skills: ['React', 'Node.js', 'JavaScript', 'Python'],
-      isOnline: true,
-      joinedDate: '2023-08-15'
-    },
-    {
-      id: 2,
-      username: 'rohan_math',
-      name: 'Rohan Patel',
-      avatar: 'https://i.pravatar.cc/150?img=2',
-      location: 'IIT Bombay',
-      rating: 4.8,
-      reviewCount: 89,
-      bio: 'Mathematics tutor with 3+ years of experience. Specialized in Calculus, Statistics, and Linear Algebra.',
-      skills: ['Mathematics', 'Calculus', 'Statistics', 'Tutoring'],
-      isOnline: false,
-      joinedDate: '2023-06-10'
-    },
-    {
-      id: 3,
-      username: 'kavya_creative',
-      name: 'Kavya Menon',
-      avatar: 'https://i.pravatar.cc/150?img=3',
-      location: 'NIT Trichy',
-      rating: 4.7,
-      reviewCount: 34,
-      bio: 'Creative video editor and motion graphics designer. Bringing stories to life through visual storytelling.',
-      skills: ['Video Editing', 'After Effects', 'Premiere Pro', 'Motion Graphics'],
-      isOnline: true,
-      joinedDate: '2023-09-20'
-    },
-    {
-      id: 4,
-      username: 'ishaan_design',
-      name: 'Ishaan Gupta',
-      avatar: 'https://i.pravatar.cc/150?img=4',
-      location: 'BITS Pilani',
-      rating: 4.9,
-      reviewCount: 56,
-      bio: 'UI/UX Designer and Brand Specialist. Creating modern, user-friendly designs that make an impact.',
-      skills: ['UI/UX Design', 'Figma', 'Branding', 'Photoshop'],
-      isOnline: true,
-      joinedDate: '2023-07-03'
-    },
-    {
-      id: 5,
-      username: 'priya_writer',
-      name: 'Priya Sharma',
-      avatar: 'https://i.pravatar.cc/150?img=5',
-      location: 'DU Delhi',
-      rating: 4.6,
-      reviewCount: 28,
-      bio: 'Content writer and copywriter with expertise in technical writing, blogs, and marketing copy.',
-      skills: ['Content Writing', 'Copywriting', 'SEO', 'Marketing'],
-      isOnline: false,
-      joinedDate: '2023-10-12'
-    },
-    {
-      id: 6,
-      username: 'arjun_data',
-      name: 'Arjun Kumar',
-      avatar: 'https://i.pravatar.cc/150?img=6',
-      location: 'IIT Kharagpur',
-      rating: 4.8,
-      reviewCount: 42,
-      bio: 'Data scientist and machine learning engineer. Passionate about turning data into actionable insights.',
-      skills: ['Data Science', 'Python', 'Machine Learning', 'SQL'],
-      isOnline: true,
-      joinedDate: '2023-05-28'
-    }
-  ]);
+  useEffect(() => {
+    const handleSearch = async () => {
+      if (searchTerm.trim() === '') {
+        setUsers([]);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const data = await searchUsers(searchTerm);
+        setUsers(data);
+      } catch (error) {
+        console.error('Error searching users:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const debounceTimeout = setTimeout(() => {
+      handleSearch();
+    }, 500);
+
+    return () => clearTimeout(debounceTimeout);
+  }, [searchTerm]);
 
   // Get unique skills for filters
   const skillOptions = useMemo(() => {
@@ -185,29 +131,24 @@ const UserSearch = () => {
   // Filter users based on search criteria
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
-      const matchesSearch = 
-        user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.bio.toLowerCase().includes(searchTerm.toLowerCase());
-      
       const matchesSkill = selectedSkill === 'all' || 
         user.skills.some(skill => skill.toLowerCase().includes(selectedSkill.toLowerCase()));
       
-      return matchesSearch && matchesSkill;
+      return matchesSkill;
     });
-  }, [users, searchTerm, selectedSkill]);
+  }, [users, selectedSkill]);
 
   // Event handlers
   const handleMessage = useCallback((user) => {
     // TODO: Implement messaging functionality
-    console.log('Message user:', user.username);
-    alert(`Messaging feature will be implemented soon. Selected user: @${user.username}`);
+    console.log('Message user:', user.name);
+    alert(`Messaging feature will be implemented soon. Selected user: @${user.name}`);
   }, []);
 
   const handleFollow = useCallback((user) => {
     // TODO: Implement follow functionality
-    console.log('Follow user:', user.username);
-    alert(`Follow feature will be implemented soon. Selected user: @${user.username}`);
+    console.log('Follow user:', user.name);
+    alert(`Follow feature will be implemented soon. Selected user: @${user.name}`);
   }, []);
 
   return (
@@ -285,7 +226,11 @@ const UserSearch = () => {
 
       {/* Users List */}
       <div className="space-y-4">
-        {filteredUsers.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center py-16">
+            <p style={{ color: 'var(--text-primary)' }}>Loading...</p>
+          </div>
+        ) : filteredUsers.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-8 backdrop-blur-lg rounded-lg border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
             <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: 'var(--button-secondary)' }}>
               <User className="w-12 h-12" style={{ color: 'var(--text-secondary)' }} />
@@ -301,7 +246,7 @@ const UserSearch = () => {
         ) : (
           filteredUsers.map((user) => (
             <UserItem
-              key={user.id}
+              key={user._id}
               user={user}
               onMessage={handleMessage}
               onFollow={handleFollow}

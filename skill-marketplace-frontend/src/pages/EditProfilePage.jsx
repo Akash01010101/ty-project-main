@@ -1,13 +1,14 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { authAPI } from '../api/auth';
 
-const SignUpPage = () => {
+const EditProfilePage = () => {
+  const { user, setUser } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
-    password: '',
     university: '',
     skills: '',
     experience: [],
@@ -16,34 +17,40 @@ const SignUpPage = () => {
   const [profilePicture, setProfilePicture] = useState(null);
   const [resume, setResume] = useState(null);
   const [localError, setLocalError] = useState('');
-  const [passwordValidation, setPasswordValidation] = useState({
-    isValid: true,
-    message: ''
-  });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { name, email, password, university, skills, experience, education } = formData;
-  const navigate = useNavigate();
-  const { register, isLoading, error, clearError } = useAuth();
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setIsLoading(true);
+      try {
+        const profileResponse = await authAPI.getProfile();
+        const profile = profileResponse.user;
+        setFormData({
+          name: profile.name || '',
+          university: profile.university || '',
+          skills: profile.skills ? profile.skills.join(', ') : '',
+          experience: profile.experience || [],
+          education: profile.education || [],
+        });
+        // You might want to display existing profilePicture/resume if applicable
+        // For now, we'll just not pre-fill file inputs
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        setLocalError('Failed to load profile data.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchProfile();
+    }
+  }, [user]);
+
+  const { name, university, skills, experience, education } = formData;
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    
-    if (e.target.name === 'password') {
-      if (e.target.value.length < 6 && e.target.value.length > 0) {
-        setPasswordValidation({
-          isValid: false,
-          message: 'Password must be at least 6 characters'
-        });
-      } else {
-        setPasswordValidation({
-          isValid: true,
-          message: ''
-        });
-      }
-    }
-    
-    if (error) clearError();
-    if (localError) setLocalError('');
   };
 
   const handleFileChange = useCallback((e) => {
@@ -56,7 +63,7 @@ const SignUpPage = () => {
 
   const handleExperienceChange = useCallback((index, e) => {
     const newExperience = [...experience];
-    newExperience[index][e.target.name] = e.target.value;
+    newExperience[index] = { ...newExperience[index], [e.target.name]: e.target.value };
     setFormData({ ...formData, experience: newExperience });
   }, [formData, experience]);
 
@@ -74,7 +81,7 @@ const SignUpPage = () => {
 
   const handleEducationChange = useCallback((index, e) => {
     const newEducation = [...education];
-    newEducation[index][e.target.name] = e.target.value;
+    newEducation[index] = { ...newEducation[index], [e.target.name]: e.target.value };
     setFormData({ ...formData, education: newEducation });
   }, [formData, education]);
 
@@ -92,22 +99,11 @@ const SignUpPage = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    
-    if (password.length < 6) {
-      setLocalError('Password must be at least 6 characters long');
-      return;
-    }
-    
-    if (!email.match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/)) {
-      setLocalError('Please enter a valid email address');
-      return;
-    }
+    setIsLoading(true);
 
     const data = new FormData();
     data.append('name', name);
-    data.append('email', email);
-    data.append('password', password);
-    data.append('university', university || 'State University');
+    data.append('university', university);
     data.append('skills', skills);
     data.append('experience', JSON.stringify(experience));
     data.append('education', JSON.stringify(education));
@@ -115,15 +111,16 @@ const SignUpPage = () => {
     if (resume) data.append('resume', resume);
     
     try {
-      await register(data);
+      const updatedUser = await authAPI.updateProfile(data); // Pass true to indicate FormData
+      setUser(updatedUser.user);
       navigate('/dashboard');
     } catch (error) {
-      console.error('Registration failed:', error);
-      setLocalError(error.message || 'Registration failed. Please try again.');
+      console.error('Error updating profile:', error);
+      setLocalError(error.message || 'Profile update failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  const displayError = error || localError;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
@@ -136,18 +133,20 @@ const SignUpPage = () => {
           className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 sm:p-8 border border-white/10 shadow-xl w-full max-w-2xl"
         >
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8" style={{ color: 'var(--text-primary)' }}>
-            Sign Up
+            Edit Profile
           </h2>
-          
-          {displayError && (
+
+          {localError && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-6 p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm"
             >
-              {displayError}
+              {localError}
             </motion.div>
           )}
+          
+          {isLoading && <p className="text-center" style={{ color: 'var(--text-primary)' }}>Loading profile data...</p>}
 
           <form onSubmit={onSubmit} className="space-y-4 sm:space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -172,58 +171,8 @@ const SignUpPage = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold mb-2" htmlFor="email" style={{ color: 'var(--text-primary)' }}>
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={email}
-                  onChange={onChange}
-                  required
-                  disabled={isLoading}
-                  className="w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
-                  style={{
-                    backgroundColor: 'var(--bg-secondary)',
-                    borderColor: 'var(--border-color)',
-                    color: 'var(--text-primary)'
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-bold mb-2" htmlFor="password" style={{ color: 'var(--text-primary)' }}>
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={password}
-                  onChange={onChange}
-                  required
-                  disabled={isLoading}
-                  className={`w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 ${
-                    !passwordValidation.isValid ? 'border-red-500' : ''
-                  }`}
-                  style={{
-                    backgroundColor: 'var(--bg-secondary)',
-                    borderColor: 'var(--border-color)',
-                    color: 'var(--text-primary)'
-                  }}
-                />
-                <p className={`text-xs mt-1 ${
-                  !passwordValidation.isValid ? 'text-red-400' : 'text-gray-400'
-                }`}>
-                  {passwordValidation.message || 'Password must be at least 6 characters long'}
-                </p>
-              </div>
-              <div>
                 <label className="block text-sm font-bold mb-2" htmlFor="university" style={{ color: 'var(--text-primary)' }}>
-                  University (Optional)
+                  University
                 </label>
                 <input
                   type="text"
@@ -232,7 +181,6 @@ const SignUpPage = () => {
                   value={university}
                   onChange={onChange}
                   disabled={isLoading}
-                  placeholder="State University"
                   className="w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
                   style={{
                     backgroundColor: 'var(--bg-secondary)',
@@ -242,7 +190,6 @@ const SignUpPage = () => {
                 />
               </div>
             </div>
-
             <div>
               <label className="block text-sm font-bold mb-2" htmlFor="skills" style={{ color: 'var(--text-primary)' }}>
                 Skills (comma-separated)
@@ -254,7 +201,6 @@ const SignUpPage = () => {
                 value={skills}
                 onChange={onChange}
                 disabled={isLoading}
-                placeholder="JavaScript, React, Node.js"
                 className="w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
                 style={{
                   backgroundColor: 'var(--bg-secondary)',
@@ -331,14 +277,14 @@ const SignUpPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-bold mb-2" style={{ color: 'var(--text-primary)' }}>From Date</label>
-                    <input type="date" name="from" value={exp.from} onChange={(e) => handleExperienceChange(index, e)}
+                    <input type="date" name="from" value={exp.from ? exp.from.substring(0, 10) : ''} onChange={(e) => handleExperienceChange(index, e)}
                       className="w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
                       style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-bold mb-2" style={{ color: 'var(--text-primary)' }}>To Date</label>
-                    <input type="date" name="to" value={exp.to} onChange={(e) => handleExperienceChange(index, e)}
+                    <input type="date" name="to" value={exp.to ? exp.to.substring(0, 10) : ''} onChange={(e) => handleExperienceChange(index, e)}
                       className="w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
                       style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}
                     />
@@ -393,14 +339,14 @@ const SignUpPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-bold mb-2" style={{ color: 'var(--text-primary)' }}>From Date</label>
-                    <input type="date" name="from" value={edu.from} onChange={(e) => handleEducationChange(index, e)}
+                    <input type="date" name="from" value={edu.from ? edu.from.substring(0, 10) : ''} onChange={(e) => handleEducationChange(index, e)}
                       className="w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
                       style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-bold mb-2" style={{ color: 'var(--text-primary)' }}>To Date</label>
-                    <input type="date" name="to" value={edu.to} onChange={(e) => handleEducationChange(index, e)}
+                    <input type="date" name="to" value={edu.to ? edu.to.substring(0, 10) : ''} onChange={(e) => handleEducationChange(index, e)}
                       className="w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
                       style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}
                     />
@@ -426,7 +372,6 @@ const SignUpPage = () => {
               Add Education
             </button>
 
-
             <motion.button
               whileHover={{ scale: isLoading ? 1 : 1.05 }}
               whileTap={{ scale: isLoading ? 1 : 0.95 }}
@@ -438,17 +383,13 @@ const SignUpPage = () => {
                 color: 'var(--button-text)'
               }}
             >
-              {isLoading ? 'Creating Account...' : 'Sign Up'}
+              {isLoading ? 'Saving Changes...' : 'Save Changes'}
             </motion.button>
           </form>
-          <p className="mt-6 text-center" style={{ color: 'var(--text-secondary)' }}>
-            Already have an account? <Link to="/login" className="text-purple-400 hover:underline" style={{ color: 'var(--text-accent)' }}>Login</Link>
-          </p>
         </motion.div>
       </div>
     </div>
   );
 };
 
-export default SignUpPage;
-
+export default EditProfilePage;

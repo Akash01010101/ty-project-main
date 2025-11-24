@@ -8,6 +8,7 @@ import GigsPage from '../pages/GigsPage';
 import GigDetailPage from '../pages/GigDetailPage';
 import TeamPage from '../pages/TeamPage';
 import WalletPage from '../pages/WalletPage';
+import EditProfilePage from '../pages/EditProfilePage';
 import ManageOffersPage from '../pages/ManageOffersPage';
 import ProtectedRoute from '../components/ProtectedRoute';
 
@@ -31,6 +32,11 @@ const Router = () => {
         <Route path="/create-gig" element={
           <ProtectedRoute>
             <CreateGigPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/edit-profile" element={
+          <ProtectedRoute>
+            <EditProfilePage />
           </ProtectedRoute>
         } />
         <Route path="/team/:id" element={

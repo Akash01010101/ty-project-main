@@ -6,7 +6,6 @@ export const authAPI = {
   //  new user ko register karne ke liye
   register: async (userData) => {
     try {
-      console.log('Sending registration data:', userData);
       const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: {
@@ -15,9 +14,7 @@ export const authAPI = {
         body: JSON.stringify(userData),
       });
 
-      console.log('Registration response status:', response.status);
       const data = await response.json();
-      console.log('Registration response data:', data);
       
       if (!response.ok) {
         throw new Error(data.message || 'Registration failed');
@@ -31,7 +28,6 @@ export const authAPI = {
 
       return data;
     } catch (error) {
-      console.error('Registration error:', error);
       throw error;
     }
   },
@@ -61,7 +57,6 @@ export const authAPI = {
 
       return data;
     } catch (error) {
-      console.error('Login error:', error);
       throw error;
     }
   },
@@ -102,7 +97,6 @@ export const authAPI = {
 
       return data;
     } catch (error) {
-      console.error('Profile fetch error:', error);
       throw error;
     }
   },
@@ -138,7 +132,6 @@ export const authAPI = {
 
       return data;
     } catch (error) {
-      console.error('Profile update error:', error);
       throw error;
     }
   },
@@ -162,7 +155,6 @@ export const authAPI = {
 
       return response.ok;
     } catch (error) {
-      console.error('Token verification error:', error);
       return false;
     }
   },

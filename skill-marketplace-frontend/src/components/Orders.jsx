@@ -1,6 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, DollarSign, User, CheckCircle, Clock, AlertCircle, X } from 'lucide-react';
+import { getOrders, approveOrder, rejectOrder } from '../api/dashboard';
 
 // Order Card Component
 const OrderCard = ({ order, onApproveOrder, onRejectOrder }) => {
@@ -49,10 +50,10 @@ const OrderCard = ({ order, onApproveOrder, onRejectOrder }) => {
       <div className="space-y-4">
         {/* Order Title and Client */}
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{order.title}</h3>
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{order.gig.title}</h3>
           <div className="flex items-center" style={{ color: 'var(--text-secondary)' }}>
             <User className="w-4 h-4 mr-2" />
-            <span className="text-sm">Current User - {order.clientName}</span>
+            <span className="text-sm">Current User - {order.buyer.name}</span>
           </div>
         </div>
 
@@ -63,7 +64,7 @@ const OrderCard = ({ order, onApproveOrder, onRejectOrder }) => {
               <DollarSign className="w-4 h-4 mr-2" />
               <span className="text-sm">Amount:</span>
             </div>
-            <span className="font-semibold" style={{ color: 'var(--text-accent)' }}>${order.amount}</span>
+            <span className="font-semibold" style={{ color: 'var(--text-accent)' }}>${order.price}</span>
           </div>
 
           <div className="flex items-center justify-between">
@@ -83,7 +84,7 @@ const OrderCard = ({ order, onApproveOrder, onRejectOrder }) => {
               <Calendar className="w-4 h-4 mr-2" />
               <span className="text-sm">Order Date:</span>
             </div>
-            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{order.orderDate}</span>
+            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{new Date(order.createdAt).toLocaleDateString()}</span>
           </div>
         </div>
 
@@ -98,14 +99,14 @@ const OrderCard = ({ order, onApproveOrder, onRejectOrder }) => {
             ) : (
               <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                 <button
-                  onClick={() => onApproveOrder(order.id)}
+                  onClick={() => onApproveOrder(order._id)}
                   className="flex-1 py-2 px-4 font-medium rounded-lg hover:scale-105 transition-all duration-200 text-sm"
                   style={{ backgroundColor: 'var(--button-primary)', color: 'var(--bg-primary)' }}
                 >
                   Approve Order
                 </button>
                 <button
-                  onClick={() => onRejectOrder(order.id)}
+                  onClick={() => onRejectOrder(order._id)}
                   className="flex-1 py-2 px-4 border font-medium rounded-lg hover:scale-105 transition-all duration-200 text-sm flex items-center justify-center"
                   style={{ 
                     backgroundColor: 'rgba(239, 68, 68, 0.1)', 
@@ -126,66 +127,58 @@ const OrderCard = ({ order, onApproveOrder, onRejectOrder }) => {
 };
 
 const Orders = () => {
-  const [orders, setOrders] = useState([
-    {
-      id: 1,
-      title: 'React.js Web Development',
-      clientName: 'Ananya Singh',
-      amount: 25,
-      status: 'completed',
-      orderDate: '2024-01-15',
-      isApproved: false
-    },
-    {
-      id: 2,
-      title: 'Calculus Tutoring Session',
-      clientName: 'Rohan Patel',
-      amount: 20,
-      status: 'in-progress',
-      orderDate: '2024-01-20',
-      isApproved: false
-    },
-    {
-      id: 3,
-      title: 'Logo Design Package',
-      clientName: 'Ishaan Gupta',
-      amount: 45,
-      status: 'pending',
-      orderDate: '2024-01-22',
-      isApproved: false
-    },
-    {
-      id: 4,
-      title: 'Video Editing Project',
-      clientName: 'Kavya Menon',
-      amount: 35,
-      status: 'pending',
-      orderDate: '2024-01-25',
-      isApproved: false
-    },
-    {
-      id: 5,
-      title: 'Data Analysis Report',
-      clientName: 'Priya Sharma',
-      amount: 60,
-      status: 'completed',
-      orderDate: '2024-01-18',
-      isApproved: false
-    }
-  ]);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleApproveOrder = useCallback((orderId) => {
-    setOrders(prevOrders =>
-      prevOrders.map(order =>
-        order.id === orderId
-          ? { ...order, isApproved: true }
-          : order
-      )
-    );
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const data = await getOrders();
+        setOrders(data);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
   }, []);
 
-  const handleRejectOrder = useCallback((orderId) => {
-    setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+  const handleApproveOrder = useCallback(async (orderId) => {
+    console.log('Attempting to approve order:', orderId);
+    try {
+      const response = await approveOrder(orderId);
+      setOrders(prevOrders =>
+        prevOrders.map(order =>
+          order._id === orderId
+            ? { ...order, status: response.order.status }
+            : order
+        )
+      );
+      alert('Order approved successfully!');
+    } catch (error) {
+      console.error('Error approving order:', error);
+      alert('Failed to approve order.');
+    }
+  }, []);
+
+  const handleRejectOrder = useCallback(async (orderId) => {
+    console.log('Attempting to reject order:', orderId);
+    try {
+      const response = await rejectOrder(orderId);
+      setOrders(prevOrders =>
+        prevOrders.map(order =>
+          order._id === orderId
+            ? { ...order, status: response.order.status }
+            : order
+        )
+      );
+      alert('Order rejected successfully!');
+    } catch (error) {
+      console.error('Error rejecting order:', error);
+      alert('Failed to reject order.');
+    }
   }, []);
 
   const getOrderStats = () => {
@@ -194,12 +187,13 @@ const Orders = () => {
     const pending = orders.filter(order => order.status === 'pending').length;
     const totalEarnings = orders
       .filter(order => order.status === 'completed')
-      .reduce((sum, order) => sum + order.amount, 0);
+      .reduce((sum, order) => sum + order.price, 0);
 
     return { completed, inProgress, pending, totalEarnings };
   };
 
   const stats = getOrderStats();
+
 
   return (
     <div className="space-y-6">
@@ -233,7 +227,11 @@ const Orders = () => {
 
       {/* Orders List */}
       <div className="backdrop-blur-lg rounded-lg border min-h-[400px]" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
-        {orders.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <p style={{ color: 'var(--text-primary)' }}>Loading...</p>
+          </div>
+        ) : orders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-8">
             <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: 'var(--button-secondary)' }}>
               <CheckCircle className="w-12 h-12" style={{ color: 'var(--text-secondary)' }} />
@@ -246,7 +244,7 @@ const Orders = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {orders.map((order) => (
                 <OrderCard
-                  key={order.id}
+                  key={order._id}
                   order={order}
                   onApproveOrder={handleApproveOrder}
                   onRejectOrder={handleRejectOrder}

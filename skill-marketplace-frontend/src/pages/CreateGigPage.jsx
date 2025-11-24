@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { createGig } from '../api/dashboard';
 
 const CreateGigPage = () => {
   const [formData, setFormData] = useState({
@@ -8,9 +9,10 @@ const CreateGigPage = () => {
     description: '',
     skills: '',
     price: '',
+    duration: '',
   });
 
-  const { title, description, skills, price } = formData;
+  const { title, description, skills, price, duration } = formData;
   const navigate = useNavigate();
 
   const onChange = (e) => {
@@ -20,28 +22,16 @@ const CreateGigPage = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      // For now, since we're working with mock data, we'll simulate the creation
-      // In a real app, this would make an API call
       const newGig = {
-        id: Date.now(),
         title,
         description,
         skills: skills.split(',').map(s => s.trim()),
         price: Number(price),
-        status: 'Active',
-        orders: 0,
-        reviews: 0,
-        rating: 0,
-        createdAt: new Date().toLocaleDateString()
+        duration,
       };
       
-      console.log('Gig created successfully', newGig);
+      await createGig(newGig);
       
-      // Store in localStorage for now (in a real app, this would be handled by a state manager)
-      const existingGigs = JSON.parse(localStorage.getItem('userGigs') || '[]');
-      localStorage.setItem('userGigs', JSON.stringify([...existingGigs, newGig]));
-      
-      // Navigate to dashboard with My Gigs tab active
       navigate('/dashboard?tab=my-gigs');
     } catch (error) {
       console.error('Error during gig creation', error);
@@ -108,6 +98,7 @@ const CreateGigPage = () => {
               />
               <p className="text-gray-500 text-xs mt-1">Separate skills with commas</p>
             </div>
+            <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="price">
                 Price (USD)
@@ -126,6 +117,22 @@ const CreateGigPage = () => {
                   className="w-full py-3 pl-8 pr-4 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-white placeholder-gray-400 transition-all duration-200"
                 />
               </div>
+            </div>
+            <div>
+              <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="duration">
+                Duration
+              </label>
+              <input
+                type="text"
+                id="duration"
+                name="duration"
+                value={duration}
+                onChange={onChange}
+                placeholder="e.g., 2-3 days"
+                required
+                className="w-full py-3 px-4 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-white placeholder-gray-400 transition-all duration-200"
+              />
+            </div>
             </div>
             
             <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 pt-4">

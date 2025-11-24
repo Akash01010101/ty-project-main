@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, DollarSign, Calendar, Filter, Search } from 'lucide-react';
+import { getTransactions } from '../api/dashboard';
 
 // Transaction Item Component
 const TransactionItem = ({ transaction }) => {
@@ -27,11 +28,8 @@ const TransactionItem = ({ transaction }) => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-1">
               <div className="flex items-center text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>
                 <Calendar className="w-3 h-3 mr-1" />
-                {transaction.date}
+                {new Date(transaction.createdAt).toLocaleDateString()}
               </div>
-              <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                {transaction.status}
-              </span>
             </div>
           </div>
         </div>
@@ -51,71 +49,29 @@ const TransactionItem = ({ transaction }) => {
 const ExpenseIncome = () => {
   const [filterType, setFilterType] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock transaction data
-  const [transactions] = useState([
-    {
-      id: 1,
-      type: 'expense',
-      description: 'Payment to Ananya Singh for React.js Web Development',
-      amount: 25,
-      date: '2024-01-18',
-      status: 'completed',
-      category: 'Web Development'
-    },
-    {
-      id: 2,
-      type: 'expense',
-      description: 'Payment to Rohan Patel for Calculus Tutoring Session',
-      amount: 20,
-      date: '2024-01-20',
-      status: 'completed',
-      category: 'Tutoring'
-    },
-    {
-      id: 3,
-      type: 'income',
-      description: 'Received payment from Sneha Rao for Python Programming Help',
-      amount: 22,
-      date: '2024-01-19',
-      status: 'completed',
-      category: 'Programming'
-    },
-    {
-      id: 4,
-      type: 'income',
-      description: 'Received payment from Devansh Yadav for Video Editing',
-      amount: 30,
-      date: '2024-01-17',
-      status: 'completed',
-      category: 'Video Editing'
-    },
-    {
-      id: 5,
-      type: 'expense',
-      description: 'Payment to Kavya Menon for Logo Design',
-      amount: 45,
-      date: '2024-01-16',
-      status: 'completed',
-      category: 'Design'
-    },
-    {
-      id: 6,
-      type: 'income',
-      description: 'Received payment from Arjun Sharma for Website Development',
-      amount: 75,
-      date: '2024-01-15',
-      status: 'completed',
-      category: 'Web Development'
-    }
-  ]);
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const data = await getTransactions();
+        setTransactions(data);
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
 
   // Filter and search transactions
   const filteredTransactions = useMemo(() => {
     return transactions.filter(transaction => {
       const matchesFilter = filterType === 'all' || transaction.type === filterType;
-      const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           transaction.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase());
       return matchesFilter && matchesSearch;
     });
   }, [transactions, filterType, searchTerm]);
@@ -132,6 +88,7 @@ const ExpenseIncome = () => {
     
     return { income, expenses, balance };
   }, [transactions]);
+
 
   return (
     <div className="space-y-6">
@@ -227,7 +184,11 @@ const ExpenseIncome = () => {
           <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Transactions</h3>
         </div>
         
-        {filteredTransactions.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <p style={{ color: 'var(--text-primary)' }}>Loading...</p>
+          </div>
+        ) : filteredTransactions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-8">
             <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: 'var(--button-secondary)' }}>
               <DollarSign className="w-12 h-12" style={{ color: 'var(--text-secondary)' }} />
@@ -244,7 +205,7 @@ const ExpenseIncome = () => {
           <div className="divide-y" style={{ borderColor: 'var(--border-color)' }}>
             {filteredTransactions.map((transaction) => (
               <TransactionItem
-                key={transaction.id}
+                key={transaction._id}
                 transaction={transaction}
               />
             ))}

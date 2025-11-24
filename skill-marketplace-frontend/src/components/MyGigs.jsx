@@ -2,26 +2,25 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Plus, Star, Edit, Trash2, Eye } from 'lucide-react';
+import { getMyGigs } from '../api/dashboard';
 
 const MyGigs = () => {
   const [userGigs, setUserGigs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Load gigs from localStorage on component mount
   useEffect(() => {
-    const loadGigs = () => {
-      const savedGigs = JSON.parse(localStorage.getItem('userGigs') || '[]');
-      setUserGigs(savedGigs);
+    const fetchGigs = async () => {
+      try {
+        const data = await getMyGigs();
+        setUserGigs(data);
+      } catch (error) {
+        console.error('Error fetching gigs:', error);
+      } finally {
+        setLoading(false);
+      }
     };
-    
-    loadGigs();
-    
-    // Listen for storage changes (when new gigs are created)
-    const handleStorageChange = () => {
-      loadGigs();
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+
+    fetchGigs();
   }, []);
 
   // Mock user profile data
@@ -32,9 +31,9 @@ const MyGigs = () => {
   };
 
   const handleDeleteGig = (gigId) => {
-    const updatedGigs = userGigs.filter(gig => gig.id !== gigId);
+    const updatedGigs = userGigs.filter(gig => gig._id !== gigId);
     setUserGigs(updatedGigs);
-    localStorage.setItem('userGigs', JSON.stringify(updatedGigs));
+    // TODO: Add API call to delete gig
   };
 
   const EmptyState = () => (
@@ -108,7 +107,7 @@ const MyGigs = () => {
             <Edit className="w-4 h-4" />
           </button>
           <button 
-            onClick={() => handleDeleteGig(gig.id)}
+            onClick={() => handleDeleteGig(gig._id)}
             className="p-2 hover:text-red-400 hover:bg-red-500/10 rounded transition-all duration-200"
             style={{ color: 'var(--text-secondary)' }}
           >
@@ -175,12 +174,16 @@ const MyGigs = () => {
 
       {/* Gigs Content */}
       <div className="backdrop-blur-lg rounded-lg border min-h-[400px]" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
-        {userGigs.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <p style={{ color: 'var(--text-primary)' }}>Loading...</p>
+          </div>
+        ) : userGigs.length === 0 ? (
           <EmptyState />
         ) : (
           <div className="p-6 space-y-4">
             {userGigs.map((gig) => (
-              <GigCard key={gig.id} gig={gig} />
+              <GigCard key={gig._id} gig={gig} />
             ))}
           </div>
         )}

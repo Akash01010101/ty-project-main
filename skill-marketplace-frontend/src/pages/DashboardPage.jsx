@@ -6,6 +6,7 @@ import MyGigs from '../components/MyGigs';
 import Portfolio from '../components/Portfolio';
 import Messages from '../components/Messages';
 import Orders from '../components/Orders';
+import MyPurchases from '../components/MyPurchases';
 import ExpenseIncome from '../components/ExpenseIncome';
 import UserSearch from '../components/UserSearch';
 import ThemeToggle from '../components/ThemeToggle';
@@ -58,6 +59,8 @@ const DashboardPage = () => {
       setActiveTab('Messages');
     } else if (tab === 'orders') {
       setActiveTab('Orders');
+    } else if (tab === 'my-purchases') {
+      setActiveTab('My Purchases');
     } else if (tab === 'expense-income') {
       setActiveTab('Expense and Income');
     } else if (tab === 'user-search') {
@@ -98,14 +101,14 @@ const DashboardPage = () => {
         price: gig.price,
       });
       alert('Order placed successfully!');
-      navigate('/dashboard?tab=orders');
+      navigate('/dashboard?tab=my-purchases');
     } catch (error) {
       console.error('Error placing order:', error);
       alert('Failed to place order.');
     }
   };
 
-  const tabs = ['Browse Gigs', 'AI Picks', 'My Gigs', 'Portfolio', 'Messages', 'Orders', 'Expense and Income', 'Search Users'];
+  const tabs = ['Browse Gigs', 'AI Picks', 'My Gigs', 'Portfolio', 'Messages', 'Orders', 'My Purchases', 'Expense and Income', 'Search Users'];
   const categories = ['All Categories', 'React Development', 'Math Tutoring', 'Video Editing', 'Graphic Design', 'Data Science', 'Writing'];
 
 
@@ -302,6 +305,8 @@ const DashboardPage = () => {
               <Messages />
             ) : activeTab === 'Orders' ? (
               <Orders />
+            ) : activeTab === 'My Purchases' ? (
+              <MyPurchases />
             ) : activeTab === 'Expense and Income' ? (
               <ExpenseIncome />
             ) : activeTab === 'Search Users' ? (

@@ -174,6 +174,9 @@ export const AuthProvider = ({ children }) => {
       
       const response = await authAPI.login(credentials);
       
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+
       dispatch({
         type: AUTH_ACTIONS.LOGIN_SUCCESS,
         payload: {
@@ -199,6 +202,9 @@ export const AuthProvider = ({ children }) => {
       
       const response = await authAPI.register(userData);
       
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+
       dispatch({
         type: AUTH_ACTIONS.REGISTER_SUCCESS,
         payload: {

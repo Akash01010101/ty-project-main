@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 
 // Load environment variables from root directory
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, './.env') });
 
 const app = express();
 const port = process.env.PORT || 9000;
@@ -19,7 +19,7 @@ app.use(express.json()); // Added back
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static uploaded files
 
 // Database connection
-console.log(process.env.MONGO_URI)
+console.log(process.env.PORT)
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log('Connected to MongoDB'))
 .catch((error) => console.error('MongoDB connection error:', error));

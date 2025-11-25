@@ -1,4 +1,4 @@
-import { get, post, put } from '../utils';
+import { get, post, put, del } from '../utils';
 
 const getGigs = () => {
   return get('/gigs');
@@ -20,12 +20,20 @@ const createOrder = (data) => {
   return post('/orders', data);
 };
 
-const approveOrder = (orderId) => {
-  return put(`/orders/${orderId}/approve`);
+const completeOrder = (orderId) => {
+  return put(`/orders/${orderId}/complete`);
+};
+
+const confirmCompletion = (orderId) => {
+  return put(`/orders/${orderId}/confirm-completion`);
 };
 
 const rejectOrder = (orderId) => {
   return put(`/orders/${orderId}/reject`);
+};
+
+const deleteOrder = (orderId) => {
+  return del(`/orders/${orderId}`);
 };
 
 const getPortfolio = () => {
@@ -48,17 +56,24 @@ const searchUsers = (query) => {
   return get(`/users/search?q=${query}`);
 };
 
+const getSales = () => {
+  return get('/orders/sales');
+};
+
 export {
   getGigs,
   createGig,
   getMyGigs,
   getOrders,
   createOrder,
-  approveOrder,
   rejectOrder,
   getPortfolio,
   addPortfolioItem,
   getTransactions,
   addTransaction,
   searchUsers,
+  getSales,
+  completeOrder,
+  confirmCompletion,
+  deleteOrder,
 };

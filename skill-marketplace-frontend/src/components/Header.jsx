@@ -62,7 +62,7 @@ const Header = () => {
       <div className="relative flex justify-between h-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Left content */}
         <div className="flex items-center gap-8">
-          <h1 className="text-xl font-bold flex items-center" style={{ color: 'var(--text-primary)' }}>SkillMarketplace</h1>
+          <h1 className="text-xl font-bold flex items-center" style={{ color: 'var(--text-primary)' }}>Peerly</h1>
           <nav className="hidden md:flex gap-6 items-center">
             <Link to="/" onClick={handleHomeClick} className="text-sm transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Home</Link>
             <a href="#features" className="text-sm transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Features</a>

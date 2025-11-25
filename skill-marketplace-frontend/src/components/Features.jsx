@@ -34,7 +34,7 @@ const Features = () => {
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
           className="text-4xl font-bold text-center"
-          style={{ color: 'var(--text-primary)' }}
+          style={{ color: 'var(--text-primary)',fontWeight: 500 }}
         >
           Why Choose SkillMarketplace?
         </motion.h2>

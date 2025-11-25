@@ -40,7 +40,7 @@ const Hero = () => {
             Monetize Your Skills.
           </span>
           <br />
-          <span style={{ fontWeight: 400 }}>
+          <span style={{ fontWeight: 500 }}>
           Elevate Your Campus Life.
           </span>
         </motion.h2>

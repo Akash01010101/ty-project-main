@@ -31,6 +31,7 @@ const Testimonials = () => {
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
           className="text-4xl font-bold text-center text-white"
+          style={{ fontWeight: 500 }}
         >
           Loved by Students Like You
         </motion.h2>

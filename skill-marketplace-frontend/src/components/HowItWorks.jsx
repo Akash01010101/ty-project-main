@@ -17,6 +17,7 @@ const HowItWorks = () => {
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
           className="text-4xl font-bold text-center text-white"
+          style={{ fontWeight: 500 }}
         >
           Get Started in Minutes
         </motion.h2>

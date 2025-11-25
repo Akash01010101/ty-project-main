@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Button } from './ui/button';
 
 const Hero = () => {
   const { isAuthenticated } = useAuth();
@@ -14,7 +15,7 @@ const Hero = () => {
     }
   };
   return (
-    <section className="relative h-screen flex items-center justify-center text-center">
+    <section className="relative h-screen flex items-center justify-center text-center" style={{ fontFamily: 'Circular, "Helvetica Neue", Helvetica, Arial, sans-serif' }}>
       <div className="container mx-auto px-6">
         <motion.h2
           initial={{ opacity: 0, y: 50 }}
@@ -23,7 +24,7 @@ const Hero = () => {
           className="text-4xl md:text-6xl font-bold leading-tight max-w-4xl mx-auto"
           style={{ color: 'var(--text-primary)' }}
         >
-          <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(to right, var(--text-accent), var(--button-primary))' }}>
+          <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(to right, #3ECF8E, var(--button-primary))' }}>
             Monetize Your Skills.
           </span>
           <br />
@@ -44,17 +45,23 @@ const Hero = () => {
           transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }}
           className="mt-10 flex justify-center gap-4"
         >
-          <button
+          <Button
             onClick={handleGetStarted}
+            size="lg"
             className="px-6 py-2.5 font-bold rounded-full hover:scale-105 transform transition-all duration-300"
-            style={{ backgroundColor: 'var(--button-primary)', color: 'var(--bg-primary)' }}
+            style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}
           >
             Get Started
-          </button>
+          </Button>
           <a href="#features">
-            <button className="px-6 py-2.5 backdrop-blur-md font-bold rounded-full border transform transition-all duration-300 hover:scale-105" style={{ backgroundColor: 'var(--button-secondary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>
+            <Button 
+              variant="outline"
+              size="lg"
+              className="px-6 py-2.5 backdrop-blur-md font-bold rounded-full border transform transition-all duration-300 hover:scale-105" 
+              style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', color: 'var(--text-primary)', borderColor: 'rgba(255, 255, 255, 0.2)' }}
+            >
               Learn More
-            </button>
+            </Button>
           </a>
         </motion.div>
       </div>

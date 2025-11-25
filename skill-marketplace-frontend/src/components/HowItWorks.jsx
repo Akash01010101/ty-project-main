@@ -11,7 +11,7 @@ const HowItWorks = () => {
   return (
     <section id="how-it-works" className="py-20">
       <div className="container mx-auto px-6">
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -23,7 +23,7 @@ const HowItWorks = () => {
         <div className="mt-16 relative">
           <div className="absolute left-1/2 top-0 h-full w-0.5 bg-white/10"></div>
           {steps.map((step, index) => (
-            <motion.div 
+            <motion.div
               key={index}
               initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
               whileInView={{ opacity: 1, x: 0 }}

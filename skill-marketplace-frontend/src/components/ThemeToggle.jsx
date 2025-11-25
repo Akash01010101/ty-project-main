@@ -4,9 +4,18 @@ import { useTheme } from '../utils/ThemeContext';
 const ThemeToggle = () => {
   const { isDarkMode, toggleTheme } = useTheme();
 
+  const handleToggle = () => {
+    toggleTheme();
+    if (isDarkMode) {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+  };
+
   return (
     <button
-      onClick={toggleTheme}
+      onClick={handleToggle}
       className="p-2 sm:p-3 rounded-full transition-all duration-300 ease-in-out hover:scale-110 focus:outline-none min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
       style={{
         backgroundColor: 'var(--button-secondary)',

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 import { useAuth } from '../context/AuthContext';
+import { Button } from './ui/button';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,36 +48,45 @@ const Header = () => {
   };
 
   return (
-    <motion.header 
+    <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
       className="sticky top-0 z-50 backdrop-blur-lg shadow-lg"
       style={{
-        backgroundColor: 'var(--bg-accent)',
-        borderBottom: '1px solid var(--border-color)'
+        backgroundColor: 'var(--bg-primary)',
+        borderBottom: '1px solid var(--border-color)',
+        fontFamily: 'Circular, "Helvetica Neue", Helvetica, Arial, sans-serif'
       }}
     >
-      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>SkillMarketplace</h1>
-        <nav className="hidden md:flex space-x-8 items-center">
-          <Link to="/" onClick={handleHomeClick} className="transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Home</Link>
-          <a href="#features" className="transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Features</a>
-          <a href="#how-it-works" className="transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>How It Works</a>
-          <a href="#testimonials" className="transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Testimonials</a>
+      <div className="relative flex justify-between h-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Left content */}
+        <div className="flex items-center gap-8">
+          <h1 className="text-xl font-bold flex items-center" style={{ color: 'var(--text-primary)' }}>SkillMarketplace</h1>
+          <nav className="hidden md:flex gap-6 items-center">
+            <Link to="/" onClick={handleHomeClick} className="text-sm transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Home</Link>
+            <a href="#features" className="text-sm transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Features</a>
+            <a href="#how-it-works" className="text-sm transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>How It Works</a>
+            <a href="#testimonials" className="text-sm transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Testimonials</a>
+          </nav>
+        </div>
+
+        {/* Right content */}
+        <div className="flex items-center gap-3">
           <ThemeToggle />
-          
+
           {isAuthenticated ? (
-            <div className="relative" ref={userMenuRef}>
-              <button
+            <div className="relative hidden md:block" ref={userMenuRef}>
+              <Button
                 onClick={() => setShowUserMenu(!showUserMenu)}
+                variant="ghost"
                 className="flex items-center space-x-2 px-4 py-2 rounded-full transition-colors duration-300"
-                style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-primary)' }}
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', color: 'var(--text-primary)' }}
               >
                 <User size={20} />
                 <span className="font-medium">{user?.name || 'User'}</span>
-              </button>
-              
+              </Button>
+
               {showUserMenu && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -89,58 +99,58 @@ const Header = () => {
                       Welcome, {user?.name}!
                     </div>
                     <hr className="my-2" style={{ borderColor: 'var(--border-color)' }} />
-                    <button
+                    <Button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 flex items-center space-x-2 transition-colors duration-300"
+                      variant="ghost"
+                      className="w-full justify-start px-4 py-2 flex items-center space-x-2 transition-colors duration-300 hover:bg-white/10"
                       style={{ color: 'var(--text-secondary)' }}
-                      onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'}
-                      onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}
                     >
                       <LogOut size={16} />
                       <span>Logout</span>
-                    </button>
+                    </Button>
                   </div>
                 </motion.div>
               )}
             </div>
           ) : (
-            <>
-              <Link to="/login" className="px-4 py-2 font-bold rounded-full hover:scale-105 transform transition-all duration-300" style={{ backgroundColor: 'var(--button-primary)', color: 'var(--bg-primary)' }}>Login</Link>
-              <Link to="/signup" className="px-4 py-2 font-bold rounded-full border transform transition-all duration-300 hover:scale-105" style={{ backgroundColor: 'var(--button-secondary)', color: 'var(--text-accent)', borderColor: 'var(--border-color)' }}>Sign Up</Link>
-            </>
+            <div className="hidden md:flex items-center gap-2">
+              <Button asChild variant="ghost" className="px-4 py-2 text-sm font-medium rounded-md transition-colors duration-300 hover:bg-white/10" style={{ color: 'var(--text-secondary)' }}>
+                <Link to="/login">Log in</Link>
+              </Button>
+              <Button asChild className="px-4 py-2 text-sm font-medium rounded-md transition-all duration-300 hover:scale-105" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
+                <Link to="/signup">Sign Up</Link>
+              </Button>
+            </div>
           )}
-        </nav>
-        <div className="md:hidden flex items-center space-x-3">
-          <ThemeToggle />
-          <button onClick={() => setIsOpen(!isOpen)} style={{ color: 'var(--text-primary)' }}>
+
+          <Button onClick={() => setIsOpen(!isOpen)} variant="ghost" size="icon" className="md:hidden hover:bg-white/10" style={{ color: 'var(--text-primary)' }}>
             {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          </Button>
         </div>
       </div>
       {isOpen && (
-        <div className="md:hidden backdrop-blur-lg" style={{ backgroundColor: 'var(--bg-accent)', borderTop: '1px solid var(--border-color)' }}>
+        <div className="md:hidden backdrop-blur-lg" style={{ backgroundColor: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)' }}>
           <nav className="px-6 pt-2 pb-4 space-y-2">
             <Link to="/" onClick={handleHomeClick} className="block transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Home</Link>
             <a href="#features" className="block transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Features</a>
             <a href="#how-it-works" className="block transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>How It Works</a>
             <a href="#testimonials" className="block transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Testimonials</a>
-            
+
             {isAuthenticated ? (
               <>
                 <div className="flex items-center space-x-2 py-2" style={{ color: 'var(--text-primary)' }}>
                   <User size={20} />
                   <span className="font-medium">Welcome, {user?.name}!</span>
                 </div>
-                <button
+                <Button
                   onClick={handleLogout}
-                  className="w-full text-left transition-colors duration-300 flex items-center space-x-2"
+                  variant="ghost"
+                  className="w-full justify-start transition-colors duration-300 flex items-center space-x-2 hover:bg-white/10"
                   style={{ color: 'var(--text-secondary)' }}
-                  onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'}
-                  onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}
                 >
                   <LogOut size={16} />
                   <span>Logout</span>
-                </button>
+                </Button>
               </>
             ) : (
               <>

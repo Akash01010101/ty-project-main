@@ -25,7 +25,7 @@ const Testimonials = () => {
   return (
     <section id="testimonials" className="py-20">
       <div className="container mx-auto px-6">
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -36,7 +36,7 @@ const Testimonials = () => {
         </motion.h2>
         <div className="mt-16 grid gap-8 md:grid-cols-3">
           {testimonials.map((testimonial, index) => (
-            <motion.div 
+            <motion.div
               key={index}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -44,7 +44,7 @@ const Testimonials = () => {
               viewport={{ once: true }}
               className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 shadow-xl text-center"
             >
-              <img src={testimonial.avatar} alt={testimonial.author} className="w-24 h-24 rounded-full mx-auto mb-6 border-4 border-purple-500/50"/>
+              <img src={testimonial.avatar} alt={testimonial.author} className="w-24 h-24 rounded-full mx-auto mb-6 border-4 border-purple-500/50" />
               <p className="text-gray-300 italic">"{testimonial.quote}"</p>
               <div className="mt-6">
                 <p className="font-bold text-white">{testimonial.author}</p>

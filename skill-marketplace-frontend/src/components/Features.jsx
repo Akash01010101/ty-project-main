@@ -17,7 +17,7 @@ const features = [
     title: 'Seamless Communication',
     description: 'Integrated chat and collaboration tools to keep your projects on track.',
   },
-    {
+  {
     icon: <Zap size={36} style={{ color: 'var(--text-accent)' }} />,
     title: 'Instant & Secure Transactions',
     description: 'Mock payment system for safe and immediate compensation for your work.',
@@ -28,7 +28,7 @@ const Features = () => {
   return (
     <section id="features" className="py-20">
       <div className="container mx-auto px-6">
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -40,7 +40,7 @@ const Features = () => {
         </motion.h2>
         <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {features.map((feature, index) => (
-            <motion.div 
+            <motion.div
               key={index}
               initial={{ opacity: 0, y: 50, scale: 0.9 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}

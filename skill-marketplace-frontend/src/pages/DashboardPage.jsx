@@ -113,7 +113,7 @@ const DashboardPage = () => {
       {/* Top Header */}
       <div className="px-6 py-4 flex items-center justify-between border-b" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
         {/* Logo */}
-        <h1 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>SkillMarketPlace</h1>
+        <h1 className="text-3xl font-bold pl-20" style={{ color: 'var(--text-primary)' }}>Peerly</h1>
         
         {/* User Profile and Controls */}
         <div className="flex items-center space-x-4">

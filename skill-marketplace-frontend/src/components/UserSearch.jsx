@@ -18,40 +18,52 @@ const UserItem = ({ user, onMessage, onFollow }) => {
       onMouseLeave={(e) => e.target.style.borderColor = 'var(--border-color)'}
     >
       <div className="flex items-start space-x-4 mb-4">
-        <img
-          src={user.avatar}
-          alt={user.name}
-          className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover ring-2 flex-shrink-0"
-          style={{ ringColor: 'var(--button-secondary)' }}
-        />
+        {user.profilePicture ? (
+          <img
+            src={user.profilePicture.startsWith('http')
+              ? user.profilePicture
+              : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${user.profilePicture}`}
+            alt={user.name}
+            className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover ring-2 flex-shrink-0"
+            style={{ ringColor: 'var(--button-secondary)' }}
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.parentElement.innerHTML = '<div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center ring-2 flex-shrink-0" style="background-color: var(--bg-secondary); ring-color: var(--button-secondary)"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-secondary)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>';
+            }}
+          />
+        ) : (
+          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center ring-2 flex-shrink-0" style={{ backgroundColor: 'var(--bg-secondary)', ringColor: 'var(--button-secondary)' }}>
+            <User size={24} style={{ color: 'var(--text-secondary)' }} />
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2">
             <div className="mb-2 sm:mb-0">
               <h3 className="font-semibold text-base sm:text-lg truncate" style={{ color: 'var(--text-primary)' }}>
-                @{user.name}
+                {user.name}
               </h3>
-              <p className="font-medium text-sm sm:text-base" style={{ color: 'var(--text-secondary)' }}>{user.name}</p>
+              <p className="font-medium text-sm sm:text-base" style={{ color: 'var(--text-secondary)' }}>@{user.name}</p>
             </div>
             <div className="flex items-center space-x-2 flex-shrink-0">
               <div className="flex items-center text-yellow-500">
                 <Star className="w-4 h-4 mr-1" />
-                <span className="text-sm">{user.rating}</span>
+                <span className="text-sm">{user.rating || 0}</span>
               </div>
-              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>({user.reviewCount})</span>
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>({user.reviewCount || 0})</span>
             </div>
           </div>
           
           <div className="flex items-center text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
             <MapPin className="w-4 h-4 mr-1" />
-            <span>{user.university}</span>
+            <span>{user.university || 'University'}</span>
           </div>
           
           <p className="text-sm line-clamp-2 mb-3" style={{ color: 'var(--text-secondary)' }}>
-            {user.bio}
+            {user.bio || 'No bio available'}
           </p>
           
           <div className="flex flex-wrap gap-2 mb-4">
-            {user.skills.map((skill, index) => (
+            {user.skills?.map((skill, index) => (
               <span
                 key={index}
                 className="px-2 py-1 text-xs rounded-full"
@@ -124,7 +136,7 @@ const UserSearch = () => {
 
   // Get unique skills for filters
   const skillOptions = useMemo(() => {
-    const allSkills = users.flatMap(user => user.skills);
+    const allSkills = users.flatMap(user => user.skills || []);
     return ['all', ...new Set(allSkills)];
   }, [users]);
 

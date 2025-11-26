@@ -200,14 +200,7 @@ const SignUpPage = () => {
             </Button>
           </div>
 
-          {/* Divider */}
-          <div className="flex items-center my-6">
-            <div className="flex-1 border-t" style={{ borderColor: 'var(--border-color)' }}></div>
-            <span className="px-3 text-xs" style={{ color: 'var(--text-secondary)' }}>or</span>
-            <div className="flex-1 border-t" style={{ borderColor: 'var(--border-color)' }}></div>
-          </div>
-
-          {/* Signup Form */}
+          {/* Signup Form - No divider here */}
           <form onSubmit={onSubmit} className="space-y-4">
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -48,8 +48,8 @@ const Features = () => {
 							viewport={{ once: true }}
 							className="backdrop-blur-lg rounded-2xl p-8 shadow-xl transform hover:-translate-y-2 transition-all duration-300 border"
 							style={{
-								backgroundColor: 'rgba(50, 50, 50, 0.4)',
-								borderColor: 'rgba(128, 128, 128, 0.3)'
+								backgroundColor: 'var(--bg-secondary)',
+								borderColor: 'var(--border-color)'
 							}}
 						>
 							<div className="mb-4">{feature.icon}</div>

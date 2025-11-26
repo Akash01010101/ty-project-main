@@ -16,13 +16,13 @@ const HowItWorks = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="text-4xl font-bold text-center text-white"
-          style={{ fontWeight: 500 }}
+          className="text-4xl font-bold text-center"
+          style={{ color: 'var(--text-primary)', fontWeight: 500 }}
         >
           Get Started in Minutes
         </motion.h2>
         <div className="mt-16 relative">
-          <div className="absolute left-1/2 top-0 h-full w-0.5 bg-white/10"></div>
+          <div className="absolute left-1/2 top-0 h-full w-0.5" style={{ backgroundColor: 'var(--border-color)' }}></div>
           {steps.map((step, index) => (
             <motion.div
               key={index}
@@ -32,13 +32,13 @@ const HowItWorks = () => {
               viewport={{ once: true }}
               className={`mb-12 flex items-center w-full ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
               <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
-                <div className="p-6 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 shadow-xl">
-                  <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">{step.title}</h3>
-                  <p className="mt-2 text-gray-400">{step.description}</p>
+                <div className="p-6 bg-white/5 backdrop-blur-lg rounded-2xl border shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+                  <h3 className="text-2xl font-bold" style={{ color: 'var(--text-accent)' }}>{step.title}</h3>
+                  <p className="mt-2" style={{ color: 'var(--text-secondary)' }}>{step.description}</p>
                 </div>
               </div>
-              <div className="absolute left-1/2 -translate-x-1/2 w-8 h-8 bg-gray-900 border-2 border-purple-500 rounded-full flex items-center justify-center">
-                <div className="w-4 h-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+              <div className="absolute left-1/2 -translate-x-1/2 w-8 h-8 rounded-full flex items-center justify-center border-2" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--button-action)' }}>
+                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: 'var(--button-action)' }}></div>
               </div>
             </motion.div>
           ))}

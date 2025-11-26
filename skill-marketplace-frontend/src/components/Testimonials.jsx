@@ -30,8 +30,8 @@ const Testimonials = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="text-4xl font-bold text-center text-white"
-          style={{ fontWeight: 500 }}
+          className="text-4xl font-bold text-center"
+          style={{ color: 'var(--text-primary)', fontWeight: 500 }}
         >
           Loved by Students Like You
         </motion.h2>
@@ -43,13 +43,14 @@ const Testimonials = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.2 }}
               viewport={{ once: true }}
-              className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 shadow-xl text-center"
+              className="backdrop-blur-lg rounded-2xl p-8 border shadow-xl text-center"
+              style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}
             >
-              <img src={testimonial.avatar} alt={testimonial.author} className="w-24 h-24 rounded-full mx-auto mb-6 border-4 border-purple-500/50" />
-              <p className="text-gray-300 italic">"{testimonial.quote}"</p>
+              <img src={testimonial.avatar} alt={testimonial.author} className="w-24 h-24 rounded-full mx-auto mb-6 border-4" style={{ borderColor: 'var(--button-action)' }} />
+              <p className="italic" style={{ color: 'var(--text-secondary)' }}>"{testimonial.quote}"</p>
               <div className="mt-6">
-                <p className="font-bold text-white">{testimonial.author}</p>
-                <p className="text-sm text-purple-400">{testimonial.title}</p>
+                <p className="font-bold" style={{ color: 'var(--text-primary)' }}>{testimonial.author}</p>
+                <p className="text-sm" style={{ color: 'var(--text-accent)' }}>{testimonial.title}</p>
               </div>
             </motion.div>
           ))}

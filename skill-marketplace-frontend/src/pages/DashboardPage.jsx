@@ -111,7 +111,7 @@ const DashboardPage = () => {
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)', fontFamily: 'Circular, "Helvetica Neue", Helvetica, Arial, sans-serif' }}>
       {/* Top Header */}
-      <div className="px-6 py-4 flex items-center justify-between border-b" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'rgba(128, 128, 128, 0.2)' }}>
+      <div className="px-6 py-4 flex items-center justify-between border-b" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
         {/* Logo */}
         <h1 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>SkillMarketPlace</h1>
         
@@ -162,10 +162,10 @@ const DashboardPage = () => {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar - Contains Navigation AND Profile/Stats side by side */}
-        <div className="flex overflow-y-auto border-r" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'rgba(128, 128, 128, 0.2)' }}>
+        <div className="flex overflow-y-auto" style={{ backgroundColor: 'var(--bg-accent)' }}>
           <div className="flex">
             {/* Navigation Menu - Left Column */}
-            <nav className="w-48 p-4 border-r" style={{ borderColor: 'rgba(128, 128, 128, 0.15)' }}>
+            <nav className="w-48 p-4 border-r" style={{ borderColor: 'var(--border-color)' }}>
               <div className="space-y-1">
                 <button
                   onClick={() => setActiveTab('Browse Gigs')}
@@ -280,7 +280,7 @@ const DashboardPage = () => {
             {/* Profile & Stats Column - Right of Navigation */}
             <div className="w-64 p-4 space-y-4">
               {/* Your Profile Card */}
-              <div className="rounded-lg p-4 border" style={{ backgroundColor: 'rgba(50, 50, 50, 0.3)', borderColor: 'rgba(128, 128, 128, 0.3)' }}>
+              <div className="rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
                 <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Your Profile</h3>
                 
                 <div className="flex items-center justify-center mb-3">
@@ -308,7 +308,7 @@ const DashboardPage = () => {
               </div>
 
               {/* Quick Stats Card with Vertical Bar Chart */}
-              <div className="rounded-lg p-4 border" style={{ backgroundColor: 'rgba(50, 50, 50, 0.3)', borderColor: 'rgba(128, 128, 128, 0.3)' }}>
+              <div className="rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
                 <h4 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Quick Stats</h4>
                 
                 <div className="space-y-2 mb-4">
@@ -464,7 +464,7 @@ const DashboardPage = () => {
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Search Bar and Filter - Only show for Browse Gigs */}
             {activeTab === 'Browse Gigs' && (
-              <div className="px-6 py-4 flex items-center gap-4 border-b" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'rgba(128, 128, 128, 0.2)' }}>
+              <div className="px-6 py-4 flex items-center gap-4" style={{ backgroundColor: 'var(--bg-accent)' }}>
                 <div className="flex-1 max-w-2xl">
                   <input
                     type="text"
@@ -498,7 +498,7 @@ const DashboardPage = () => {
             )}
 
             {/* Main Content */}
-            <div className="flex-1 overflow-auto p-6">
+            <div className="flex-1 overflow-auto p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
               {activeTab === 'My Gigs' ? (
                 <MyGigs />
               ) : activeTab === 'Portfolio' ? (
@@ -529,8 +529,8 @@ const DashboardPage = () => {
                           transition={{ duration: 0.3 }}
                           className="rounded-lg p-5 transition-all duration-300 hover:shadow-md border"
                           style={{
-                            backgroundColor: 'rgba(50, 50, 50, 0.3)',
-                            borderColor: 'rgba(128, 128, 128, 0.3)'
+                            backgroundColor: 'var(--bg-accent)',
+                            borderColor: 'var(--border-color)'
                           }}
                         >
                           <div className="flex items-start justify-between">
@@ -597,36 +597,38 @@ const DashboardPage = () => {
           </div>
 
           {/* Right AI Insights Sidebar */}
-          <div className="w-80 p-6 overflow-y-auto hidden xl:block border-l" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'rgba(128, 128, 128, 0.2)' }}>
-            <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>AI Insights</h3>
-            
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span style={{ color: 'var(--text-secondary)' }}>Profile Strength</span>
-                  <span style={{ color: 'var(--text-primary)' }}>{profileStats.profileStrength}%</span>
-                </div>
-                <div className="w-full rounded-full h-2" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                  <div className="h-2 rounded-full transition-all duration-500" style={{width: `${profileStats.profileStrength}%`, backgroundColor: 'var(--button-action)'}}></div>
-                </div>
-              </div>
+          <div className="w-80 p-6 overflow-y-auto hidden xl:block" style={{ backgroundColor: 'var(--bg-accent)' }}>
+            <div className="rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+              <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>AI Insights</h3>
               
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span style={{ color: 'var(--text-secondary)' }}>Market Demand</span>
-                  <span style={{ color: 'var(--text-primary)' }}>{profileStats.marketDemand}%</span>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between text-xs mb-2">
+                    <span style={{ color: 'var(--text-secondary)' }}>Profile Strength</span>
+                    <span style={{ color: 'var(--text-primary)' }}>{profileStats.profileStrength}%</span>
+                  </div>
+                  <div className="w-full rounded-full h-2" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                    <div className="h-2 rounded-full transition-all duration-500" style={{width: `${profileStats.profileStrength}%`, backgroundColor: 'var(--button-action)'}}></div>
+                  </div>
                 </div>
-                <div className="w-full rounded-full h-2" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                  <div className="h-2 rounded-full transition-all duration-500" style={{width: `${profileStats.marketDemand}%`, backgroundColor: 'var(--button-action)'}}></div>
+                
+                <div>
+                  <div className="flex justify-between text-xs mb-2">
+                    <span style={{ color: 'var(--text-secondary)' }}>Market Demand</span>
+                    <span style={{ color: 'var(--text-primary)' }}>{profileStats.marketDemand}%</span>
+                  </div>
+                  <div className="w-full rounded-full h-2" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                    <div className="h-2 rounded-full transition-all duration-500" style={{width: `${profileStats.marketDemand}%`, backgroundColor: 'var(--button-action)'}}></div>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                <div className="flex items-start">
-                  <span className="mr-3 text-2xl">💡</span>
-                  <div className="flex-1">
-                    <p className="font-medium text-sm mb-1" style={{ color: 'var(--text-primary)' }}>Top Suggestion:</p>
-                    <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Add 2-3 more portfolio projects to increase credibility</p>
+                
+                <div className="p-3 rounded-lg border" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
+                  <div className="flex items-start">
+                    <span className="mr-2 text-lg">💡</span>
+                    <div className="flex-1">
+                      <p className="font-medium text-xs mb-1" style={{ color: 'var(--text-primary)' }}>Top Suggestion:</p>
+                      <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Add 2-3 more portfolio projects to increase credibility</p>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -460,7 +460,7 @@ const DashboardPage = () => {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex overflow-hidden border-none">
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Search Bar and Filter - Only show for Browse Gigs */}
             {activeTab === 'Browse Gigs' && (
@@ -498,7 +498,7 @@ const DashboardPage = () => {
             )}
 
             {/* Main Content */}
-            <div className="flex-1 overflow-auto p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
+            <div className="flex-1 overflow-auto p-6 border-none" style={{ backgroundColor: 'var(--bg-primary)' }}>
               {activeTab === 'My Gigs' ? (
                 <MyGigs />
               ) : activeTab === 'Portfolio' ? (

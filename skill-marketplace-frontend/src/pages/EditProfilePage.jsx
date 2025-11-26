@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../api/auth';
 
 const EditProfilePage = () => {
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
@@ -107,13 +107,37 @@ const EditProfilePage = () => {
     data.append('skills', skills);
     data.append('experience', JSON.stringify(experience));
     data.append('education', JSON.stringify(education));
-    if (profilePicture) data.append('profilePicture', profilePicture);
-    if (resume) data.append('resume', resume);
+    if (profilePicture) {
+      data.append('profilePicture', profilePicture);
+      console.log('Uploading profile picture:', profilePicture.name);
+    }
+    if (resume) {
+      data.append('resume', resume);
+      console.log('Uploading resume:', resume.name);
+    }
     
     try {
-      const updatedUser = await authAPI.updateProfile(data); // Pass true to indicate FormData
-      setUser(updatedUser.user);
+      const response = await authAPI.updateProfile(data);
+      console.log('Profile update response:', response);
+      
+      // Update localStorage with new user data
+      if (response.user) {
+        const token = localStorage.getItem('token');
+        if (token) {
+          localStorage.setItem('user', JSON.stringify(response.user));
+        }
+      }
+      
+      // Success message
+      alert('Profile updated successfully!');
+      
+      // Navigate without full page reload
       navigate('/dashboard');
+      
+      // Force a page reload to refresh all components
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } catch (error) {
       console.error('Error updating profile:', error);
       setLocalError(error.message || 'Profile update failed. Please try again.');

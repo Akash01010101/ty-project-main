@@ -4,6 +4,17 @@ const orderSchema = new mongoose.Schema({
   gig: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Gig',
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  duration: {
+    type: String,
     required: true,
   },
   buyer: {

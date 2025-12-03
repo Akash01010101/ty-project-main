@@ -73,4 +73,4 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-module.exports = { authenticate }; //ss
+module.exports = { authenticate };

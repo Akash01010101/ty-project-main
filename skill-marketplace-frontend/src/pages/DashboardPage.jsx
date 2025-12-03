@@ -20,7 +20,7 @@ const DashboardPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout, user } = useAuth();
+  const { logout, user, unreadCount } = useAuth();
   const [gigs, setGigs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [profileStats, setProfileStats] = useState({
@@ -217,14 +217,21 @@ const DashboardPage = () => {
 
                 <button
                   onClick={() => setActiveTab('Messages')}
-                  className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 ${activeTab === 'Messages' ? 'font-medium' : ''}`}
+                  className={`w-full flex items-center justify-between space-x-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 ${activeTab === 'Messages' ? 'font-medium' : ''}`}
                   style={{
                     backgroundColor: activeTab === 'Messages' ? 'var(--button-secondary)' : 'transparent',
                     color: activeTab === 'Messages' ? 'var(--text-primary)' : 'var(--text-secondary)'
                   }}
                 >
-                  <MessageSquare size={18} />
-                  <span>Messages</span>
+                  <div className="flex items-center space-x-3">
+                    <MessageSquare size={18} />
+                    <span>Messages</span>
+                  </div>
+                  {unreadCount > 0 && (
+                    <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
                 </button>
 
                 <button
@@ -578,10 +585,10 @@ const DashboardPage = () => {
                                 {gig.duration}
                               </div>
                               <div className="flex flex-col space-y-2">
-                                <button className="px-4 py-2 rounded-md text-xs font-medium transition-all duration-200" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }} onClick={() => handleOrderNow(gig)}>
-                                  Order Now
-                                </button>
-                                <button className="px-4 py-2 rounded-md text-xs border transition-all duration-200" style={{ color: 'var(--text-secondary)', borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}>
+                                <button className="px-4 py-2 rounded-md text-xs border transition-all duration-200" style={{ color: 'var(--text-secondary)', borderColor: 'var(--border-color)', backgroundColor: 'transparent' }} onClick={() => {
+                                  setActiveTab('Messages');
+                                  navigate('/dashboard?tab=messages', { state: { recipientId: gig.user._id, recipientName: gig.user.name, recipientProfilePicture: gig.user.profilePicture } });
+                                }}>
                                   Contact
                                 </button>
                               </div>

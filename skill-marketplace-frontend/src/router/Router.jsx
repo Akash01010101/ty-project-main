@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
 import LoginPage from '../pages/Auth/LoginPage';
 import SignUpPage from '../pages/Auth/SignUpPage';
@@ -11,17 +11,21 @@ import WalletPage from '../pages/WalletPage';
 import EditProfilePage from '../pages/EditProfilePage';
 import ManageOffersPage from '../pages/ManageOffersPage';
 import ProtectedRoute from '../components/ProtectedRoute';
+import LandingPage from '../pages/LandingPage';
+import TermsPage from '../pages/TermsPage';
+import PrivacyPage from '../pages/PrivacyPage';
 
-const Router = () => {
+const AppRoutes = () => {
   return (
-    <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/gigs" element={<GigsPage />} />
         <Route path="/gig/:id" element={<GigDetailPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
         
         {/* Protected Routes */}
         <Route path="/dashboard" element={
@@ -55,8 +59,7 @@ const Router = () => {
           </ProtectedRoute>
         } />
       </Routes>
-    </BrowserRouter>
   );
 };
 
-export default Router;
+export default AppRoutes;

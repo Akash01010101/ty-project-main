@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { authAPI } from '../api/auth';
+import { getUnreadCount } from '../api/messages';
 
 // Initial state
 const initialState = {
@@ -7,7 +8,8 @@ const initialState = {
   token: null,
   isAuthenticated: false,
   isLoading: true,
-  error: null
+  error: null,
+  unreadCount: 0,
 };
 
 // Action types
@@ -22,7 +24,8 @@ const AUTH_ACTIONS = {
   LOAD_USER: 'LOAD_USER',
   UPDATE_PROFILE: 'UPDATE_PROFILE',
   CLEAR_ERROR: 'CLEAR_ERROR',
-  SET_LOADING: 'SET_LOADING'
+  SET_LOADING: 'SET_LOADING',
+  SET_UNREAD_COUNT: 'SET_UNREAD_COUNT',
 };
 
 // Reducer function
@@ -65,7 +68,8 @@ const authReducer = (state, action) => {
         token: null,
         isAuthenticated: false,
         isLoading: false,
-        error: null
+        error: null,
+        unreadCount: 0,
       };
 
     case AUTH_ACTIONS.LOAD_USER:
@@ -96,6 +100,12 @@ const authReducer = (state, action) => {
         ...state,
         isLoading: action.payload
       };
+      
+    case AUTH_ACTIONS.SET_UNREAD_COUNT:
+      return {
+        ...state,
+        unreadCount: action.payload,
+      };
 
     default:
       return state;
@@ -108,6 +118,15 @@ const AuthContext = createContext();
 // AuthProvider component
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+
+  const fetchUnreadCount = async () => {
+    try {
+      const { count } = await getUnreadCount();
+      dispatch({ type: AUTH_ACTIONS.SET_UNREAD_COUNT, payload: count });
+    } catch (error) {
+      console.error('Error fetching unread count:', error);
+    }
+  };
 
   // Load user on app start
   useEffect(() => {
@@ -129,6 +148,7 @@ export const AuthProvider = ({ children }) => {
                 isAuthenticated: true
               }
             });
+            fetchUnreadCount();
           } else {
             // Token is invalid, clear storage
             authAPI.logout();
@@ -184,6 +204,7 @@ export const AuthProvider = ({ children }) => {
           token: response.token
         }
       });
+      fetchUnreadCount();
 
       return response;
     } catch (error) {
@@ -252,6 +273,10 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: AUTH_ACTIONS.CLEAR_ERROR });
   };
 
+  const setUnreadCount = (count) => {
+    dispatch({ type: AUTH_ACTIONS.SET_UNREAD_COUNT, payload: count });
+  };
+
   // Context value
   const value = {
     ...state,
@@ -259,7 +284,9 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     updateProfile,
-    clearError
+    clearError,
+    fetchUnreadCount,
+    setUnreadCount,
   };
 
   return (

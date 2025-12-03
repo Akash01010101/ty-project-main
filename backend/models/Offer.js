@@ -32,6 +32,10 @@ const offerSchema = new mongoose.Schema({
     enum: ['pending', 'accepted', 'declined', 'cancelled'],
     default: 'pending',
   },
+  order: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Order',
+  },
 }, { timestamps: true });
 
 const Offer = mongoose.model('Offer', offerSchema);

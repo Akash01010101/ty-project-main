@@ -58,7 +58,7 @@ const updateOfferStatus = async (req, res) => {
     }
 
     if (status === 'accepted') {
-      if (offer.toUser.toString() !== req.user.userId) {
+      if (offer.toUser.toString() !== req.user.userId.toString()) {
         return res.status(401).json({ msg: 'User not authorized to accept this offer' });
       }
 
@@ -74,12 +74,13 @@ const updateOfferStatus = async (req, res) => {
       await order.save();
       
       offer.status = 'accepted';
+      offer.order = order._id;
       await offer.save();
 
       return res.json({ offer, order });
 
     } else if (status === 'declined') {
-      if (offer.toUser.toString() !== req.user.userId) {
+      if (offer.toUser.toString() !== req.user.userId.toString()) {
         return res.status(401).json({ msg: 'User not authorized to decline this offer' });
       }
       offer.status = 'declined';
@@ -87,7 +88,7 @@ const updateOfferStatus = async (req, res) => {
       return res.json({ offer });
 
     } else if (status === 'cancelled') {
-      if (offer.fromUser.toString() !== req.user.userId) {
+      if (offer.fromUser.toString() !== req.user.userId.toString()) {
         return res.status(401).json({ msg: 'User not authorized to cancel this offer' });
       }
       offer.status = 'cancelled';

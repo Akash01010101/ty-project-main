@@ -51,13 +51,18 @@ const getMessages = async (req, res) => {
   try {
     const messages = await Message.find({ conversationId: req.params.id })
       .populate('sender', 'name profilePicture')
-      .populate('offer')
+      .populate({
+        path: 'offer',
+        populate: {
+          path: 'order'
+        }
+      })
       .sort({ createdAt: 'asc' });
       
     res.json(messages);
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Server Error');
+    console.error('Error in getMessages:', error);
+    res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };
 

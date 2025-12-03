@@ -9,8 +9,7 @@ import { createOffer, updateOfferStatus } from '../api/offers';
 import { createRazorpayOrder, verifyPayment } from '../api/payments';
 import { useAuth } from '../context/AuthContext';
 
-// Payment Prompt Message Component
-const PaymentPromptMessage = ({ order, onPay }) => (
+const PaymentPromptMessage = ({ order, onPay, currentUser }) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
@@ -29,7 +28,12 @@ const PaymentPromptMessage = ({ order, onPay }) => (
           <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Price</div>
           <div className="text-xl font-bold" style={{ color: 'var(--text-accent)' }}>${order.price}</div>
         </div>
-        <button onClick={() => onPay(order)} className="px-4 py-2 text-sm font-medium text-white rounded-lg" style={{backgroundColor: 'var(--button-primary)'}}>Pay Now</button>
+        {currentUser._id === order.buyer && order.status === 'pending' && (
+          <button onClick={() => onPay(order)} className="px-4 py-2 text-sm font-medium text-white rounded-lg" style={{backgroundColor: 'var(--button-primary)'}}>Pay Now</button>
+        )}
+        {order.status !== 'pending' && (
+          <span className="text-xs px-2 py-1 rounded-full" style={{backgroundColor: 'var(--button-secondary)', color: 'var(--text-secondary)'}}>{order.status}</span>
+        )}
       </div>
     </div>
   </motion.div>
@@ -122,12 +126,12 @@ const OfferMessage = ({ offer, isOwnMessage, onAccept, onDecline }) => (
 );
 
 // Chat Message Component
-const ChatMessage = ({ message, isOwnMessage, sender, onAccept, onDecline, onPay, onCancelOffer }) => {
-  if (message.type === 'offer') {
-    return <OfferMessage offer={message.offer} isOwnMessage={isOwnMessage} onAccept={onAccept} onDecline={onDecline} onCancel={onCancelOffer} />;
+const ChatMessage = ({ message, isOwnMessage, sender, onAccept, onDecline, onPay, onCancelOffer, currentUser }) => {
+  if (message.type === 'offer' && message.offer.status === 'accepted' && message.offer.order) {
+    return <PaymentPromptMessage order={message.offer.order} onPay={onPay} currentUser={currentUser} />;
   }
-  if (message.type === 'payment-prompt') {
-    return <PaymentPromptMessage order={message.order} onPay={onPay} />;
+  if (message.type === 'offer') {
+    return <OfferMessage offer={message.offer} isOwnMessage={isOwnMessage} onAccept={onAccept} onDecline={onDecline} onCancelOffer={onCancelOffer} />;
   }
 
   return (
@@ -257,11 +261,9 @@ const Messages = () => {
 
   const handleAcceptOffer = async (offerId) => {
     try {
-      const { offer, order } = await updateOfferStatus(offerId, 'accepted');
-      const newMessages = chatMessages.map(msg => 
-        msg.offer?._id === offerId ? { ...msg, offer: { ...msg.offer, status: 'accepted' }, type: 'payment-prompt', order } : msg
-      );
-      setChatMessages(newMessages);
+      await updateOfferStatus(offerId, 'accepted');
+      const data = await getMessages(selectedConversation._id);
+      setChatMessages(data);
     } catch (error) {
       console.error('Error accepting offer:', error);
     }
@@ -404,14 +406,10 @@ const Messages = () => {
     return otherParticipant?.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const isChatDisabled = chatMessages.some(msg => msg.type === 'payment-prompt' && msg.order.status === 'pending');
+  const isChatDisabled = chatMessages.some(msg => msg.type === 'offer' && msg.offer.status === 'accepted');
 
-
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, [chatMessages]);
+  console.log('chatMessages:', chatMessages);
+  console.log('isChatDisabled:', isChatDisabled);
 
   if (selectedConversation) {
     const otherParticipant = selectedConversation.participants.find(p => p._id !== currentUser._id);
@@ -494,6 +492,7 @@ const Messages = () => {
                   onDecline={handleDeclineOffer}
                   onPay={handlePayment}
                   onCancelOffer={handleCancelOffer}
+                  currentUser={currentUser}
                 />
               ))}
             </div>

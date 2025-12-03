@@ -36,6 +36,9 @@ const orderSchema = new mongoose.Schema({
     enum: ['pending', 'in-progress', 'completed', 'cancelled', 'completed-by-seller'],
     default: 'pending',
   },
+  razorpayOrderId: {
+    type: String,
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Order', orderSchema);

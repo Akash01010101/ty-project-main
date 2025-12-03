@@ -1,5 +1,6 @@
 const Order = require('../models/Order');
-const Transaction = require('../models/Transaction'); // Import Transaction model
+const User = require('../models/User');
+const Transaction = require('../models/Transaction');
 
 const getSales = async (req, res) => {
   const user = req.user.userId;
@@ -48,119 +49,62 @@ const createOrder = async (req, res) => {
   }
 };
 
-const completeOrder = async (req, res) => {
+const completeBySeller = async (req, res) => {
   try {
-    const { orderId } = req.params;
-    const order = await Order.findById(orderId).populate('gig', 'title');
+    const order = await Order.findById(req.params.id);
 
     if (!order) {
-      console.log(`Order with ID ${orderId} not found.`);
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    // Ensure only the seller can complete the order
-    if (order.seller.toString() !== req.user.userId.toString()) {
-      console.log('403: User is not the seller for this order.');
-      return res.status(403).json({ message: 'Not authorized to complete this order' });
+    if (order.seller.toString() !== req.user.userId) {
+      return res.status(401).json({ message: 'Not authorized' });
     }
-
+    
     order.status = 'completed-by-seller';
     await order.save();
-
-    console.log(`Order ${orderId} marked as completed by seller ${req.user.userId}.`);
-    res.json({ message: 'Order marked as completed by seller', order });
+    res.json(order);
   } catch (error) {
-    console.error('Error completing order:', error);
+    console.error('Error completing order by seller:', error);
     res.status(500).json({ message: 'Server Error' });
   }
 };
 
-const confirmCompletion = async (req, res) => {
+const clearPayment = async (req, res) => {
   try {
-    const { orderId } = req.params;
-    const order = await Order.findById(orderId).populate('gig', 'title');
+    const order = await Order.findById(req.params.id);
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    // Ensure only the buyer can confirm completion
-    if (order.buyer.toString() !== req.user.userId.toString()) {
-      return res.status(403).json({ message: 'Not authorized to confirm completion for this order' });
+    if (order.buyer.toString() !== req.user.userId) {
+      return res.status(401).json({ message: 'Not authorized' });
     }
 
-    // Ensure the order was marked as completed by the seller
     if (order.status !== 'completed-by-seller') {
-      return res.status(400).json({ message: 'Order not yet marked as completed by seller' });
+      return res.status(400).json({ message: 'Order not yet marked as complete by seller' });
     }
-
+    
     order.status = 'completed';
     await order.save();
 
-    // Create a transaction for the seller (income)
+    const seller = await User.findById(order.seller);
+    seller.walletBalance += order.price;
+    await seller.save();
+
     const transaction = new Transaction({
       user: order.seller,
       type: 'income',
       amount: order.price,
-      description: `Income from gig: ${order.gig.title}`,
+      description: `Payment for order: ${order.title}`,
       order: order._id,
     });
     await transaction.save();
 
-    res.json({ message: 'Order completed and payment processed', order });
+    res.json({ message: 'Payment cleared and order completed', order });
   } catch (error) {
-    console.error('Error confirming order completion:', error);
-    res.status(500).json({ message: 'Server Error' });
-  }
-};
-
-const rejectOrder = async (req, res) => {
-  try {
-    const { orderId } = req.params;
-    const order = await Order.findById(orderId).populate('gig', 'title');
-
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
-    }
-
-    // Ensure only the seller can reject the order
-    if (order.seller.toString() !== req.user.userId.toString()) {
-      return res.status(403).json({ message: 'Not authorized to reject this order' });
-    }
-
-    order.status = 'cancelled';
-    await order.save();
-
-    res.json({ message: 'Order rejected and marked as cancelled', order });
-  } catch (error) {
-    console.error('Error rejecting order:', error);
-    res.status(500).json({ message: 'Server Error' });
-  }
-};
-
-const deleteOrder = async (req, res) => {
-  try {
-    const { orderId } = req.params;
-    const order = await Order.findById(orderId);
-
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
-    }
-
-    // Allow both buyer and seller to delete a completed or cancelled order
-    if (order.buyer.toString() !== req.user.userId.toString() && order.seller.toString() !== req.user.userId.toString()) {
-      return res.status(403).json({ message: 'Not authorized to delete this order' });
-    }
-
-    if (order.status !== 'completed' && order.status !== 'cancelled') {
-      return res.status(400).json({ message: 'Only completed or cancelled orders can be deleted' });
-    }
-
-    await Order.findByIdAndDelete(orderId);
-
-    res.json({ message: 'Order deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting order:', error);
+    console.error('Error clearing payment:', error);
     res.status(500).json({ message: 'Server Error' });
   }
 };
@@ -168,9 +112,7 @@ const deleteOrder = async (req, res) => {
 module.exports = {
   getOrders,
   createOrder,
-  rejectOrder,
   getSales,
-  completeOrder,
-  confirmCompletion,
-  deleteOrder,
+  completeBySeller,
+  clearPayment,
 };

@@ -13,13 +13,31 @@ const messageSchema = new mongoose.Schema({
   },
   text: {
     type: String,
-    required: true,
+  },
+  type: {
+    type: String,
+    enum: ['text', 'offer'],
+    default: 'text',
+  },
+  offer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Offer',
   },
   readBy: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   }],
 }, { timestamps: true });
+
+messageSchema.pre('save', function (next) {
+  if (this.type === 'text' && !this.text) {
+    next(new Error('Text is required for text messages.'));
+  } else if (this.type === 'offer' && !this.offer) {
+    next(new Error('Offer is required for offer messages.'));
+  } else {
+    next();
+  }
+});
 
 const Message = mongoose.model('Message', messageSchema);
 

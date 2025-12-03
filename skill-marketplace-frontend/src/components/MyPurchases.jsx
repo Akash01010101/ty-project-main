@@ -1,11 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, DollarSign, User, CheckCircle, Clock, AlertCircle, X, Trash2 } from 'lucide-react';
-import { getOrders, confirmCompletion, deleteOrder } from '../api/dashboard';
+import { Calendar, DollarSign, User, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { getMyPurchases, clearPayment } from '../api/orders';
 import { useAuth } from '../context/AuthContext';
 
 // Order Card Component
-const OrderCard = ({ order, onConfirmCompletion, onDeleteOrder }) => {
+const OrderCard = ({ order, onClearPayment }) => {
   const { user } = useAuth();
   const getStatusColor = (status) => {
     switch (status) {
@@ -46,20 +46,16 @@ const OrderCard = ({ order, onConfirmCompletion, onDeleteOrder }) => {
         backgroundColor: 'var(--bg-accent)',
         borderColor: 'var(--border-color)'
       }}
-      onMouseEnter={(e) => e.target.style.borderColor = 'var(--text-accent)'}
-      onMouseLeave={(e) => e.target.style.borderColor = 'var(--border-color)'}
     >
       <div className="space-y-4">
-        {/* Order Title and Seller */}
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{order.gig.title}</h3>
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{order.title}</h3>
           <div className="flex items-center" style={{ color: 'var(--text-secondary)' }}>
             <User className="w-4 h-4 mr-2" />
             <span className="text-sm">Seller - {order.seller.name}</span>
           </div>
         </div>
 
-        {/* Order Details */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center" style={{ color: 'var(--text-secondary)' }}>
@@ -90,32 +86,16 @@ const OrderCard = ({ order, onConfirmCompletion, onDeleteOrder }) => {
           </div>
         </div>
 
-        {/* Action Buttons */}
         {user && user._id === order.buyer._id && (
           <div className="pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
-            {order.status === 'completed-by-seller' && (
-              <button
-                onClick={() => onConfirmCompletion(order._id)}
-                className="w-full py-2 px-4 font-medium rounded-lg hover:scale-105 transition-all duration-200 text-sm"
-                style={{ backgroundColor: 'var(--button-primary)', color: 'var(--bg-primary)' }}
-              >
-                Confirm Completion
-              </button>
-            )}
-            {(order.status === 'completed' || order.status === 'cancelled') && (
-              <button
-                onClick={() => onDeleteOrder(order._id)}
-                className="w-full py-2 px-4 border font-medium rounded-lg hover:scale-105 transition-all duration-200 text-sm flex items-center justify-center"
-                style={{
-                  backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                  color: '#ef4444',
-                  borderColor: 'rgba(239, 68, 68, 0.3)'
-                }}
-              >
-                <Trash2 className="w-4 h-4 mr-1" />
-                Delete Order
-              </button>
-            )}
+            <button
+              onClick={() => onClearPayment(order._id)}
+              disabled={order.status !== 'completed-by-seller'}
+              className="w-full py-2 px-4 font-medium rounded-lg hover:scale-105 transition-all duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ backgroundColor: 'var(--button-primary)', color: 'var(--bg-primary)' }}
+            >
+              Clear Payment
+            </button>
           </div>
         )}
       </div>
@@ -126,11 +106,12 @@ const OrderCard = ({ order, onConfirmCompletion, onDeleteOrder }) => {
 const MyPurchases = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { fetchUnreadCount } = useAuth();
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const data = await getOrders();
+        const data = await getMyPurchases();
         setOrders(data);
       } catch (error) {
         console.error('Error fetching orders:', error);
@@ -142,9 +123,9 @@ const MyPurchases = () => {
     fetchOrders();
   }, []);
 
-  const handleConfirmCompletion = useCallback(async (orderId) => {
+  const handleClearPayment = useCallback(async (orderId) => {
     try {
-      const response = await confirmCompletion(orderId);
+      const response = await clearPayment(orderId);
       setOrders(prevOrders =>
         prevOrders.map(order =>
           order._id === orderId
@@ -152,32 +133,20 @@ const MyPurchases = () => {
             : order
         )
       );
-      alert('Order completed successfully!');
+      fetchUnreadCount(); // To update wallet balance in sidebar
+      alert('Payment cleared successfully!');
     } catch (error) {
-      console.error('Error confirming order completion:', error);
-      alert('Failed to confirm order completion.');
+      console.error('Error clearing payment:', error);
+      alert('Failed to clear payment.');
     }
-  }, []);
-
-  const handleDeleteOrder = useCallback(async (orderId) => {
-    if (window.confirm('Are you sure you want to delete this order? This action cannot be undone.')) {
-      try {
-        await deleteOrder(orderId);
-        setOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
-        alert('Order deleted successfully!');
-      } catch (error) {
-        console.error('Error deleting order:', error);
-        alert('Failed to delete order.');
-      }
-    }
-  }, []);
+  }, [fetchUnreadCount]);
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
           <h2 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>My Purchases</h2>
-          <p style={{ color: 'var(--text-secondary)' }}>Track your orders and confirm completion</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Track your orders and clear payments</p>
         </div>
       </div>
 
@@ -201,8 +170,7 @@ const MyPurchases = () => {
                 <OrderCard
                   key={order._id}
                   order={order}
-                  onConfirmCompletion={handleConfirmCompletion}
-                  onDeleteOrder={handleDeleteOrder}
+                  onClearPayment={handleClearPayment}
                 />
               ))}
             </div>
@@ -214,4 +182,3 @@ const MyPurchases = () => {
 };
 
 export default MyPurchases;
-

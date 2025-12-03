@@ -42,26 +42,10 @@ io.on('connection', (socket) => {
     io.emit('getUsers', onlineUsers);
   });
 
-  socket.on('sendMessage', async ({ senderId, receiverId, text, conversationId }) => {
+  socket.on('sendMessage', async ({ receiverId, message }) => {
     const user = getUser(receiverId);
     if (user) {
-      const sender = await User.findById(senderId).select('name profilePicture');
-      io.to(user.socketId).emit('getMessage', {
-        sender,
-        text,
-        conversationId,
-      });
-    }
-  });
-
-  socket.on('sendOffer', async ({ senderId, receiverId, offer }) => {
-    const user = getUser(receiverId);
-    if (user) {
-      const sender = await User.findById(senderId).select('name profilePicture');
-      io.to(user.socketId).emit('getOffer', {
-        sender,
-        offer,
-      });
+      io.to(user.socketId).emit('getMessage', message);
     }
   });
 

@@ -14,6 +14,7 @@ import { useAuth } from '../context/AuthContext';
 
 import { authAPI } from '../api/auth';
 import { getGigs, createOrder } from '../api/dashboard';
+import WalletPage from './WalletPage';
 
 const DashboardPage = () => {
   const [activeTab, setActiveTab] = useState('Browse Gigs');
@@ -259,15 +260,15 @@ const DashboardPage = () => {
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('Expense and Income')}
-                  className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 ${activeTab === 'Expense and Income' ? 'font-medium' : ''}`}
+                  onClick={() => setActiveTab('Wallet')}
+                  className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 ${activeTab === 'Wallet' ? 'font-medium' : ''}`}
                   style={{
-                    backgroundColor: activeTab === 'Expense and Income' ? 'var(--button-secondary)' : 'transparent',
-                    color: activeTab === 'Expense and Income' ? 'var(--text-primary)' : 'var(--text-secondary)'
+                    backgroundColor: activeTab === 'Wallet' ? 'var(--button-secondary)' : 'transparent',
+                    color: activeTab === 'Wallet' ? 'var(--text-primary)' : 'var(--text-secondary)'
                   }}
                 >
-                  <DollarSign size={18} />
-                  <span>Expense and Income</span>
+                  <CreditCard size={18} />
+                  <span>Wallet</span>
                 </button>
 
                 <button
@@ -516,8 +517,8 @@ const DashboardPage = () => {
                 <Orders />
               ) : activeTab === 'My Purchases' ? (
                 <MyPurchases />
-              ) : activeTab === 'Expense and Income' ? (
-                <ExpenseIncome />
+              ) : activeTab === 'Wallet' ? (
+                <WalletPage/>
               ) : activeTab === 'Search Users' ? (
                 <UserSearch />
               ) : (

@@ -31,7 +31,19 @@ const addTransaction = async (req, res) => {
   }
 };
 
+const getMyTransactions = async (req, res) => {
+  const user = req.user.userId;
+
+  try {
+    const transactions = await Transaction.find({ user });
+    res.json(transactions);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 module.exports = {
   getTransactions,
   addTransaction,
+  getMyTransactions,
 };

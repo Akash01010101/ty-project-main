@@ -51,6 +51,7 @@ const getMessages = async (req, res) => {
   try {
     const messages = await Message.find({ conversationId: req.params.id })
       .populate('sender', 'name profilePicture')
+      .populate('offer')
       .sort({ createdAt: 'asc' });
       
     res.json(messages);

@@ -5,8 +5,35 @@ import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import CreateOfferForm from './CreateOfferForm';
 import { getConversations, getMessages, sendMessage, createConversation, markAsRead } from '../api/messages';
-import { createOffer } from '../api/offers';
+import { createOffer, updateOfferStatus } from '../api/offers';
+import { createRazorpayOrder, verifyPayment } from '../api/payments';
 import { useAuth } from '../context/AuthContext';
+
+// Payment Prompt Message Component
+const PaymentPromptMessage = ({ order, onPay }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    className={`flex justify-center my-4`}
+  >
+    <div className="w-full max-w-md p-4 rounded-lg border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)'}}>
+      <div className="flex items-center mb-3">
+        <FileText className="w-5 h-5 mr-3" style={{ color: 'var(--text-accent)' }} />
+        <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+          Offer Accepted!
+        </h4>
+      </div>
+      <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>Please complete the payment to start the order.</p>
+      <div className="flex justify-between items-end">
+        <div>
+          <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Price</div>
+          <div className="text-xl font-bold" style={{ color: 'var(--text-accent)' }}>${order.price}</div>
+        </div>
+        <button onClick={() => onPay(order)} className="px-4 py-2 text-sm font-medium text-white rounded-lg" style={{backgroundColor: 'var(--button-primary)'}}>Pay Now</button>
+      </div>
+    </div>
+  </motion.div>
+);
 
 // Message Item Component
 const MessageItem = ({ message, isSelected, onClick, currentUser }) => {
@@ -57,7 +84,7 @@ const MessageItem = ({ message, isSelected, onClick, currentUser }) => {
 };
 
 // Offer Message Component
-const OfferMessage = ({ offer, isOwnMessage }) => (
+const OfferMessage = ({ offer, isOwnMessage, onAccept, onDecline }) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
@@ -80,13 +107,14 @@ const OfferMessage = ({ offer, isOwnMessage }) => (
           <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Duration</div>
           <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>{offer.duration}</div>
         </div>
-        {isOwnMessage ? (
-          <span className="text-xs px-2 py-1 rounded-full" style={{backgroundColor: 'var(--button-secondary)', color: 'var(--text-secondary)'}}>Pending</span>
-        ) : (
+        {offer.status === 'pending' && !isOwnMessage && (
           <div className="flex space-x-2">
-            <button className="px-3 py-1 text-xs font-medium rounded" style={{backgroundColor: 'var(--button-secondary)', color: 'var(--text-secondary)'}}>Decline</button>
-            <button className="px-3 py-1 text-xs font-medium text-white rounded" style={{backgroundColor: 'var(--button-primary)'}}>Accept</button>
+            <button onClick={() => onDecline(offer._id)} className="px-3 py-1 text-xs font-medium rounded" style={{backgroundColor: 'var(--button-secondary)', color: 'var(--text-secondary)'}}>Decline</button>
+            <button onClick={() => onAccept(offer._id)} className="px-3 py-1 text-xs font-medium text-white rounded" style={{backgroundColor: 'var(--button-primary)'}}>Accept</button>
           </div>
+        )}
+        {offer.status !== 'pending' && (
+          <span className="text-xs px-2 py-1 rounded-full" style={{backgroundColor: 'var(--button-secondary)', color: 'var(--text-secondary)'}}>{offer.status}</span>
         )}
       </div>
     </div>
@@ -94,9 +122,12 @@ const OfferMessage = ({ offer, isOwnMessage }) => (
 );
 
 // Chat Message Component
-const ChatMessage = ({ message, isOwnMessage, sender }) => {
+const ChatMessage = ({ message, isOwnMessage, sender, onAccept, onDecline, onPay, onCancelOffer }) => {
   if (message.type === 'offer') {
-    return <OfferMessage offer={message.offer} isOwnMessage={isOwnMessage} />;
+    return <OfferMessage offer={message.offer} isOwnMessage={isOwnMessage} onAccept={onAccept} onDecline={onDecline} onCancel={onCancelOffer} />;
+  }
+  if (message.type === 'payment-prompt') {
+    return <PaymentPromptMessage order={message.order} onPay={onPay} />;
   }
 
   return (
@@ -161,31 +192,21 @@ const Messages = () => {
       }
     }, [chatMessages]);
     
-    useEffect(() => {
-          socket.current = io(import.meta.env.VITE_API_URL || 'http://localhost:9000');
-          
-          socket.current.on('getMessage', (data) => {
-            if (data.conversationId === selectedConversationRef.current?._id) {
-              setChatMessages((prev) => [...prev, data]);
-            } else {
-              fetchUnreadCount();
-            }
-          });
-      
-          socket.current.on('getOffer', (data) => {
-            const newOfferMessage = {
-              _id: data.offer._id,
-              type: 'offer',
-              offer: data.offer,
-              sender: data.sender,
-              createdAt: data.offer.createdAt,
-            };
-            setChatMessages((prev) => [...prev, newOfferMessage]);
-          });  
-      return () => {
-        socket.current.disconnect();
-      };
-    }, []);
+  useEffect(() => {
+    socket.current = io(import.meta.env.VITE_API_URL || 'http://localhost:9000');
+    
+    socket.current.on('getMessage', (message) => {
+      if (message.conversationId === selectedConversationRef.current?._id) {
+        setChatMessages((prev) => [...prev, message]);
+      } else {
+        fetchUnreadCount();
+      }
+    });
+
+    return () => {
+      socket.current.disconnect();
+    };
+  }, [fetchUnreadCount]);
   
     useEffect(() => {
       if(currentUser?._id) {
@@ -234,6 +255,30 @@ const Messages = () => {
     startConversation();
   }, [location.state]);
 
+  const handleAcceptOffer = async (offerId) => {
+    try {
+      const { offer, order } = await updateOfferStatus(offerId, 'accepted');
+      const newMessages = chatMessages.map(msg => 
+        msg.offer?._id === offerId ? { ...msg, offer: { ...msg.offer, status: 'accepted' }, type: 'payment-prompt', order } : msg
+      );
+      setChatMessages(newMessages);
+    } catch (error) {
+      console.error('Error accepting offer:', error);
+    }
+  };
+
+  const handleDeclineOffer = async (offerId) => {
+    try {
+      await updateOfferStatus(offerId, 'declined');
+      const newMessages = chatMessages.map(msg => 
+        msg.offer?._id === offerId ? { ...msg, offer: { ...msg.offer, status: 'declined' } } : msg
+      );
+      setChatMessages(newMessages);
+    } catch (error) {
+      console.error('Error declining offer:', error);
+    }
+  };
+
   const handleConversationSelect = async (conversation) => {
     setSelectedConversation(conversation);
     try {
@@ -256,19 +301,18 @@ const Messages = () => {
     
     const receiver = selectedConversation.participants.find(p => p._id !== currentUser._id);
 
-    socket.current.emit('sendMessage', {
-      senderId: currentUser._id,
-      receiverId: receiver._id,
-      text: newMessage,
-      conversationId: selectedConversation._id,
-    });
-
     try {
       const data = await sendMessage(selectedConversation._id, message);
       const newMessageForState = {
         ...data,
         sender: currentUser
       };
+      
+      socket.current.emit('sendMessage', {
+        receiverId: receiver._id,
+        message: newMessageForState,
+      });
+
       setChatMessages([...chatMessages, newMessageForState]);
       setNewMessage('');
     } catch (error) {
@@ -286,26 +330,65 @@ const Messages = () => {
     };
 
     try {
-      const newOffer = await createOffer(offer);
-      const newOfferMessage = {
-        _id: newOffer._id, // Using the id from the backend
-        type: 'offer',
-        offer: newOffer,
-        sender: currentUser,
-        createdAt: newOffer.createdAt,
-      };
+      const { message } = await createOffer(offer);
 
-      socket.current.emit('sendOffer', {
+      socket.current.emit('sendMessage', {
         senderId: currentUser._id,
         receiverId: receiver._id,
-        offer: newOffer,
+        text: message.text,
+        conversationId: selectedConversation._id,
+        message: message, // Send the whole message
       });
 
-      setChatMessages(prev => [...prev, newOfferMessage]);
+      setChatMessages(prev => [...prev, message]);
       setShowOfferForm(false);
     } catch (error) {
       console.error('Error sending offer:', error);
     }
+  };
+
+  const handleCancelOffer = async (offerId) => {
+    try {
+      await updateOfferStatus(offerId, 'cancelled');
+      const newMessages = chatMessages.map(msg => 
+        msg.offer?._id === offerId ? { ...msg, offer: { ...msg.offer, status: 'cancelled' } } : msg
+      );
+      setChatMessages(newMessages);
+    } catch (error) {
+      console.error('Error cancelling offer:', error);
+    }
+  };
+
+  const handlePayment = async (order) => {
+    const razorpayOrder = await createRazorpayOrder({ orderId: order._id });
+
+    const options = {
+      key: 'rzp_test_Rmf6SEALUezF1v',
+      amount: razorpayOrder.amount,
+      currency: razorpayOrder.currency,
+      name: 'Your App Name',
+      description: 'Test Transaction',
+      order_id: razorpayOrder.id,
+      handler: async function (response) {
+        await verifyPayment({
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature,
+        });
+        alert('Payment successful');
+        // Refresh messages or update order status in UI
+        const newMessages = chatMessages.map(msg => 
+          msg.order?._id === order._id ? { ...msg, order: { ...msg.order, status: 'in-progress' } } : msg
+        );
+        setChatMessages(newMessages);
+      },
+      prefill: {
+        name: currentUser.name,
+        email: currentUser.email,
+      },
+    };
+    const rzp1 = new window.Razorpay(options);
+    rzp1.open();
   };
 
   const handleSearchChange = useCallback((e) => {
@@ -320,6 +403,8 @@ const Messages = () => {
     const otherParticipant = conversation.participants.find(p => p._id !== currentUser._id);
     return otherParticipant?.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
+
+  const isChatDisabled = chatMessages.some(msg => msg.type === 'payment-prompt' && msg.order.status === 'pending');
 
 
   useEffect(() => {
@@ -405,6 +490,10 @@ const Messages = () => {
                   message={message}
                   isOwnMessage={message.sender._id === currentUser._id}
                   sender={message.sender}
+                  onAccept={handleAcceptOffer}
+                  onDecline={handleDeclineOffer}
+                  onPay={handlePayment}
+                  onCancelOffer={handleCancelOffer}
                 />
               ))}
             </div>
@@ -412,60 +501,67 @@ const Messages = () => {
         </div>
 
         {/* Message Input */}
-        <form onSubmit={handleSendMessage} className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
-          <div className="flex items-end space-x-3">
-            <button
-              type="button"
-              className="p-2 rounded-lg transition-colors hover:scale-105"
-              style={{ color: 'var(--text-secondary)' }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--button-secondary)'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-            >
-              <Paperclip className="w-5 h-5" />
-            </button>
-            
-            <div className="flex-1">
-              <textarea
-                value={newMessage}
-                onChange={handleMessageInputChange}
-                placeholder="Type your message..."
-                rows={2}
-                autoComplete="off"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 resize-none transition-all duration-300"
-                style={{
-                  backgroundColor: 'var(--bg-secondary)',
-                  borderColor: 'var(--border-color)',
-                  color: 'var(--text-primary)'
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage(e);
-                  }
-                }}
-              />
-            </div>
-            
-            <button
-              type="button"
-              className="p-2 rounded-lg transition-colors hover:scale-105"
-              style={{ color: 'var(--text-secondary)' }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--button-secondary)'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-            >
-              <Smile className="w-5 h-5" />
-            </button>
-            
-            <button
-              type="submit"
-              disabled={!newMessage.trim()}
-              className="p-2 rounded-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-              style={{ backgroundColor: 'var(--button-primary)', color: 'var(--bg-primary)' }}
-            >
-              <Send className="w-5 h-5" />
-            </button>
+        {isChatDisabled ? (
+          <div className="text-center p-4 border-t" style={{borderColor: 'var(--border-color)'}}>
+            <p className="text-sm" style={{color: 'var(--text-secondary)'}}>Payment is pending. The chat is disabled.</p>
+            <button onClick={() => handleCancelOffer(chatMessages.find(msg => msg.type === 'payment-prompt').offer._id)} className="text-xs text-red-500 hover:underline">Cancel Offer</button>
           </div>
-        </form>
+        ) : (
+          <form onSubmit={handleSendMessage} className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+            <div className="flex items-end space-x-3">
+              <button
+                type="button"
+                className="p-2 rounded-lg transition-colors hover:scale-105"
+                style={{ color: 'var(--text-secondary)' }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--button-secondary)'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+              >
+                <Paperclip className="w-5 h-5" />
+              </button>
+              
+              <div className="flex-1">
+                <textarea
+                  value={newMessage}
+                  onChange={handleMessageInputChange}
+                  placeholder="Type your message..."
+                  rows={2}
+                  autoComplete="off"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 resize-none transition-all duration-300"
+                  style={{
+                    backgroundColor: 'var(--bg-secondary)',
+                    borderColor: 'var(--border-color)',
+                    color: 'var(--text-primary)'
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage(e);
+                    }
+                  }}
+                />
+              </div>
+              
+              <button
+                type="button"
+                className="p-2 rounded-lg transition-colors hover:scale-105"
+                style={{ color: 'var(--text-secondary)' }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--button-secondary)'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+              >
+                <Smile className="w-5 h-5" />
+              </button>
+              
+              <button
+                type="submit"
+                disabled={!newMessage.trim()}
+                className="p-2 rounded-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                style={{ backgroundColor: 'var(--button-primary)', color: 'var(--bg-primary)' }}
+              >
+                <Send className="w-5 h-5" />
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     );
   }

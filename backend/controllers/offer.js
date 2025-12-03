@@ -1,11 +1,16 @@
 const Offer = require('../models/Offer');
 const Order = require('../models/Order');
+const Conversation = require('../models/Conversation');
+const Message = require('../models/Message');
 
 const createOffer = async (req, res) => {
   try {
     const { toUser, gig, amount, description, duration } = req.body;
+    const fromUser = req.user.userId;
+
+    // Create the offer
     const offer = new Offer({
-      fromUser: req.user.userId,
+      fromUser,
       toUser,
       gig,
       amount,
@@ -13,8 +18,31 @@ const createOffer = async (req, res) => {
       duration,
     });
     await offer.save();
-    res.status(201).json(offer);
-  } catch (error) => {
+
+    // Find or create a conversation between the two users
+    let conversation = await Conversation.findOneAndUpdate(
+      { participants: { $all: [fromUser, toUser] } },
+      { $set: { participants: [fromUser, toUser] } },
+      { upsert: true, new: true }
+    );
+
+    // Create a message for the offer
+    const message = new Message({
+      conversationId: conversation._id,
+      sender: fromUser,
+      type: 'offer',
+      offer: offer._id,
+    });
+    await message.save();
+    
+    // Update the last message of the conversation
+    conversation.lastMessage = message._id;
+    await conversation.save();
+
+    const populatedMessage = await Message.findById(message._id).populate('sender', 'name profilePicture').populate('offer');
+
+    res.status(201).json({ offer, message: populatedMessage });
+  } catch (error) {
     console.error(error);
     res.status(500).send('Server Error');
   }

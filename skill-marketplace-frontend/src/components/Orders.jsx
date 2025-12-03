@@ -1,11 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, DollarSign, User, CheckCircle, Clock, AlertCircle, X, Trash2 } from 'lucide-react';
-import { getSales, completeOrder, rejectOrder, deleteOrder } from '../api/dashboard';
+import { Calendar, DollarSign, User, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { getMySales, completeBySeller } from '../api/orders';
 import { useAuth } from '../context/AuthContext';
 
 // Order Card Component
-const OrderCard = ({ order, onCompleteOrder, onRejectOrder, onDeleteOrder }) => {
+const OrderCard = ({ order, onMarkAsComplete }) => {
   const { user } = useAuth();
   const getStatusColor = (status) => {
     switch (status) {
@@ -15,10 +15,8 @@ const OrderCard = ({ order, onCompleteOrder, onRejectOrder, onDeleteOrder }) => 
         return { color: 'var(--text-accent)' }; // Theme accent
       case 'pending':
         return { color: '#eab308' }; // Yellow
-      case 'cancelled':
-        return { color: '#ef4444' }; // Red
       case 'completed-by-seller':
-          return { color: '#3b82f6' }; // Blue (as a new status, it needs a color)
+        return { color: '#3b82f6' }; // Blue
       default:
         return { color: 'var(--text-secondary)' };
     }
@@ -32,10 +30,8 @@ const OrderCard = ({ order, onCompleteOrder, onRejectOrder, onDeleteOrder }) => 
         return <Clock className="w-4 h-4" />;
       case 'pending':
         return <AlertCircle className="w-4 h-4" />;
-      case 'cancelled':
-        return <X className="w-4 h-4" />;
       case 'completed-by-seller':
-          return <CheckCircle className="w-4 h-4 text-blue-500" />;
+        return <CheckCircle className="w-4 h-4 text-blue-500" />;
       default:
         return <Clock className="w-4 h-4" />;
     }
@@ -50,20 +46,16 @@ const OrderCard = ({ order, onCompleteOrder, onRejectOrder, onDeleteOrder }) => 
         backgroundColor: 'var(--bg-accent)',
         borderColor: 'var(--border-color)'
       }}
-      onMouseEnter={(e) => e.target.style.borderColor = 'var(--text-accent)'}
-      onMouseLeave={(e) => e.target.style.borderColor = 'var(--border-color)'}
     >
       <div className="space-y-4">
-        {/* Order Title and Client */}
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{order.gig.title}</h3>
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{order.title}</h3>
           <div className="flex items-center" style={{ color: 'var(--text-secondary)' }}>
             <User className="w-4 h-4 mr-2" />
             <span className="text-sm">Buyer - {order.buyer.name}</span>
           </div>
         </div>
 
-        {/* Order Details */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center" style={{ color: 'var(--text-secondary)' }}>
@@ -94,52 +86,15 @@ const OrderCard = ({ order, onCompleteOrder, onRejectOrder, onDeleteOrder }) => 
           </div>
         </div>
 
-        {/* Action Buttons */}
-        {user && user._id === order.seller._id && (
+        {user && user._id === order.seller._id && order.status === 'in-progress' && (
           <div className="pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
-            {(order.status === 'pending' || order.status === 'in-progress') && (
-              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-                <button
-                  onClick={() => onCompleteOrder(order._id)}
-                  className="flex-1 py-2 px-4 font-medium rounded-lg hover:scale-105 transition-all duration-200 text-sm"
-                  style={{ backgroundColor: 'var(--button-primary)', color: 'var(--bg-primary)' }}
-                >
-                  Complete Order
-                </button>
-                <button
-                  onClick={() => onRejectOrder(order._id)}
-                  className="flex-1 py-2 px-4 border font-medium rounded-lg hover:scale-105 transition-all duration-200 text-sm flex items-center justify-center"
-                  style={{
-                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                    color: '#ef4444',
-                    borderColor: 'rgba(239, 68, 68, 0.3)'
-                  }}
-                >
-                  <X className="w-4 h-4 mr-1" />
-                  Reject Order
-                </button>
-              </div>
-            )}
-            {order.status === 'completed-by-seller' && (
-              <div className="flex items-center justify-center py-2">
-                <CheckCircle className="w-5 h-5 mr-2 text-blue-500" />
-                <span className="font-medium text-blue-500">Awaiting Buyer Confirmation</span>
-              </div>
-            )}
-            {(order.status === 'completed' || order.status === 'cancelled') && (
-              <button
-                onClick={() => onDeleteOrder(order._id)}
-                className="w-full py-2 px-4 border font-medium rounded-lg hover:scale-105 transition-all duration-200 text-sm flex items-center justify-center"
-                style={{
-                  backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                  color: '#ef4444',
-                  borderColor: 'rgba(239, 68, 68, 0.3)'
-                }}
-              >
-                <Trash2 className="w-4 h-4 mr-1" />
-                Delete Order
-              </button>
-            )}
+            <button
+              onClick={() => onMarkAsComplete(order._id)}
+              className="w-full py-2 px-4 font-medium rounded-lg hover:scale-105 transition-all duration-200 text-sm"
+              style={{ backgroundColor: 'var(--button-primary)', color: 'var(--bg-primary)' }}
+            >
+              Mark as Complete
+            </button>
           </div>
         )}
       </div>
@@ -154,7 +109,7 @@ const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const data = await getSales();
+        const data = await getMySales();
         setOrders(data);
       } catch (error) {
         console.error('Error fetching orders:', error);
@@ -166,14 +121,13 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
-  const handleCompleteOrder = useCallback(async (orderId) => {
-    console.log('Attempting to complete order:', orderId);
+  const handleMarkAsComplete = useCallback(async (orderId) => {
     try {
-      const response = await completeOrder(orderId);
+      const response = await completeBySeller(orderId);
       setOrders(prevOrders =>
         prevOrders.map(order =>
           order._id === orderId
-            ? { ...order, status: response.order.status }
+            ? { ...order, status: response.status }
             : order
         )
       );
@@ -184,82 +138,15 @@ const Orders = () => {
     }
   }, []);
 
-  const handleRejectOrder = useCallback(async (orderId) => {
-    console.log('Attempting to reject order:', orderId);
-    try {
-      const response = await rejectOrder(orderId);
-      setOrders(prevOrders =>
-        prevOrders.map(order =>
-          order._id === orderId
-            ? { ...order, status: response.order.status }
-            : order
-        )
-      );
-      alert('Order rejected successfully!');
-    } catch (error) {
-      console.error('Error rejecting order:', error);
-      alert('Failed to reject order.');
-    }
-  }, []);
-
-  const handleDeleteOrder = useCallback(async (orderId) => {
-    if (window.confirm('Are you sure you want to delete this order? This action cannot be undone.')) {
-      try {
-        await deleteOrder(orderId);
-        setOrders(prevOrders => prevOrders.filter(order => order._id !== orderId));
-        alert('Order deleted successfully!');
-      } catch (error) {
-        console.error('Error deleting order:', error);
-        alert('Failed to delete order.');
-      }
-    }
-  }, []);
-
-  const getOrderStats = () => {
-    const completed = orders.filter(order => order.status === 'completed').length;
-    const inProgress = orders.filter(order => order.status === 'in-progress').length;
-    const pending = orders.filter(order => order.status === 'pending').length;
-    const totalEarnings = orders
-      .filter(order => order.status === 'completed')
-      .reduce((sum, order) => sum + order.price, 0);
-
-    return { completed, inProgress, pending, totalEarnings };
-  };
-
-  const stats = getOrderStats();
-
-
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
-          <h2 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>Orders</h2>
+          <h2 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>My Sales</h2>
           <p style={{ color: 'var(--text-secondary)' }}>Manage your client orders and track progress</p>
         </div>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
-          <div className="text-2xl font-bold" style={{ color: '#22c55e' }}>{stats.completed}</div>
-          <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Completed</div>
-        </div>
-        <div className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
-          <div className="text-2xl font-bold" style={{ color: 'var(--text-accent)' }}>{stats.inProgress}</div>
-          <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>In Progress</div>
-        </div>
-        <div className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
-          <div className="text-2xl font-bold" style={{ color: '#eab308' }}>{stats.pending}</div>
-          <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Pending</div>
-        </div>
-        <div className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
-          <div className="text-2xl font-bold" style={{ color: 'var(--text-accent)' }}>${stats.totalEarnings}</div>
-          <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Earned</div>
-        </div>
-      </div>
-
-      {/* Orders List */}
       <div className="backdrop-blur-lg rounded-lg border min-h-[400px]" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
         {loading ? (
           <div className="flex justify-center items-center h-full">
@@ -270,8 +157,8 @@ const Orders = () => {
             <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: 'var(--button-secondary)' }}>
               <CheckCircle className="w-12 h-12" style={{ color: 'var(--text-secondary)' }} />
             </div>
-            <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>No orders yet</h3>
-            <p className="text-center" style={{ color: 'var(--text-secondary)' }}>Your client orders will appear here once you start receiving them</p>
+            <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>No sales yet</h3>
+            <p className="text-center" style={{ color: 'var(--text-secondary)' }}>Your sales will appear here once you start receiving them.</p>
           </div>
         ) : (
           <div className="p-4 sm:p-6">
@@ -280,9 +167,7 @@ const Orders = () => {
                 <OrderCard
                   key={order._id}
                   order={order}
-                  onCompleteOrder={handleCompleteOrder}
-                  onRejectOrder={handleRejectOrder}
-                  onDeleteOrder={handleDeleteOrder}
+                  onMarkAsComplete={handleMarkAsComplete}
                 />
               ))}
             </div>

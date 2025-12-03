@@ -1,6 +1,8 @@
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Order = require('../models/Order');
+const User = require('../models/User');
+const Transaction = require('../models/Transaction');
 
 const razorpay = new Razorpay({
   key_id: 'rzp_test_Rmf6SEALUezF1v',
@@ -23,6 +25,10 @@ const createOrder = async (req, res) => {
     };
 
     const razorpayOrder = await razorpay.orders.create(options);
+    
+    order.razorpayOrderId = razorpayOrder.id;
+    await order.save();
+    
     res.json(razorpayOrder);
   } catch (error) {
     console.error(error);
@@ -43,12 +49,10 @@ const verifyPayment = async (req, res) => {
 
     if (expectedSignature === razorpay_signature) {
       // Payment is successful
-      const order = await Order.findOne({ 'receipt': razorpay_order_id });
+      const order = await Order.findOne({ razorpayOrderId: razorpay_order_id });
       if(order) {
         order.status = 'in-progress';
         await order.save();
-        
-        // TODO: Add money to freelancer's wallet
       }
 
       res.json({ status: 'success' });

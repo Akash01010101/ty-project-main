@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
   profilePicture: {
     type: String,
   },
+  walletBalance: {
+    type: Number,
+    default: 0,
+  },
   skills: [{
     type: String,
     trim: true

@@ -1,55 +1,26 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
+import { getMyTransactions } from '../api/transactions';
 
 const WalletPage = () => {
-  const [wallet, setWallet] = useState(null);
-  const [amount, setAmount] = useState('');
+  const { user, walletBalance } = useAuth();
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchWallet = async () => {
+    const fetchTransactions = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/wallet`, {
-          headers: { 'x-auth-token': localStorage.getItem('token') },
-        });
-        const data = await response.json();
-        if (response.ok) {
-          setWallet(data);
-        } else {
-          console.error('Failed to fetch wallet', data);
-        }
-      } catch (error) {
-        console.error('Error fetching wallet', error);
+        const data = await getMyTransactions();
+        setTransactions(data);
+      } catch (error)  {
+        console.error('Error fetching transactions:', error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchWallet();
+    fetchTransactions();
   }, []);
-
-  const handleDeposit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/wallet/deposit`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': localStorage.getItem('token'),
-        },
-        body: JSON.stringify({ amount: Number(amount) }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setWallet(data);
-        setAmount('');
-      } else {
-        console.error('Deposit failed', data);
-      }
-    } catch (error) {
-      console.error('Error during deposit', error);
-    }
-  };
-
-  if (!wallet) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="min-h-screen p-4">
@@ -58,36 +29,35 @@ const WalletPage = () => {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 shadow-xl max-w-md mx-auto"
+        className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 shadow-xl max-w-2xl mx-auto"
       >
         <div className="text-center mb-8">
           <p className="text-gray-300 text-lg">Current Balance</p>
-          <p className="text-5xl font-bold text-white">${wallet.balance.toFixed(2)}</p>
+          <p className="text-5xl font-bold text-white">${walletBalance?.toFixed(2) || 0}</p>
         </div>
-        <form onSubmit={handleDeposit} className="space-y-6">
-          <div>
-            <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="amount">
-              Deposit Amount
-            </label>
-            <input
-              type="number"
-              id="amount"
-              name="amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              required
-              className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-800/50 border-gray-700 text-white"
-            />
+
+        <h3 className="text-xl font-bold text-white mb-4">Transaction History</h3>
+        {loading ? (
+          <div className="text-center text-white">Loading...</div>
+        ) : (
+          <div className="space-y-4">
+            {transactions.length === 0 ? (
+              <p className="text-gray-400 text-center">No transactions yet.</p>
+            ) : (
+              transactions.map((tx) => (
+                <div key={tx._id} className="flex justify-between items-center bg-gray-800/50 p-4 rounded-lg">
+                  <div>
+                    <p className="font-semibold text-white">{tx.description}</p>
+                    <p className="text-sm text-gray-400">{new Date(tx.createdAt).toLocaleString()}</p>
+                  </div>
+                  <p className={`font-bold text-lg ${tx.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>
+                    {tx.type === 'income' ? '+' : '-'}${tx.amount.toFixed(2)}
+                  </p>
+                </div>
+              ))
+            )}
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            type="submit"
-            className="w-full px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold rounded-full hover:scale-105 transform transition-transform duration-300"
-          >
-            Deposit
-          </motion.button>
-        </form>
+        )}
       </motion.div>
     </div>
   );

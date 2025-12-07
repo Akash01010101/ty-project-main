@@ -70,8 +70,13 @@ const completeBySeller = async (req, res) => {
   }
 };
 
+const Review = require('../models/Review');
+
+// ... (getSales, getOrders, createOrder, completeBySeller)
+
 const clearPayment = async (req, res) => {
   try {
+    const { rating, comment } = req.body;
     const order = await Order.findById(req.params.id);
 
     if (!order) {
@@ -86,10 +91,26 @@ const clearPayment = async (req, res) => {
       return res.status(400).json({ message: 'Order not yet marked as complete by seller' });
     }
     
+    // Create review
+    const review = new Review({
+      fromUser: req.user.userId,
+      toUser: order.seller,
+      order: order._id,
+      rating,
+      comment,
+    });
+    await review.save();
+
+    // Update seller's rating
+    const seller = await User.findById(order.seller);
+    const reviews = await Review.find({ toUser: order.seller });
+    const totalRating = reviews.reduce((acc, item) => item.rating + acc, 0);
+    seller.rating = totalRating / reviews.length;
+    
+    // Clear payment
     order.status = 'completed';
     await order.save();
 
-    const seller = await User.findById(order.seller);
     seller.walletBalance += order.price;
     await seller.save();
 
@@ -102,15 +123,7 @@ const clearPayment = async (req, res) => {
     });
     await transaction.save();
 
-    // Emit socket event to seller
-    const sellerSocket = req.getUser(order.seller.toString());
-    if (sellerSocket) {
-      req.io.to(sellerSocket.socketId).emit('walletUpdated', {
-        walletBalance: seller.walletBalance,
-      });
-    }
-
-    res.json({ message: 'Payment cleared and order completed', order });
+    res.json({ message: 'Payment cleared, review submitted, and order completed', order });
   } catch (error) {
     console.error('Error clearing payment:', error);
     res.status(500).json({ message: 'Server Error' });

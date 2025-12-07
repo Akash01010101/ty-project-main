@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Calendar, DollarSign, User, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { getMyPurchases, clearPayment } from '../api/orders';
 import { useAuth } from '../context/AuthContext';
+import ReviewModal from './ReviewModal';
 
 // Order Card Component
 const OrderCard = ({ order, onClearPayment }) => {
@@ -89,7 +90,7 @@ const OrderCard = ({ order, onClearPayment }) => {
         {user && user._id === order.buyer._id && (
           <div className="pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
             <button
-              onClick={() => onClearPayment(order._id)}
+              onClick={() => onClearPayment(order)}
               disabled={order.status !== 'completed-by-seller'}
               className="w-full py-2 px-4 font-medium rounded-lg hover:scale-105 transition-all duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ backgroundColor: 'var(--button-primary)', color: 'var(--bg-primary)' }}
@@ -106,6 +107,8 @@ const OrderCard = ({ order, onClearPayment }) => {
 const MyPurchases = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [selectedOrderForReview, setSelectedOrderForReview] = useState(null);
   const { fetchUnreadCount } = useAuth();
 
   useEffect(() => {
@@ -123,61 +126,82 @@ const MyPurchases = () => {
     fetchOrders();
   }, []);
 
-  const handleClearPayment = useCallback(async (orderId) => {
+  const handleOpenReviewModal = (order) => {
+    setSelectedOrderForReview(order);
+    setIsReviewModalOpen(true);
+  };
+
+  const handleCloseReviewModal = () => {
+    setSelectedOrderForReview(null);
+    setIsReviewModalOpen(false);
+  };
+
+  const handleReviewSubmit = useCallback(async (reviewData) => {
+    if (!selectedOrderForReview) return;
+
     try {
-      const response = await clearPayment(orderId);
+      const response = await clearPayment(selectedOrderForReview._id, reviewData);
       setOrders(prevOrders =>
         prevOrders.map(order =>
-          order._id === orderId
+          order._id === selectedOrderForReview._id
             ? { ...order, status: response.order.status }
             : order
         )
       );
-      fetchUnreadCount(); // To update wallet balance in sidebar
+      fetchUnreadCount();
       alert('Payment cleared successfully!');
     } catch (error) {
       console.error('Error clearing payment:', error);
       alert('Failed to clear payment.');
+    } finally {
+      handleCloseReviewModal();
     }
-  }, [fetchUnreadCount]);
+  }, [selectedOrderForReview, fetchUnreadCount]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-        <div>
-          <h2 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>My Purchases</h2>
-          <p style={{ color: 'var(--text-secondary)' }}>Track your orders and clear payments</p>
+    <>
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={handleCloseReviewModal}
+        onSubmit={handleReviewSubmit}
+      />
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+          <div>
+            <h2 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>My Purchases</h2>
+            <p style={{ color: 'var(--text-secondary)' }}>Track your orders and clear payments</p>
+          </div>
+        </div>
+
+        <div className="backdrop-blur-lg rounded-lg border min-h-[400px]" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+          {loading ? (
+            <div className="flex justify-center items-center h-full">
+              <p style={{ color: 'var(--text-primary)' }}>Loading...</p>
+            </div>
+          ) : orders.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 px-8">
+              <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: 'var(--button-secondary)' }}>
+                <CheckCircle className="w-12 h-12" style={{ color: 'var(--text-secondary)' }} />
+              </div>
+              <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>No purchases yet</h3>
+              <p className="text-center" style={{ color: 'var(--text-secondary)' }}>Your purchased orders will appear here.</p>
+            </div>
+          ) : (
+            <div className="p-4 sm:p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {orders.map((order) => (
+                  <OrderCard
+                    key={order._id}
+                    order={order}
+                    onClearPayment={handleOpenReviewModal}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
-      <div className="backdrop-blur-lg rounded-lg border min-h-[400px]" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
-        {loading ? (
-          <div className="flex justify-center items-center h-full">
-            <p style={{ color: 'var(--text-primary)' }}>Loading...</p>
-          </div>
-        ) : orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-8">
-            <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: 'var(--button-secondary)' }}>
-              <CheckCircle className="w-12 h-12" style={{ color: 'var(--text-secondary)' }} />
-            </div>
-            <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>No purchases yet</h3>
-            <p className="text-center" style={{ color: 'var(--text-secondary)' }}>Your purchased orders will appear here.</p>
-          </div>
-        ) : (
-          <div className="p-4 sm:p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {orders.map((order) => (
-                <OrderCard
-                  key={order._id}
-                  order={order}
-                  onClearPayment={handleClearPayment}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+    </>
   );
 };
 

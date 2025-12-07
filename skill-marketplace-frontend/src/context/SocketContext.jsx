@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
-import { useAuth } from './AuthContext';
 
 const SocketContext = createContext();
 
@@ -10,7 +9,6 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children }) => {
   const socket = useRef();
-  const { user } = useAuth();
 
   useEffect(() => {
     const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:9000', {
@@ -24,9 +22,6 @@ export const SocketProvider = ({ children }) => {
 
     newSocket.on('connect', () => {
       console.log('Socket connected:', newSocket.id);
-      if (user?._id) {
-        newSocket.emit('addUser', user._id);
-      }
     });
 
     newSocket.on('disconnect', () => {
@@ -36,7 +31,7 @@ export const SocketProvider = ({ children }) => {
     return () => {
       newSocket.disconnect();
     };
-  }, [user]);
+  }, []);
 
   return (
     <SocketContext.Provider value={socket}>

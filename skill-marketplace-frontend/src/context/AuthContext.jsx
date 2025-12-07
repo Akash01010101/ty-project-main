@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import { authAPI } from '../api/auth';
 import { getUnreadCount } from '../api/messages';
+import { useSocket } from './SocketContext';
 
 // Initial state
 const initialState = {
@@ -85,7 +86,7 @@ const authReducer = (state, action) => {
     case AUTH_ACTIONS.UPDATE_PROFILE:
       return {
         ...state,
-        user: action.payload.user,
+        user: { ...state.user, ...action.payload.user },
         error: null
       };
 
@@ -118,15 +119,38 @@ const AuthContext = createContext();
 // AuthProvider component
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const socket = useSocket();
 
-  const fetchUnreadCount = async () => {
+  useEffect(() => {
+    if (socket.current && state.user?._id) {
+      socket.current.emit('addUser', state.user._id);
+    }
+  }, [socket, state.user]);
+
+  useEffect(() => {
+    if (!socket.current) return;
+
+    const walletUpdatedHandler = ({ walletBalance }) => {
+      dispatch({
+        type: AUTH_ACTIONS.UPDATE_PROFILE,
+        payload: { user: { ...state.user, walletBalance } }
+      });
+    };
+
+    socket.current.on('walletUpdated', walletUpdatedHandler);
+
+    return () => {
+      socket.current.off('walletUpdated', walletUpdatedHandler);
+    };
+  }, [socket, state.user]);
+  const fetchUnreadCount = useCallback(async () => {
     try {
       const { count } = await getUnreadCount();
       dispatch({ type: AUTH_ACTIONS.SET_UNREAD_COUNT, payload: count });
     } catch (error) {
       console.error('Error fetching unread count:', error);
     }
-  };
+  }, []);
 
   // Load user on app start
   useEffect(() => {
@@ -169,7 +193,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     loadUser();
-  }, []);
+  }, [fetchUnreadCount]);
 
   // Login function
   const login = async (credentials) => {

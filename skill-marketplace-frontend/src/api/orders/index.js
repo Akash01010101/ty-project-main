@@ -12,6 +12,6 @@ export const completeBySeller = (orderId) => {
   return put(`/orders/${orderId}/complete-by-seller`);
 };
 
-export const clearPayment = (orderId) => {
-  return post(`/orders/${orderId}/clear-payment`);
+export const clearPayment = (orderId, reviewData) => {
+  return post(`/orders/${orderId}/clear-payment`, reviewData);
 };

@@ -64,6 +64,11 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.use((req, res, next) => {
+  req.io = io;
+  req.getUser = getUser;
+  next();
+});
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static uploaded files
 
 // Database connection

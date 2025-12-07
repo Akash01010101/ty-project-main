@@ -1,6 +1,8 @@
 const Order = require('../models/Order');
 const User = require('../models/User');
 const Transaction = require('../models/Transaction');
+const Review = require('../models/Review');
+const Gig = require('../models/Gig');
 
 const getSales = async (req, res) => {
   const user = req.user.userId;
@@ -70,7 +72,6 @@ const completeBySeller = async (req, res) => {
   }
 };
 
-const Review = require('../models/Review');
 
 // ... (getSales, getOrders, createOrder, completeBySeller)
 
@@ -107,6 +108,18 @@ const clearPayment = async (req, res) => {
     const totalRating = reviews.reduce((acc, item) => item.rating + acc, 0);
     seller.rating = totalRating / reviews.length;
     
+    // Update gig's rating
+    if (order.gig) {
+      const gig = await Gig.findById(order.gig);
+      if (gig) {
+        const oldRatingSum = gig.rating * gig.reviews;
+        const newRatingSum = oldRatingSum + review.rating;
+        gig.reviews += 1;
+        gig.rating = newRatingSum / gig.reviews;
+        await gig.save();
+      }
+    }
+
     // Clear payment
     order.status = 'completed';
     await order.save();

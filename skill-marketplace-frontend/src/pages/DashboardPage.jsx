@@ -566,7 +566,7 @@ const DashboardPage = () => {
                                   <span>Unknown</span>
                                   <span>•</span>
                                   <Star className="w-3 h-3 text-yellow-400" />
-                                  <span>{gig.user?.rating || 0} (0)</span>
+                                  <span>{gig.rating.toFixed(1)} ({gig.reviews} reviews)</span>
                                 </div>
                                 <p className="text-sm line-clamp-2 mb-3" style={{ color: 'var(--text-secondary)' }}>{gig.description}</p>
                                 <div className="flex flex-wrap gap-2">

@@ -1,5 +1,10 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Gig = require('../models/Gig');
+const Order = require('../models/Order');
+const Portfolio = require('../models/Portfolio');
+const Transaction = require('../models/Transaction');
+const Review = require('../models/Review');
 
 // JWT Secret (in production, use a secure environment variable)
 const JWT_SECRET = process.env.JWT_SECRET ;
@@ -278,10 +283,7 @@ const searchUsers = async (req, res) => {
   }
 };
 
-const Gig = require('../models/Gig');
-const Order = require('../models/Order');
-const Portfolio = require('../models/Portfolio');
-const Transaction = require('../models/Transaction');
+
 
 // @desc    Get quick stats for the dashboard
 // @route   GET /api/auth/quick-stats
@@ -335,6 +337,87 @@ const getQuickStats = async (req, res) => {
   }
 };
 
+const followUser = async (req, res) => {
+  try {
+    const userToFollow = await User.findById(req.params.id);
+    const currentUser = await User.findById(req.user.userId);
+
+    if (!userToFollow || !currentUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (req.params.id === req.user.userId) {
+      return res.status(400).json({ message: 'You cannot follow yourself' });
+    }
+
+    if (currentUser.following.includes(req.params.id)) {
+      // Unfollow
+      currentUser.following = currentUser.following.filter(
+        (id) => id.toString() !== req.params.id
+      );
+      userToFollow.followers = userToFollow.followers.filter(
+        (id) => id.toString() !== req.user.userId.toString()
+      );
+      await currentUser.save();
+      await userToFollow.save();
+      res.json({ message: 'User unfollowed' });
+    } else {
+      // Follow
+      currentUser.following.push(req.params.id);
+      userToFollow.followers.push(req.user.userId);
+      await currentUser.save();
+      await userToFollow.save();
+      res.json({ message: 'User followed' });
+    }
+  } catch (error) {
+    console.error('Follow user error:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const gigs = await Gig.find({ user: req.params.id });
+    const reviews = await Review.find({ toUser: req.params.id }).populate('fromUser', 'name profilePicture');
+
+    res.json({ user, gigs, reviews });
+  } catch (error) {
+    console.error('Get user profile error:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+const getFollowing = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).populate('following', 'name profilePicture followers skills');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user.following);
+  } catch (error) {
+    console.error('Get following error:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+const getFollowers = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).populate('followers', 'name profilePicture followers skills');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user.followers);
+  } catch (error) {
+    console.error('Get followers error:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -342,4 +425,8 @@ module.exports = {
   updateProfile,
   searchUsers,
   getQuickStats,
+  followUser,
+  getUserProfile,
+  getFollowing,
+  getFollowers,
 };

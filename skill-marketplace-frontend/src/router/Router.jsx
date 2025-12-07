@@ -10,6 +10,7 @@ import TeamPage from '../pages/TeamPage';
 import WalletPage from '../pages/WalletPage';
 import EditProfilePage from '../pages/EditProfilePage';
 import ManageOffersPage from '../pages/ManageOffersPage';
+import ProfilePage from '../pages/ProfilePage';
 import ProtectedRoute from '../components/ProtectedRoute';
 import LandingPage from '../pages/LandingPage';
 import TermsPage from '../pages/TermsPage';
@@ -56,6 +57,11 @@ const AppRoutes = () => {
         <Route path="/manage-offers" element={
           <ProtectedRoute>
             <ManageOffersPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/profile/:id" element={
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         } />
       </Routes>

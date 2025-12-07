@@ -244,14 +244,16 @@ const Messages = () => {
       if (location.state && location.state.recipientId) {
         try {
           const conversation = await createConversation({ recipientId: location.state.recipientId });
-          if (!conversations.find(c => c._id === conversation._id)) {
-            // we need to refetch conversations to get the populated one
-             const data = await getConversations();
-             setConversations(data);
-             setSelectedConversation(data.find(c => c._id === conversation._id));
-          } else {
-            setSelectedConversation(conversation);
-          }
+          
+          setConversations(prev => {
+            const existing = prev.find(c => c._id === conversation._id);
+            if (existing) {
+              return prev;
+            }
+            return [conversation, ...prev];
+          });
+
+          setSelectedConversation(conversation);
           const data = await getMessages(conversation._id);
           setChatMessages(data);
           await markAsRead(conversation._id);
@@ -263,7 +265,7 @@ const Messages = () => {
       }
     };
     startConversation();
-  }, [location.state]);
+  }, [location.state, fetchUnreadCount]);
 
   const handleAcceptOffer = async (offerId) => {
     try {

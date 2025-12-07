@@ -54,7 +54,11 @@ const getMessages = async (req, res) => {
       .populate({
         path: 'offer',
         populate: {
-          path: 'order'
+          path: 'order',
+          populate: {
+            path: 'buyer seller',
+            select: 'name profilePicture'
+          }
         }
       })
       .sort({ createdAt: 'asc' });

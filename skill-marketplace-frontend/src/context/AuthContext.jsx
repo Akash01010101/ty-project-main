@@ -133,53 +133,37 @@ export const AuthProvider = ({ children }) => {
     const loadUser = async () => {
       try {
         const token = authAPI.getStoredToken();
-        const user = authAPI.getStoredUser();
-
-        if (token && user) {
-          // Verify token is still valid
-          const isValid = await authAPI.verifyToken();
-          
-          if (isValid) {
-            dispatch({
-              type: AUTH_ACTIONS.LOAD_USER,
-              payload: {
-                user,
-                token,
-                isAuthenticated: true
-              }
-            });
-            fetchUnreadCount();
-          } else {
-            // Token is invalid, clear storage
-            authAPI.logout();
-            dispatch({
-              type: AUTH_ACTIONS.LOAD_USER,
-              payload: {
-                user: null,
-                token: null,
-                isAuthenticated: false
-              }
-            });
-          }
+        if (token) {
+          const { user } = await authAPI.getProfile();
+          dispatch({
+            type: AUTH_ACTIONS.LOAD_USER,
+            payload: {
+              user,
+              token,
+              isAuthenticated: true,
+            },
+          });
+          fetchUnreadCount();
         } else {
           dispatch({
             type: AUTH_ACTIONS.LOAD_USER,
             payload: {
               user: null,
               token: null,
-              isAuthenticated: false
-            }
+              isAuthenticated: false,
+            },
           });
         }
       } catch (error) {
         console.error('Error loading user:', error);
+        authAPI.logout();
         dispatch({
           type: AUTH_ACTIONS.LOAD_USER,
           payload: {
             user: null,
             token: null,
-            isAuthenticated: false
-          }
+            isAuthenticated: false,
+          },
         });
       }
     };
@@ -273,10 +257,6 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: AUTH_ACTIONS.CLEAR_ERROR });
   };
 
-  const setUnreadCount = (count) => {
-    dispatch({ type: AUTH_ACTIONS.SET_UNREAD_COUNT, payload: count });
-  };
-
   // Context value
   const value = {
     ...state,
@@ -286,7 +266,6 @@ export const AuthProvider = ({ children }) => {
     updateProfile,
     clearError,
     fetchUnreadCount,
-    setUnreadCount,
   };
 
   return (

@@ -57,7 +57,7 @@ const completeBySeller = async (req, res) => {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    if (order.seller.toString() !== req.user.userId) {
+    if (order.seller.toString() !== req.user.userId.toString()) {
       return res.status(401).json({ message: 'Not authorized' });
     }
     
@@ -78,7 +78,7 @@ const clearPayment = async (req, res) => {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    if (order.buyer.toString() !== req.user.userId) {
+    if (order.buyer.toString() !== req.user.userId.toString()) {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
@@ -101,6 +101,14 @@ const clearPayment = async (req, res) => {
       order: order._id,
     });
     await transaction.save();
+
+    // Emit socket event to seller
+    const sellerSocket = req.getUser(order.seller.toString());
+    if (sellerSocket) {
+      req.io.to(sellerSocket.socketId).emit('walletUpdated', {
+        walletBalance: seller.walletBalance,
+      });
+    }
 
     res.json({ message: 'Payment cleared and order completed', order });
   } catch (error) {

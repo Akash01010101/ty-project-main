@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { getMyTransactions } from '../api/transactions';
 
 const WalletPage = () => {
-  const { user, walletBalance } = useAuth();
+  const { user } = useAuth();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -13,7 +13,7 @@ const WalletPage = () => {
       try {
         const data = await getMyTransactions();
         setTransactions(data);
-      } catch (error)  {
+      } catch (error) {
         console.error('Error fetching transactions:', error);
       } finally {
         setLoading(false);
@@ -33,7 +33,7 @@ const WalletPage = () => {
       >
         <div className="text-center mb-8">
           <p className="text-gray-300 text-lg">Current Balance</p>
-          <p className="text-5xl font-bold text-white">${walletBalance?.toFixed(2) || 0}</p>
+          <p className="text-5xl font-bold text-white">${user?.walletBalance.toFixed(2)}</p>
         </div>
 
         <h3 className="text-xl font-bold text-white mb-4">Transaction History</h3>

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Send, Search, MoreVertical, Paperclip, Smile, FileText } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
-import { io } from 'socket.io-client';
+import { useSocket } from '../context/SocketContext';
 import CreateOfferForm from './CreateOfferForm';
 import { getConversations, getMessages, sendMessage, createConversation, markAsRead } from '../api/messages';
 import { createOffer, updateOfferStatus } from '../api/offers';
@@ -28,7 +28,7 @@ const PaymentPromptMessage = ({ order, onPay, currentUser }) => (
           <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Price</div>
           <div className="text-xl font-bold" style={{ color: 'var(--text-accent)' }}>${order.price}</div>
         </div>
-        {currentUser._id === order.buyer && order.status === 'pending' && (
+        {currentUser._id === order.buyer._id && order.status === 'pending' && (
           <button onClick={() => onPay(order)} className="px-4 py-2 text-sm font-medium text-white rounded-lg" style={{backgroundColor: 'var(--button-primary)'}}>Pay Now</button>
         )}
         {order.status !== 'pending' && (
@@ -182,44 +182,50 @@ const Messages = () => {
   const [showOfferForm, setShowOfferForm] = useState(false);
   const { user: currentUser, unreadCount, setUnreadCount, fetchUnreadCount } = useAuth();
   const location = useLocation();
-    const socket = useRef();
-    const chatContainerRef = useRef(null);
-    const selectedConversationRef = useRef(null);
-  
-    useEffect(() => {
-      selectedConversationRef.current = selectedConversation;
-    }, [selectedConversation]);
-  
-    useEffect(() => {
-      if (chatContainerRef.current) {
-        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-      }
-    }, [chatMessages]);
-    
+  const socket = useSocket();
+  const chatContainerRef = useRef(null);
+  const selectedConversationRef = useRef(null);
+
   useEffect(() => {
-    socket.current = io(import.meta.env.VITE_API_URL || 'http://localhost:9000');
-    
-    socket.current.on('getMessage', (message) => {
-      if (message.conversationId === selectedConversationRef.current?._id) {
-        setChatMessages((prev) => [...prev, message]);
+    selectedConversationRef.current = selectedConversation;
+  }, [selectedConversation]);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [chatMessages]);
+  
+  useEffect(() => {
+    if (!socket.current) return;
+
+    const getMessageHandler = (data) => {
+      if (data.conversationId === selectedConversationRef.current?._id) {
+        setChatMessages((prev) => [...prev, data]);
       } else {
         fetchUnreadCount();
       }
-    });
+    };
+
+    const getOfferHandler = (data) => {
+      const newOfferMessage = {
+        _id: data.offer._id,
+        type: 'offer',
+        offer: data.offer,
+        sender: data.sender,
+        createdAt: data.offer.createdAt,
+      };
+      setChatMessages((prev) => [...prev, newOfferMessage]);
+    };
+
+    socket.current.on('getMessage', getMessageHandler);
+    socket.current.on('getOffer', getOfferHandler);
 
     return () => {
-      socket.current.disconnect();
+      socket.current.off('getMessage', getMessageHandler);
+      socket.current.off('getOffer', getOfferHandler);
     };
-  }, [fetchUnreadCount]);
-  
-    useEffect(() => {
-      if(currentUser?._id) {
-        socket.current.emit('addUser', currentUser._id);
-        socket.current.on('getUsers', (users) => {
-          // console.log(users);
-        });
-      }
-    }, [currentUser]);
+  }, [socket, fetchUnreadCount]);
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -406,10 +412,9 @@ const Messages = () => {
     return otherParticipant?.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const isChatDisabled = chatMessages.some(msg => msg.type === 'offer' && msg.offer.status === 'accepted');
+  const isChatDisabled = chatMessages.some(msg => msg.type === 'offer' && msg.offer?.status === 'accepted' && msg.offer?.order?.status === 'pending');
 
   console.log('chatMessages:', chatMessages);
-  console.log('isChatDisabled:', isChatDisabled);
 
   if (selectedConversation) {
     const otherParticipant = selectedConversation.participants.find(p => p._id !== currentUser._id);

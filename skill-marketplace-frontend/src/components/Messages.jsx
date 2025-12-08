@@ -41,7 +41,23 @@ const PaymentPromptMessage = ({ order, onPay, currentUser }) => (
 
 // Message Item Component
 const MessageItem = ({ message, isSelected, onClick, currentUser }) => {
-  const otherParticipant = message.participants.find(p => p._id !== currentUser._id);
+  const otherParticipant = message.participants?.find(p => p._id !== currentUser?._id);
+
+  // Return null if no other participant found
+  if (!otherParticipant) {
+    return null;
+  }
+
+  // Helper function to get profile picture URL
+  const getProfilePictureUrl = (profilePicture) => {
+    if (!profilePicture) {
+      return 'https://via.placeholder.com/48?text=User';
+    }
+    if (profilePicture.startsWith('http')) {
+      return profilePicture;
+    }
+    return `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${profilePicture}`;
+  };
 
   return (
     <motion.div
@@ -56,9 +72,12 @@ const MessageItem = ({ message, isSelected, onClick, currentUser }) => {
       <div className="flex items-start space-x-3">
         <div className="relative">
           <img
-            src={otherParticipant.profilePicture.startsWith('http') ? otherParticipant.profilePicture : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${otherParticipant.profilePicture}`}
-            alt={otherParticipant.name}
+            src={getProfilePictureUrl(otherParticipant.profilePicture)}
+            alt={otherParticipant.name || 'User'}
             className="w-12 h-12 rounded-full object-cover"
+            onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/48?text=User';
+            }}
           />
           {/* {message.isOnline && (
             <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 rounded-full" style={{ borderColor: 'var(--bg-primary)' }}></div>
@@ -67,11 +86,11 @@ const MessageItem = ({ message, isSelected, onClick, currentUser }) => {
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
-            <h3 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>{otherParticipant.name}</h3>
-            <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{new Date(message.updatedAt).toLocaleTimeString()}</span>
+            <h3 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>{otherParticipant.name || 'Unknown User'}</h3>
+            <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{message.updatedAt ? new Date(message.updatedAt).toLocaleTimeString() : ''}</span>
           </div>
           
-          <p className="text-sm truncate mb-1" style={{ color: 'var(--text-secondary)' }}>{message.lastMessage?.text}</p>
+          <p className="text-sm truncate mb-1" style={{ color: 'var(--text-secondary)' }}>{message.lastMessage?.text || 'No messages yet'}</p>
           
           <div className="flex items-center justify-between">
             {/* <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{message.project}</span>
@@ -127,7 +146,18 @@ const OfferMessage = ({ offer, isOwnMessage, onAccept, onDecline }) => (
 
 // Chat Message Component
 const ChatMessage = ({ message, isOwnMessage, sender, onAccept, onDecline, onPay, onCancelOffer, currentUser }) => {
-  if (message.type === 'offer' && message.offer.status === 'accepted' && message.offer.order) {
+  // Helper function to get profile picture URL
+  const getProfilePictureUrl = (profilePicture) => {
+    if (!profilePicture) {
+      return 'https://via.placeholder.com/32?text=User';
+    }
+    if (profilePicture.startsWith('http')) {
+      return profilePicture;
+    }
+    return `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${profilePicture}`;
+  };
+
+  if (message.type === 'offer' && message.offer?.status === 'accepted' && message.offer?.order) {
     return <PaymentPromptMessage order={message.offer.order} onPay={onPay} currentUser={currentUser} />;
   }
   if (message.type === 'offer') {
@@ -152,21 +182,21 @@ const ChatMessage = ({ message, isOwnMessage, sender, onAccept, onDecline, onPay
             color: isOwnMessage ? 'var(--bg-primary)' : 'var(--text-primary)'
           }}
         >
-          <p className="text-sm">{message.text}</p>
+          <p className="text-sm">{message.text || ''}</p>
         </div>
         <div className={`flex items-center mt-1 space-x-2 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
-          <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{new Date(message.createdAt).toLocaleTimeString()}</span>
-          {/* {isOwnMessage && message.status && (
-            <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{message.status}</span>
-          )} */}
+          <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{message.createdAt ? new Date(message.createdAt).toLocaleTimeString() : ''}</span>
         </div>
       </div>
       
-      {!isOwnMessage && (
+      {!isOwnMessage && sender && (
         <img
-          src={sender.profilePicture.startsWith('http') ? sender.profilePicture : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${sender.profilePicture}`}
-          alt={sender.name}
+          src={getProfilePictureUrl(sender.profilePicture)}
+          alt={sender.name || 'User'}
           className="w-8 h-8 rounded-full object-cover order-1 mr-2"
+          onError={(e) => {
+            e.target.src = 'https://via.placeholder.com/32?text=User';
+          }}
         />
       )}
     </motion.div>
@@ -419,7 +449,19 @@ const Messages = () => {
   console.log('chatMessages:', chatMessages);
 
   if (selectedConversation) {
-    const otherParticipant = selectedConversation.participants.find(p => p._id !== currentUser._id);
+    const otherParticipant = selectedConversation.participants?.find(p => p._id !== currentUser?._id);
+    
+    // Helper function to get profile picture URL
+    const getProfilePictureUrl = (profilePicture) => {
+      if (!profilePicture) {
+        return 'https://via.placeholder.com/40?text=User';
+      }
+      if (profilePicture.startsWith('http')) {
+        return profilePicture;
+      }
+      return `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${profilePicture}`;
+    };
+
     return (
       <div className="space-y-6">
         {/* Chat Header */}
@@ -438,9 +480,12 @@ const Messages = () => {
               
               <div className="relative">
                 <img
-                  src={otherParticipant.profilePicture.startsWith('http') ? otherParticipant.profilePicture : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${otherParticipant.profilePicture}`}
-                  alt={otherParticipant.name}
+                  src={getProfilePictureUrl(otherParticipant?.profilePicture)}
+                  alt={otherParticipant?.name || 'User'}
                   className="w-10 h-10 rounded-full object-cover"
+                  onError={(e) => {
+                    e.target.src = 'https://via.placeholder.com/40?text=User';
+                  }}
                 />
                 {/* {selectedMessage.isOnline && (
                   <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 rounded-full" style={{ borderColor: 'var(--bg-primary)' }}></div>
@@ -448,7 +493,7 @@ const Messages = () => {
               </div>
               
               <div>
-                <h3 className="font-medium" style={{ color: 'var(--text-primary)' }}>{otherParticipant.name}</h3>
+                <h3 className="font-medium" style={{ color: 'var(--text-primary)' }}>{otherParticipant?.name || 'Unknown User'}</h3>
                 {/* <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{selectedMessage.project}</p> */}
               </div>
             </div>

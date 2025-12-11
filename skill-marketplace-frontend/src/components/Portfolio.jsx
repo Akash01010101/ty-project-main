@@ -219,23 +219,23 @@ const Portfolio = () => {
       {/* Stats Overview */}
       {portfolioItems.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+          <div className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{portfolioItems.length}</div>
             <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Projects</div>
           </div>
-          <div className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+          <div className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <div className="text-2xl font-bold" style={{ color: 'var(--accent-primary)' }}>
               {[...new Set(portfolioItems.map(item => item.category))].length}
             </div>
             <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Categories</div>
           </div>
-          <div className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+          <div className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <div className="text-2xl font-bold" style={{ color: 'var(--accent-primary)' }}>
               {[...new Set(portfolioItems.flatMap(item => item.technologies))].length}
             </div>
             <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Technologies</div>
           </div>
-          <div className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+          <div className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <div className="text-2xl font-bold text-green-400">
               {portfolioItems.filter(item => item.projectUrl).length}
             </div>
@@ -249,8 +249,8 @@ const Portfolio = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="backdrop-blur-lg rounded-lg p-6 border mb-6"
-          style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}
+          className="glow-border backdrop-blur-lg rounded-lg p-6 mb-6"
+          style={{ backgroundColor: 'var(--bg-secondary)' }}
         >
           <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Add New Project</h3>
           <form onSubmit={handleCreateItem} className="space-y-4">

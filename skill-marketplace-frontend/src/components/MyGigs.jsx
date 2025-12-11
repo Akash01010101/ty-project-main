@@ -63,10 +63,9 @@ const MyGigs = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="backdrop-blur-lg rounded-lg p-6 border transition-all duration-200"
+      className="glow-border backdrop-blur-lg rounded-lg p-6 transition-all duration-200"
       style={{ 
-        backgroundColor: 'var(--bg-accent)', 
-        borderColor: 'var(--border-color)'
+        backgroundColor: 'var(--bg-secondary)'
       }}
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
@@ -149,23 +148,23 @@ const MyGigs = () => {
       {/* Stats Overview */}
       {userGigs.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+          <div className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{userGigs.length}</div>
             <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Active Gigs</div>
           </div>
-          <div className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+          <div className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <div className="text-2xl font-bold" style={{ color: 'var(--accent-primary)' }}>
               {userGigs.reduce((total, gig) => total + gig.orders, 0)}
             </div>
             <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Total Orders</div>
           </div>
-          <div className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+          <div className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <div className="text-2xl font-bold text-green-400">
               ${userGigs.reduce((total, gig) => total + (gig.price * gig.orders), 0)}
             </div>
             <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Total Earnings</div>
           </div>
-          <div className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+          <div className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <div className="text-2xl font-bold text-yellow-400">{userProfile.rating}</div>
             <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Avg Rating</div>
           </div>
@@ -173,7 +172,7 @@ const MyGigs = () => {
       )}
 
       {/* Gigs Content */}
-      <div className="backdrop-blur-lg rounded-lg border min-h-[400px]" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+      <div className="glow-border backdrop-blur-lg rounded-lg min-h-[400px]" style={{ backgroundColor: 'var(--bg-secondary)' }}>
         {loading ? (
           <div className="flex justify-center items-center h-full">
             <p style={{ color: 'var(--text-primary)' }}>Loading...</p>

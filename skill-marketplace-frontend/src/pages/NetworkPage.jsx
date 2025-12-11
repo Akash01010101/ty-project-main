@@ -59,31 +59,34 @@ const NetworkPage = () => {
         <nav className="-mb-px flex space-x-8" aria-label="Tabs">
           <button
             onClick={() => setActiveTab('search')}
-            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-all duration-200 ${
               activeTab === 'search'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-[var(--text-accent)]'
+                : 'border-transparent hover:border-[var(--border-color)]'
             }`}
+            style={{ color: activeTab === 'search' ? 'var(--text-accent)' : 'var(--text-secondary)' }}
           >
             Search
           </button>
           <button
             onClick={() => setActiveTab('following')}
-            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-all duration-200 ${
               activeTab === 'following'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-[var(--text-accent)]'
+                : 'border-transparent hover:border-[var(--border-color)]'
             }`}
+            style={{ color: activeTab === 'following' ? 'var(--text-accent)' : 'var(--text-secondary)' }}
           >
             Following ({followingUsers.length})
           </button>
           <button
             onClick={() => setActiveTab('followers')}
-            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-all duration-200 ${
               activeTab === 'followers'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-[var(--text-accent)]'
+                : 'border-transparent hover:border-[var(--border-color)]'
             }`}
+            style={{ color: activeTab === 'followers' ? 'var(--text-accent)' : 'var(--text-secondary)' }}
           >
             Followers ({followers.length})
           </button>

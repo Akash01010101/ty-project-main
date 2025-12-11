@@ -24,8 +24,8 @@ const CreateOfferForm = ({ onSendOffer, onCancel }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
-      className="p-4 border-t"
-      style={{ borderColor: 'var(--border-color)' }}
+      className="glow-border p-4 rounded-lg"
+      style={{ backgroundColor: 'var(--bg-secondary)' }}
     >
       <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Create a Custom Offer</h3>
       <form onSubmit={handleSubmit} className="space-y-4">

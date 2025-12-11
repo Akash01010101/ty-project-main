@@ -24,31 +24,32 @@ const WalletPage = () => {
 
   return (
     <div className="min-h-screen p-4">
-      <h2 className="text-3xl font-bold text-center text-white mb-8">My Wallet</h2>
+      <h2 className="text-3xl font-bold text-center mb-8" style={{ color: 'var(--text-primary)' }}>My Wallet</h2>
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 shadow-xl max-w-2xl mx-auto"
+        className="glow-border backdrop-blur-lg rounded-2xl p-8 shadow-xl max-w-2xl mx-auto"
+        style={{ backgroundColor: 'var(--bg-secondary)' }}
       >
         <div className="text-center mb-8">
-          <p className="text-gray-300 text-lg">Current Balance</p>
-          <p className="text-5xl font-bold text-white">${user?.walletBalance.toFixed(2)}</p>
+          <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Current Balance</p>
+          <p className="text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>${user?.walletBalance.toFixed(2)}</p>
         </div>
 
-        <h3 className="text-xl font-bold text-white mb-4">Transaction History</h3>
+        <h3 className="text-xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Transaction History</h3>
         {loading ? (
-          <div className="text-center text-white">Loading...</div>
+          <div className="text-center" style={{ color: 'var(--text-primary)' }}>Loading...</div>
         ) : (
           <div className="space-y-4">
             {transactions.length === 0 ? (
-              <p className="text-gray-400 text-center">No transactions yet.</p>
+              <p className="text-center" style={{ color: 'var(--text-secondary)' }}>No transactions yet.</p>
             ) : (
               transactions.map((tx) => (
-                <div key={tx._id} className="flex justify-between items-center bg-gray-800/50 p-4 rounded-lg">
+                <div key={tx._id} className="glow-border-static flex justify-between items-center p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
                   <div>
-                    <p className="font-semibold text-white">{tx.description}</p>
-                    <p className="text-sm text-gray-400">{new Date(tx.createdAt).toLocaleString()}</p>
+                    <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>{tx.description}</p>
+                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{new Date(tx.createdAt).toLocaleString()}</p>
                   </div>
                   <p className={`font-bold text-lg ${tx.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>
                     {tx.type === 'income' ? '+' : '-'}${tx.amount.toFixed(2)}

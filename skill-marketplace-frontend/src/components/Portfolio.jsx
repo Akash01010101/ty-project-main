@@ -9,10 +9,9 @@ const PortfolioCard = ({ item, onDelete }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className="backdrop-blur-lg rounded-lg border transition-all duration-200 overflow-hidden"
+    className="glow-border backdrop-blur-lg rounded-lg transition-all duration-200 overflow-hidden"
     style={{ 
-      backgroundColor: 'var(--bg-accent)', 
-      borderColor: 'var(--border-color)'
+      backgroundColor: 'var(--bg-secondary)'
     }}
   >
     <div className="aspect-video relative overflow-hidden" style={{ backgroundColor: 'var(--button-secondary)' }}>

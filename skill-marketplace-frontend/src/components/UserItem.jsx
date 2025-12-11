@@ -10,10 +10,9 @@ const UserItem = ({ user, onMessage, onFollow, currentUser }) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col p-4 sm:p-6 border rounded-lg backdrop-blur-lg hover:shadow-md transition-all duration-200"
+      className="glow-border flex flex-col p-4 sm:p-6 rounded-lg backdrop-blur-lg hover:shadow-md transition-all duration-200"
       style={{
-        backgroundColor: 'var(--bg-accent)',
-        borderColor: 'var(--border-color)'
+        backgroundColor: 'var(--bg-secondary)'
       }}
     >
       <Link to={`/profile/${user._id}`} className="flex-grow">

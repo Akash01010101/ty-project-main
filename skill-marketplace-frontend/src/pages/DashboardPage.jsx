@@ -73,7 +73,7 @@ const DashboardPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)', fontFamily: 'Circular, "Helvetica Neue", Helvetica, Arial, sans-serif' }}>
-      <div className="px-6 py-4 flex items-center justify-between border-b" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+      <div className="px-6 py-4 flex items-center justify-between border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
         <h1 className="text-3xl font-bold pl-20" style={{ color: 'var(--text-primary)' }}>Peerly</h1>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-3">
@@ -113,7 +113,7 @@ const DashboardPage = () => {
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        <div className="flex overflow-y-auto" style={{ backgroundColor: 'var(--bg-accent)' }}>
+        <div className="flex overflow-y-auto" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           <div className="flex">
             <nav className="w-48 p-4 border-r" style={{ borderColor: 'var(--border-color)' }}>
               <div className="space-y-1">
@@ -121,9 +121,9 @@ const DashboardPage = () => {
                   <button
                     key={tabName}
                     onClick={() => setActiveTab(tabName)}
-                    className={`w-full flex items-center justify-between space-x-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 ${activeTab === tabName ? 'font-medium' : ''}`}
+                    className={`w-full flex items-center justify-between space-x-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 ${activeTab === tabName ? 'font-medium glow-border-static' : 'hover:bg-[var(--button-secondary)]'}`}
                     style={{
-                      backgroundColor: activeTab === tabName ? 'var(--button-secondary)' : 'transparent',
+                      backgroundColor: activeTab === tabName ? 'var(--bg-primary)' : 'transparent',
                       color: activeTab === tabName ? 'var(--text-primary)' : 'var(--text-secondary)'
                     }}
                   >
@@ -150,7 +150,7 @@ const DashboardPage = () => {
             </nav>
             {/* Profile & Stats Column */}
             <div className="w-64 p-4 space-y-4">
-              <div className="rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+              <div className="glow-border rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                 <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Your Profile</h3>
                 <div className="flex items-center justify-center mb-3">
                   <Star className="w-4 h-4 text-yellow-400 mr-1" />
@@ -180,7 +180,7 @@ const DashboardPage = () => {
         <div className="flex-1 flex overflow-hidden border-none">
           <div className="flex-1 flex flex-col overflow-hidden">
             {activeTab === 'Browse Gigs' && (
-              <div className="px-6 py-4 flex items-center gap-4" style={{ backgroundColor: 'var(--bg-accent)' }}>
+              <div className="px-6 py-4 flex items-center gap-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                 <div className="flex-1 max-w-2xl">
                   <input
                     type="text"
@@ -231,10 +231,9 @@ const DashboardPage = () => {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.3 }}
-                          className="rounded-lg p-5 transition-all duration-300 hover:shadow-md border"
+                          className="glow-border rounded-lg p-5 transition-all duration-300 hover:shadow-md"
                           style={{
-                            backgroundColor: 'var(--bg-accent)',
-                            borderColor: 'var(--border-color)'
+                            backgroundColor: 'var(--bg-secondary)'
                           }}
                         >
                           <div className="flex items-start justify-between">

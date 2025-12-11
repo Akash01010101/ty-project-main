@@ -24,6 +24,9 @@ html {
   --aurora-color-1: rgba(59, 130, 246, 0.3);
   --aurora-color-2: rgba(147, 197, 253, 0.3);
   --focus-ring: rgba(59, 130, 246, 0.5);
+  --glow-color-1: #3b82f6;
+  --glow-color-2: #8b5cf6;
+  --glow-color-3: #06b6d4;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -76,20 +79,23 @@ body[data-theme="light"] {
 }
 
 .dark {
-  /* Dark Mode - Black and Green */
+  /* Dark Mode - Pure Black with Green Accents */
   --bg-primary: #000000;
-  --bg-secondary: #0a0a0a;
-  --bg-accent: rgba(34, 197, 94, 0.1);
+  --bg-secondary: #0d0d0d;
+  --bg-accent: #111111;
   --text-primary: #ffffff;
-  --text-secondary: #e2e8f0;
+  --text-secondary: #a1a1a1;
   --text-accent: #22c55e;
-  --border-color: rgba(34, 197, 94, 0.2);
+  --border-color: #1a1a1a;
   --button-primary: #22c55e;
-  --button-secondary: rgba(34, 197, 94, 0.1);
+  --button-secondary: #1a1a1a;
   --button-hover: #16a34a;
-  --aurora-color-1: rgba(34, 197, 94, 0.4);
-  --aurora-color-2: rgba(74, 222, 128, 0.4);
-  --focus-ring: rgba(34, 197, 94, 0.5);
+  --aurora-color-1: rgba(34, 197, 94, 0.2);
+  --aurora-color-2: rgba(74, 222, 128, 0.2);
+  --focus-ring: rgba(34, 197, 94, 0.3);
+  --glow-color-1: #22c55e;
+  --glow-color-2: #10b981;
+  --glow-color-3: #34d399;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -129,6 +135,128 @@ body[data-theme="light"] {
     color: var(--text-primary);
     transition: background-color 0.3s ease, color 0.3s ease;
   }
+}
+
+/* Shining Gradient Border Styles */
+@keyframes borderGlow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.glow-border {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.glow-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 12px;
+  background: linear-gradient(
+    90deg,
+    var(--glow-color-1),
+    var(--glow-color-2),
+    var(--glow-color-3),
+    var(--glow-color-2),
+    var(--glow-color-1)
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.glow-border:hover::before {
+  opacity: 1;
+}
+
+.glow-border-static {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.glow-border-static::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    var(--glow-color-1),
+    var(--glow-color-2),
+    var(--glow-color-3)
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+
+.glow-border-static:hover::before {
+  opacity: 0.8;
+}
+
+/* Subtle glow effect for cards */
+.card-glow {
+  position: relative;
+  border-radius: 12px;
+}
+
+.card-glow::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 13px;
+  background: linear-gradient(
+    45deg,
+    transparent 20%,
+    var(--glow-color-1) 40%,
+    var(--glow-color-2) 60%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  animation: borderGlow 4s ease infinite;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-glow:hover::after {
+  opacity: 0.5;
 }
 
 .aurora-background {

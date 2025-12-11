@@ -113,7 +113,7 @@ const OfferMessage = ({ offer, isOwnMessage, onAccept, onDecline }) => (
     animate={{ opacity: 1, y: 0 }}
     className={`flex justify-center my-4`}
   >
-    <div className="w-full max-w-md p-4 rounded-lg border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)'}}>
+    <div className="glow-border w-full max-w-md p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-secondary)'}}>
       <div className="flex items-center mb-3">
         <FileText className="w-5 h-5 mr-3" style={{ color: 'var(--text-accent)' }} />
         <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
@@ -465,7 +465,7 @@ const Messages = () => {
     return (
       <div className="space-y-6">
         {/* Chat Header */}
-        <div className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+        <div className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <button
@@ -527,7 +527,7 @@ const Messages = () => {
         </AnimatePresence>
 
         {/* Chat Messages */}
-        <div ref={chatContainerRef} className="backdrop-blur-lg rounded-lg border min-h-[400px] max-h-[500px] overflow-y-auto p-4" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+        <div ref={chatContainerRef} className="glow-border backdrop-blur-lg rounded-lg min-h-[400px] max-h-[500px] overflow-y-auto p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           {chatMessages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <p style={{ color: 'var(--text-secondary)' }}>No messages yet. Start the conversation!</p>
@@ -558,7 +558,7 @@ const Messages = () => {
             <button onClick={() => handleCancelOffer(chatMessages.find(msg => msg.type === 'payment-prompt').offer._id)} className="text-xs text-red-500 hover:underline">Cancel Offer</button>
           </div>
         ) : (
-          <form onSubmit={handleSendMessage} className="backdrop-blur-lg rounded-lg p-4 border" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+          <form onSubmit={handleSendMessage} className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <div className="flex items-end space-x-3">
               <button
                 type="button"
@@ -646,7 +646,7 @@ const Messages = () => {
       </div>
 
       {/* Messages List */}
-      <div className="backdrop-blur-lg rounded-lg border min-h-[500px]" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+      <div className="glow-border backdrop-blur-lg rounded-lg min-h-[500px]" style={{ backgroundColor: 'var(--bg-secondary)' }}>
         {filteredConversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-8">
             <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: 'var(--button-secondary)' }}>

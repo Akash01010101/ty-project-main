@@ -42,10 +42,9 @@ const OrderCard = ({ order, onClearPayment }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="backdrop-blur-lg rounded-lg p-4 sm:p-6 border hover:shadow-md transition-all duration-200"
+      className="glow-border backdrop-blur-lg rounded-lg p-4 sm:p-6 hover:shadow-md transition-all duration-200"
       style={{
-        backgroundColor: 'var(--bg-accent)',
-        borderColor: 'var(--border-color)'
+        backgroundColor: 'var(--bg-secondary)'
       }}
     >
       <div className="space-y-4">
@@ -173,7 +172,7 @@ const MyPurchases = () => {
           </div>
         </div>
 
-        <div className="backdrop-blur-lg rounded-lg border min-h-[400px]" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+        <div className="glow-border backdrop-blur-lg rounded-lg min-h-[400px]" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           {loading ? (
             <div className="flex justify-center items-center h-full">
               <p style={{ color: 'var(--text-primary)' }}>Loading...</p>

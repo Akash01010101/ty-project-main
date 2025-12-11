@@ -137,6 +137,67 @@ body[data-theme="light"] {
   }
 }
 
+/* Animated Spinning Border */
+@keyframes rotate-border {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-90deg);
+  }
+  50% {
+    transform: rotate(-180deg);
+  }
+  75% {
+    transform: rotate(-270deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+.animated-spin-border {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.animated-spin-border::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background-image: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--glow-color-1) 60deg,
+    var(--glow-color-2) 90deg,
+    var(--glow-color-3) 120deg,
+    transparent 180deg,
+    transparent 360deg
+  );
+  top: -50%;
+  left: -50%;
+  animation: rotate-border 5s infinite linear;
+  z-index: -2;
+}
+
+.animated-spin-border::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background-color: var(--bg-primary);
+  border-radius: 10px;
+  z-index: -1;
+}
+
+.animated-spin-border input {
+  position: relative;
+  z-index: 0;
+  background-color: transparent !important;
+}
+
 /* Shining Gradient Border Styles */
 @keyframes borderGlow {
   0%, 100% {

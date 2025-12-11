@@ -179,13 +179,13 @@ const DashboardPage = () => {
 
         <div className="flex-1 flex overflow-hidden border-none">
           <div className="flex-1 flex flex-col overflow-hidden">
-            {activeTab === 'Browse Gigs' && (
+            {(activeTab === 'Browse Gigs' || activeTab === 'AI Picks') && (
               <div className="px-6 py-4 flex items-center gap-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-                <div className="flex-1 max-w-2xl">
+                <div className="flex-1 max-w-2xl animated-spin-border">
                   <input
                     type="text"
                     placeholder="Search gigs, skills, or keywords..."
-                    className="w-full px-4 py-2.5 rounded-md text-sm focus:outline-none focus:ring-2"
+                    className="w-full px-4 py-2.5 rounded-[10px] text-sm focus:outline-none"
                     style={{
                       backgroundColor: 'var(--bg-primary)',
                       color: 'var(--text-primary)',

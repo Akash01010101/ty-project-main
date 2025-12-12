@@ -94,9 +94,9 @@ const MyGigs = () => {
       
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 text-sm" style={{ color: 'var(--text-secondary)' }}>
-          <span>Status: <span className={`${gig.status === 'Active' ? 'text-green-400' : 'text-yellow-400'}`}>{gig.status}</span></span>
-          <span>Orders: {gig.orders}</span>
-          <span>Created: {gig.createdAt}</span>
+          <span>Status: <span className={`${gig.status === 'Active' ? 'text-green-400' : 'text-yellow-400'}`}>{gig.status || 'Active'}</span></span>
+          <span>Orders: {gig.orders || 0}</span>
+          <span>Created: {gig.createdAt ? new Date(gig.createdAt).toLocaleDateString() : 'N/A'}</span>
         </div>
         
         <div className="flex space-x-2">
@@ -155,13 +155,13 @@ const MyGigs = () => {
           </div>
           <div className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <div className="text-2xl font-bold" style={{ color: 'var(--accent-primary)' }}>
-              {userGigs.reduce((total, gig) => total + gig.orders, 0)}
+              {userGigs.reduce((total, gig) => total + (gig.orders || 0), 0)}
             </div>
             <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Total Orders</div>
           </div>
           <div className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <div className="text-2xl font-bold text-green-400">
-              ${userGigs.reduce((total, gig) => total + (gig.price * gig.orders), 0)}
+              ${userGigs.reduce((total, gig) => total + ((gig.price || 0) * (gig.orders || 0)), 0).toFixed(2)}
             </div>
             <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Total Earnings</div>
           </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Send, Search, MoreVertical, Paperclip, Smile, FileText } from 'lucide-react';
+import { ArrowLeft, Send, Search, MoreVertical, Paperclip, Smile, FileText, MessageCircle, Users, Clock } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import CreateOfferForm from './CreateOfferForm';
@@ -40,68 +40,105 @@ const PaymentPromptMessage = ({ order, onPay, currentUser }) => (
 );
 
 // Message Item Component
-const MessageItem = ({ message, isSelected, onClick, currentUser }) => {
+const MessageItem = ({ message, isSelected, onClick, currentUser, index }) => {
   const otherParticipant = message.participants?.find(p => p._id !== currentUser?._id);
 
-  // Return null if no other participant found
-  if (!otherParticipant) {
-    return null;
-  }
+  if (!otherParticipant) return null;
 
-  // Helper function to get profile picture URL
   const getProfilePictureUrl = (profilePicture) => {
-    if (!profilePicture) {
-      return 'https://via.placeholder.com/48?text=User';
-    }
-    if (profilePicture.startsWith('http')) {
-      return profilePicture;
-    }
+    if (!profilePicture) return 'https://via.placeholder.com/48?text=User';
+    if (profilePicture.startsWith('http')) return profilePicture;
     return `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${profilePicture}`;
+  };
+
+  const formatTime = (date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    const now = new Date();
+    const isToday = d.toDateString() === now.toDateString();
+    return isToday ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString();
   };
 
   return (
     <motion.div
-      whileHover={{ backgroundColor: 'var(--button-secondary)' }}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, delay: index * 0.04 }}
+      whileHover={{ x: 4 }}
+      whileTap={{ scale: 0.98 }}
       onClick={() => onClick(message)}
-      className={`p-4 border-b cursor-pointer transition-all duration-200`}
+      className="group flex items-center gap-3 md:gap-4 p-3 md:p-4 mx-3 my-2 rounded-2xl cursor-pointer transition-all duration-300"
       style={{
-        borderColor: 'var(--border-color)',
-        backgroundColor: isSelected ? 'var(--button-secondary)' : 'transparent'
+        backgroundColor: isSelected 
+          ? 'var(--button-action)'
+          : 'var(--bg-primary)',
+        borderLeft: isSelected ? '3px solid var(--button-action)' : '3px solid transparent',
+        border: isSelected ? 'none' : '1px solid var(--border-color)',
       }}
     >
-      <div className="flex items-start space-x-3">
-        <div className="relative">
-          <img
-            src={getProfilePictureUrl(otherParticipant.profilePicture)}
-            alt={otherParticipant.name || 'User'}
-            className="w-12 h-12 rounded-full object-cover"
-            onError={(e) => {
-              e.target.src = 'https://via.placeholder.com/48?text=User';
-            }}
-          />
-          {/* {message.isOnline && (
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 rounded-full" style={{ borderColor: 'var(--bg-primary)' }}></div>
-          )} */}
-        </div>
-        
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-1">
-            <h3 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>{otherParticipant.name || 'Unknown User'}</h3>
-            <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{message.updatedAt ? new Date(message.updatedAt).toLocaleTimeString() : ''}</span>
-          </div>
-          
-          <p className="text-sm truncate mb-1" style={{ color: 'var(--text-secondary)' }}>{message.lastMessage?.text || 'No messages yet'}</p>
-          
-          <div className="flex items-center justify-between">
-            {/* <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{message.project}</span>
-            {message.unreadCount > 0 && (
-              <span className="text-xs px-2 py-1 rounded-full min-w-[20px] text-center" style={{ backgroundColor: 'var(--text-accent)', color: 'var(--bg-primary)' }}>
-                {message.unreadCount}
-              </span>
-            )} */}
-          </div>
-        </div>
+      {/* Avatar */}
+      <div className="relative flex-shrink-0">
+        <img
+          src={getProfilePictureUrl(otherParticipant.profilePicture)}
+          alt={otherParticipant.name || 'User'}
+          className="w-12 h-12 md:w-14 md:h-14 rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105"
+          style={{ 
+            border: isSelected ? '2px solid rgba(255,255,255,0.4)' : '2px solid var(--border-color)'
+          }}
+          onError={(e) => { e.target.src = 'https://via.placeholder.com/48?text=User'; }}
+        />
+        <div 
+          className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2"
+          style={{ 
+            backgroundColor: '#22c55e',
+            borderColor: 'var(--bg-secondary)'
+          }}
+        />
       </div>
+      
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between gap-2 mb-1.5">
+          <h3 
+            className="font-semibold text-sm md:text-[15px] truncate"
+            style={{ color: isSelected ? '#fff' : 'var(--text-primary)' }}
+          >
+            {otherParticipant.name || 'Unknown User'}
+          </h3>
+          <span 
+            className="text-[11px] flex-shrink-0 font-medium"
+            style={{ color: isSelected ? 'rgba(255,255,255,0.7)' : 'var(--text-secondary)' }}
+          >
+            {formatTime(message.updatedAt)}
+          </span>
+        </div>
+        <p 
+          className="text-xs md:text-[13px] truncate leading-relaxed"
+          style={{ color: isSelected ? 'rgba(255,255,255,0.85)' : 'var(--text-secondary)' }}
+        >
+          {message.lastMessage?.text || 'Start a conversation...'}
+        </p>
+      </div>
+
+      {/* Arrow indicator */}
+      <div 
+        className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0"
+        style={{ color: isSelected ? '#fff' : 'var(--text-secondary)' }}
+      >
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </div>
+
+      {/* Unread indicator */}
+      {message.unreadCount > 0 && !isSelected && (
+        <div 
+          className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0"
+          style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}
+        >
+          {message.unreadCount}
+        </div>
+      )}
     </motion.div>
   );
 };
@@ -618,26 +655,65 @@ const Messages = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+      <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>Messages</h2>
-          <p style={{ color: 'var(--text-secondary)' }}>Connect with clients and manage conversations</p>
+          <h2 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Messages</h2>
+          <p className="text-xs md:text-sm mt-0.5 hidden sm:block" style={{ color: 'var(--text-secondary)' }}>Connect with clients and manage conversations</p>
         </div>
+      </div>
+
+      {/* Stats Bar */}
+      <div className="grid grid-cols-3 gap-2 md:gap-3">
+        {[
+          { label: 'Chats', labelFull: 'Conversations', value: conversations.length, icon: MessageCircle, accent: '#22c55e' },
+          { label: 'Active', labelFull: 'Active Chats', value: conversations.filter(c => c.lastMessage).length, icon: Users, accent: '#3b82f6' },
+          { label: 'Week', labelFull: 'This Week', value: conversations.filter(c => {
+            const d = new Date(c.updatedAt);
+            const now = new Date();
+            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            return d > weekAgo;
+          }).length, icon: Clock, accent: '#a855f7' },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-2xl transition-all hover:scale-[1.02]"
+            style={{ 
+              backgroundColor: 'var(--bg-secondary)',
+              border: '1px solid var(--border-color)'
+            }}
+          >
+            <div 
+              className="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ 
+                backgroundColor: `${stat.accent}15`,
+              }}
+            >
+              <stat.icon className="w-4 h-4 md:w-5 md:h-5" style={{ color: stat.accent }} />
+            </div>
+            <div className="min-w-0">
+              <div className="text-lg md:text-xl font-bold leading-tight" style={{ color: 'var(--text-primary)' }}>{stat.value}</div>
+              <div className="text-[10px] md:text-[11px]" style={{ color: 'var(--text-secondary)' }}>
+                <span className="sm:hidden">{stat.label}</span>
+                <span className="hidden sm:inline">{stat.labelFull}</span>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Search */}
       <div className="animated-spin-border">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+          <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
           <input
             type="text"
-            placeholder="Search messages..."
+            placeholder="Search conversations..."
             value={searchTerm}
             onChange={handleSearchChange}
             autoComplete="off"
-            className="w-full pl-10 pr-4 py-3 rounded-[10px] focus:outline-none focus:ring-2 transition-all duration-300"
+            className="w-full pl-10 pr-4 py-2.5 rounded-[10px] text-sm focus:outline-none transition-all duration-300"
             style={{
               backgroundColor: 'var(--bg-primary)',
               color: 'var(--text-primary)'
@@ -647,24 +723,55 @@ const Messages = () => {
       </div>
 
       {/* Messages List */}
-      <div className="glow-border backdrop-blur-lg rounded-lg min-h-[500px]" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+      <div 
+        className="relative rounded-2xl min-h-[320px] md:min-h-[420px] overflow-hidden"
+        style={{ 
+          backgroundColor: 'var(--bg-secondary)',
+          border: '1px solid var(--border-color)',
+        }}
+      >
+        {/* Header bar inside */}
+        <div 
+          className="px-4 py-3 flex items-center justify-between"
+          style={{ borderBottom: '1px solid var(--border-color)' }}
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+            <span className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
+              {filteredConversations.length} conversations
+            </span>
+          </div>
+          <span className="text-[10px] uppercase tracking-wider font-medium" style={{ color: 'var(--text-secondary)' }}>Recent</span>
+        </div>
+        
         {filteredConversations.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-8">
-            <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: 'var(--button-secondary)' }}>
-              <Search className="w-12 h-12" style={{ color: 'var(--text-secondary)' }} />
+          <div className="flex flex-col items-center justify-center py-16 md:py-20 px-4">
+            <div 
+              className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center mb-5"
+              style={{ 
+                backgroundColor: 'var(--bg-accent)',
+                border: '1px solid var(--border-color)'
+              }}
+            >
+              <MessageCircle className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--button-action)' }} />
             </div>
-            <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>No messages found</h3>
-            <p className="text-center" style={{ color: 'var(--text-secondary)' }}>Try adjusting your search terms</p>
+            <h3 className="text-base md:text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+              {searchTerm ? 'No matches' : 'No messages yet'}
+            </h3>
+            <p className="text-xs md:text-sm text-center max-w-[200px]" style={{ color: 'var(--text-secondary)' }}>
+              {searchTerm ? 'Try a different search' : 'When you start a chat, it will appear here'}
+            </p>
           </div>
         ) : (
-          <div className="divide-y" style={{ borderColor: 'var(--border-color)' }}>
-            {filteredConversations.map((conversation) => (
+          <div className="py-2">
+            {filteredConversations.map((conversation, index) => (
               <MessageItem
                 key={conversation._id}
                 message={conversation}
                 isSelected={selectedConversation?._id === conversation._id}
                 onClick={handleConversationSelect}
                 currentUser={currentUser}
+                index={index}
               />
             ))}
           </div>

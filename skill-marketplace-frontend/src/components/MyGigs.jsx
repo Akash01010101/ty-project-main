@@ -63,7 +63,8 @@ const MyGigs = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glow-border backdrop-blur-lg rounded-lg p-6 transition-all duration-200"
+      whileHover={{ scale: 1.01 }}
+      className="glow-border backdrop-blur-lg rounded-2xl p-6 transition-all duration-300"
       style={{ 
         backgroundColor: 'var(--bg-secondary)'
       }}

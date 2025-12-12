@@ -222,72 +222,140 @@ const DashboardPage = () => {
               {activeTab === 'Network' && <NetworkPage />}
               {activeTab === 'Browse Gigs' && (
                 <>
-                  <h2 className="text-xl font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>Gigs</h2>
-                  {loading ? <div className="text-center py-8" style={{ color: 'var(--text-primary)' }}>Loading...</div> : (
-                    <div className="space-y-4">
-                      {gigs.map((gig) => (
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Discover Gigs</h2>
+                      <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{gigs.length} services available</p>
+                    </div>
+                  </div>
+                  {loading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                      {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <div key={i} className="rounded-2xl p-5 animate-pulse" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                          <div className="h-32 rounded-xl mb-4" style={{ backgroundColor: 'var(--bg-accent)' }}></div>
+                          <div className="h-4 rounded w-3/4 mb-2" style={{ backgroundColor: 'var(--bg-accent)' }}></div>
+                          <div className="h-3 rounded w-1/2" style={{ backgroundColor: 'var(--bg-accent)' }}></div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                      {gigs.map((gig, index) => (
                         <motion.div
                           key={gig._id}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="glow-border rounded-lg p-5 transition-all duration-300 hover:shadow-md"
+                          transition={{ duration: 0.3, delay: index * 0.05 }}
+                          whileHover={{ y: -5 }}
+                          className="group rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer"
                           style={{
-                            backgroundColor: 'var(--bg-secondary)'
+                            backgroundColor: 'var(--bg-secondary)',
+                            border: '1px solid var(--border-color)'
                           }}
                         >
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-start space-x-4 flex-1">
-                              {gig.user?.profilePicture ? (
-                                <img
-                                  src={gig.user.profilePicture.startsWith('http')
-                                    ? gig.user.profilePicture
-                                    : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${gig.user.profilePicture}`}
-                                  alt={gig.user?.name || 'User'}
-                                  className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-                                />
-                              ) : (
-                                <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                                  <User size={24} style={{ color: 'var(--text-secondary)' }} />
-                                </div>
+                          {/* Gradient Header Banner */}
+                          <div 
+                            className="h-28 relative overflow-hidden"
+                            style={{
+                              background: `linear-gradient(135deg, var(--glow-color-1) 0%, var(--glow-color-2) 50%, var(--glow-color-3) 100%)`
+                            }}
+                          >
+                            {/* Decorative Pattern */}
+                            <div className="absolute inset-0 opacity-30">
+                              <div className="absolute top-0 left-0 w-32 h-32 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%)', transform: 'translate(-50%, -50%)' }}></div>
+                              <div className="absolute bottom-0 right-0 w-40 h-40 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)', transform: 'translate(30%, 30%)' }}></div>
+                              <div className="absolute top-1/2 left-1/2 w-24 h-24 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)', transform: 'translate(-50%, -50%)' }}></div>
+                            </div>
+                            {/* Mesh Grid Pattern */}
+                            <div className="absolute inset-0 opacity-10" style={{ 
+                              backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+                              backgroundSize: '20px 20px'
+                            }}></div>
+                            {/* Price Badge */}
+                            <div className="absolute top-3 left-3 px-3 py-1.5 rounded-xl text-sm font-bold backdrop-blur-md shadow-lg" style={{ backgroundColor: 'rgba(0,0,0,0.5)', color: '#fff' }}>
+                              ${gig.price}
+                            </div>
+                            {/* Duration Badge */}
+                            <div className="absolute top-3 right-3 px-2.5 py-1 rounded-xl text-xs font-medium backdrop-blur-md flex items-center" style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: '#fff' }}>
+                              <Clock className="w-3 h-3 mr-1" />
+                              {gig.duration}
+                            </div>
+                            {/* Skills at bottom */}
+                            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                              <div className="flex items-center space-x-1.5 flex-wrap gap-1">
+                                {gig.skills?.slice(0, 3).map((skill, idx) => (
+                                  <span key={idx} className="px-2.5 py-1 rounded-lg text-xs font-medium backdrop-blur-md shadow-sm" style={{ backgroundColor: 'rgba(0,0,0,0.4)', color: '#fff' }}>
+                                    {skill}
+                                  </span>
+                                ))}
+                              </div>
+                              {gig.skills?.length > 3 && (
+                                <span className="px-2 py-1 rounded-lg text-xs font-medium backdrop-blur-md" style={{ backgroundColor: 'rgba(255,255,255,0.25)', color: '#fff' }}>
+                                  +{gig.skills.length - 3}
+                                </span>
                               )}
-                              
-                              <div className="flex-1 min-w-0">
-                                <h3 className="font-semibold text-base mb-1" style={{ color: 'var(--text-primary)' }}>{gig.title}</h3>
-                                <div className="flex items-center space-x-2 text-xs mb-2" style={{ color: 'var(--text-secondary)' }}>
-                                  <span>{gig.user?.name || 'Anonymous'}</span>
-                                  <span>•</span>
-                                  <MapPin className="w-3 h-3" />
-                                  <span>Unknown</span>
-                                  <span>•</span>
-                                  <Star className="w-3 h-3 text-yellow-400" />
-                                  <span>{gig.rating.toFixed(1)} ({gig.reviews} reviews)</span>
+                            </div>
+                          </div>
+
+                          <div className="p-5">
+                            {/* User Info */}
+                            <div className="flex items-center space-x-3 mb-4">
+                              <div className="relative">
+                                {gig.user?.profilePicture ? (
+                                  <img
+                                    src={gig.user.profilePicture.startsWith('http')
+                                      ? gig.user.profilePicture
+                                      : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${gig.user.profilePicture}`}
+                                    alt={gig.user?.name || 'User'}
+                                    className="w-11 h-11 rounded-full object-cover"
+                                    style={{ border: '1.5px solid var(--glow-color-1)' }}
+                                  />
+                                ) : (
+                                  <div className="w-11 h-11 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--bg-accent)', border: '1.5px solid var(--glow-color-1)' }}>
+                                    <User size={20} style={{ color: 'var(--text-secondary)' }} />
+                                  </div>
+                                )}
+                                <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--button-action)' }}>
+                                  <Star className="w-2.5 h-2.5 text-white" fill="white" />
                                 </div>
-                                <p className="text-sm line-clamp-2 mb-3" style={{ color: 'var(--text-secondary)' }}>{gig.description}</p>
-                                <div className="flex flex-wrap gap-2">
-                                  {gig.skills?.slice(0, 5).map((skill, index) => (
-                                    <span key={index} className="px-2 py-1 text-xs rounded" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
-                                      {skill}
-                                    </span>
-                                  ))}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-semibold text-sm truncate" style={{ color: 'var(--text-primary)' }}>{gig.user?.name || 'Anonymous'}</p>
+                                <div className="flex items-center space-x-2 text-xs" style={{ color: 'var(--text-secondary)' }}>
+                                  <div className="flex items-center">
+                                    <Star className="w-3 h-3 text-yellow-400 mr-0.5" fill="#facc15" />
+                                    <span className="font-medium">{gig.rating.toFixed(1)}</span>
+                                  </div>
+                                  <span>•</span>
+                                  <span>{gig.reviews} reviews</span>
                                 </div>
                               </div>
                             </div>
 
-                            <div className="text-right ml-4 flex-shrink-0">
-                              <div className="text-2xl font-bold mb-1" style={{ color: 'var(--button-action)' }}>${gig.price}</div>
-                              <div className="text-xs flex items-center justify-end mb-3" style={{ color: 'var(--text-secondary)' }}>
-                                <Clock className="w-3 h-3 mr-1" />
-                                {gig.duration}
+                            {/* Gig Title & Description */}
+                            <h3 className="font-bold text-base mb-2 line-clamp-2 group-hover:text-[var(--button-action)] transition-colors" style={{ color: 'var(--text-primary)' }}>
+                              {gig.title}
+                            </h3>
+                            <p className="text-sm line-clamp-2 mb-4" style={{ color: 'var(--text-secondary)' }}>
+                              {gig.description}
+                            </p>
+
+                            {/* Price & CTA */}
+                            <div className="flex items-center justify-between pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
+                              <div>
+                                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>Starting at</span>
+                                <p className="text-xl font-bold" style={{ color: 'var(--button-action)' }}>${gig.price}</p>
                               </div>
-                              <div className="flex flex-col space-y-2">
-                                <button className="px-4 py-2 rounded-md text-xs border transition-all duration-200" style={{ color: 'var(--text-secondary)', borderColor: 'var(--border-color)', backgroundColor: 'transparent' }} onClick={() => {
+                              <button 
+                                className="px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:opacity-90 hover:scale-105"
+                                style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}
+                                onClick={() => {
                                   setActiveTab('Messages');
                                   navigate('/dashboard?tab=messages', { state: { recipientId: gig.user._id, recipientName: gig.user.name, recipientProfilePicture: gig.user.profilePicture } });
-                                }}>
-                                  Contact
-                                </button>
-                              </div>
+                                }}
+                              >
+                                Contact
+                              </button>
                             </div>
                           </div>
                         </motion.div>

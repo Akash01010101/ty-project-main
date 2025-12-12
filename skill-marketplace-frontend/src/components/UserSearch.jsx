@@ -91,7 +91,7 @@ const UserSearch = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="md:col-span-1">
+        <div className="md:col-span-1 animated-spin-border">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
             <input
@@ -99,10 +99,9 @@ const UserSearch = () => {
               placeholder="Search by username, name, or bio..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-300"
+              className="w-full pl-10 pr-4 py-3 rounded-[10px] focus:outline-none focus:ring-2 transition-all duration-300"
               style={{
-                backgroundColor: 'var(--bg-secondary)',
-                borderColor: 'var(--border-color)',
+                backgroundColor: 'var(--bg-primary)',
                 color: 'var(--text-primary)'
               }}
             />

@@ -628,21 +628,22 @@ const Messages = () => {
       </div>
 
       {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
-        <input
-          type="text"
-          placeholder="Search messages..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-          autoComplete="off"
-          className="w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-300"
-          style={{
-            backgroundColor: 'var(--bg-secondary)',
-            borderColor: 'var(--border-color)',
-            color: 'var(--text-primary)'
-          }}
-        />
+      <div className="animated-spin-border">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+          <input
+            type="text"
+            placeholder="Search messages..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            autoComplete="off"
+            className="w-full pl-10 pr-4 py-3 rounded-[10px] focus:outline-none focus:ring-2 transition-all duration-300"
+            style={{
+              backgroundColor: 'var(--bg-primary)',
+              color: 'var(--text-primary)'
+            }}
+          />
+        </div>
       </div>
 
       {/* Messages List */}

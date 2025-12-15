@@ -98,61 +98,60 @@ const DashboardPage = () => {
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)', fontFamily: 'Circular, "Helvetica Neue", Helvetica, Arial, sans-serif' }}>
       {/* Header Navigation */}
       <nav className="border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-8">
-          {/* Logo */}
-          <Link to="/dashboard" className="flex items-center">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 grid grid-cols-[auto,1fr,auto] items-center gap-3">
+          {/* Left - Logo */}
+          <Link to="/dashboard" className="flex items-center shrink-0">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center mr-2" style={{ backgroundColor: 'var(--button-action)' }}>
               <span className="text-white font-bold text-xl">🍀</span>
             </div>
             <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Peerly</h1>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden lg:flex items-center space-x-1">
-            {[
-              { name: 'Browse', tab: 'browse' },
-              { name: 'AI Picks', tab: 'ai-picks' },
-              { name: 'My Gigs', tab: 'my-gigs' },
-              { name: 'Messages', tab: 'messages', badge: unreadCount },
-              { name: 'Orders', tab: 'orders' },
-              { name: 'My Purchases', tab: 'my-purchases' },
-              { name: 'Wallet', tab: 'wallet' },
-              { name: 'Search Users', tab: 'network' },
-              { name: 'Portfolio', tab: 'portfolio' },
-            ].map((item) => (
-              <button
-                key={item.tab}
-                onClick={() => navigate(`/dashboard?tab=${item.tab}`)}
-                className="relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
-                style={{
-                  backgroundColor: activeTab === item.name ? 'var(--bg-primary)' : 'transparent',
-                  color: activeTab === item.name ? 'var(--text-primary)' : 'var(--text-secondary)',
-                }}
-              >
-                {item.name}
-                {item.badge > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            ))}
+          {/* Center - Desktop Navigation Links (scrolls on smaller desktops/tablets) */}
+          <div className="hidden lg:flex justify-center min-w-0">
+            <div className="flex items-center space-x-1 overflow-x-auto whitespace-nowrap no-scrollbar min-w-0">
+              {[
+                { name: 'Browse', tab: 'browse' },
+                { name: 'AI Picks', tab: 'ai-picks' },
+                { name: 'My Gigs', tab: 'my-gigs' },
+                { name: 'Messages', tab: 'messages', badge: unreadCount },
+                { name: 'Orders', tab: 'orders' },
+                { name: 'My Purchases', tab: 'my-purchases' },
+                { name: 'Wallet', tab: 'wallet' },
+                { name: 'Search Users', tab: 'network' },
+                { name: 'Portfolio', tab: 'portfolio' },
+              ].map((item) => (
+                <button
+                  key={item.tab}
+                  onClick={() => navigate(`/dashboard?tab=${item.tab}`)}
+                  className="relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                  style={{
+                    backgroundColor: activeTab === item.name ? 'var(--bg-primary)' : 'transparent',
+                    color: activeTab === item.name ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  }}
+                >
+                  {item.name}
+                  {item.badge > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden p-2 rounded-md transition-all duration-200"
-            style={{ backgroundColor: 'var(--button-secondary)' }}
-          >
-            {sidebarOpen ? <X size={24} style={{ color: 'var(--text-primary)' }} /> : <Menu size={24} style={{ color: 'var(--text-primary)' }} />}
-          </button>
-          </div>
+          {/* Right - Theme Toggle, Mobile Menu, Profile */}
+          <div className="flex items-center justify-end gap-2 sm:gap-3 shrink-0">
+            <ThemeToggle />
 
-        {/* Right Side - Theme Toggle & Profile */}
-        <div className="flex items-center space-x-3">
-          <ThemeToggle />
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden p-2 rounded-md transition-all duration-200"
+              style={{ backgroundColor: 'var(--button-secondary)' }}
+            >
+              {sidebarOpen ? <X size={24} style={{ color: 'var(--text-primary)' }} /> : <Menu size={24} style={{ color: 'var(--text-primary)' }} />}
+            </button>
           
           {/* Profile Dropdown */}
           <div className="relative" ref={profileDropdownRef}>
@@ -272,7 +271,7 @@ const DashboardPage = () => {
               )}
             </AnimatePresence>
           </div>
-        </div>
+          </div>
         </div>
       </nav>
 
@@ -352,7 +351,7 @@ const DashboardPage = () => {
             <>
               {/* Hero Section */}
               <div className="mb-8 text-center">
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/30 tracking-tighter drop-shadow-2xl" style={{ lineHeight: '1.05' }}>
+                <h1 className="hero-title-contrast text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/30 tracking-tighter drop-shadow-2xl" style={{ lineHeight: '1.05' }}>
                   Discover Talent.
                 </h1>
                 <p className="text-base md:text-lg" style={{ color: 'var(--text-secondary)' }}>
@@ -376,7 +375,7 @@ const DashboardPage = () => {
                     <button
                       type="button"
                       className="shrink-0 px-6 py-2 rounded-full font-medium transition-all duration-200 hover:opacity-90"
-                      style={{ backgroundColor: '#10b981', color: '#fff' }}
+                      style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}
                     >
                       Search
                     </button>
@@ -458,7 +457,7 @@ const DashboardPage = () => {
                         </div>
                         <div className="text-right">
                           <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>From</p>
-                          <p className="text-sm font-bold" style={{ color: '#10b981' }}>
+                          <p className="text-sm font-bold" style={{ color: 'var(--button-action)' }}>
                             ${gig.price}
                           </p>
                         </div>
@@ -529,13 +528,12 @@ const DashboardPage = () => {
         {/* Footer */}
         <footer className="mt-16 py-8 border-t text-center" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}>
           <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
-            © 2024 Peerly Inc. Student Freelance Marketplace.
+            © 2025 Peerly Inc. Student Freelance Marketplace.
           </p>
           <div className="flex justify-center space-x-6 text-sm">
             <Link to="/terms" style={{ color: 'var(--text-secondary)' }} className="hover:underline">Terms</Link>
             <Link to="/privacy" style={{ color: 'var(--text-secondary)' }} className="hover:underline">Privacy</Link>
-            <Link to="/support" style={{ color: 'var(--text-secondary)' }} className="hover:underline">Support</Link>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)' }} className="hover:underline">Instagram</a>
+           
           </div>
         </footer>
       </div>

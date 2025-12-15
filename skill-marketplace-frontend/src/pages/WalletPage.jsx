@@ -24,17 +24,17 @@ const WalletPage = () => {
 
   return (
     <div className="min-h-screen p-4">
-      <h2 className="text-3xl font-bold text-center mb-8" style={{ color: 'var(--text-primary)' }}>My Wallet</h2>
+      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8" style={{ color: 'var(--text-primary)' }}>My Wallet</h2>
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="glow-border backdrop-blur-lg rounded-2xl p-8 shadow-xl max-w-2xl mx-auto"
+        className="glow-border backdrop-blur-lg rounded-2xl p-5 sm:p-8 shadow-xl max-w-2xl mx-auto"
         style={{ backgroundColor: 'var(--bg-secondary)' }}
       >
         <div className="text-center mb-8">
           <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Current Balance</p>
-          <p className="text-5xl font-bold" style={{ color: 'var(--text-primary)' }}>${user?.walletBalance.toFixed(2)}</p>
+          <p className="text-4xl sm:text-5xl font-bold break-words" style={{ color: 'var(--text-primary)' }}>${user?.walletBalance.toFixed(2)}</p>
         </div>
 
         <h3 className="text-xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Transaction History</h3>
@@ -46,12 +46,12 @@ const WalletPage = () => {
               <p className="text-center" style={{ color: 'var(--text-secondary)' }}>No transactions yet.</p>
             ) : (
               transactions.map((tx) => (
-                <div key={tx._id} className="glow-border-static flex justify-between items-center p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                <div key={tx._id} className="glow-border-static flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-primary)' }}>
                   <div>
                     <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>{tx.description}</p>
                     <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{new Date(tx.createdAt).toLocaleString()}</p>
                   </div>
-                  <p className={`font-bold text-lg ${tx.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>
+                  <p className={`font-bold text-lg ${tx.type === 'income' ? 'text-green-400' : 'text-red-400'} sm:text-right`}>
                     {tx.type === 'income' ? '+' : '-'}${tx.amount.toFixed(2)}
                   </p>
                 </div>

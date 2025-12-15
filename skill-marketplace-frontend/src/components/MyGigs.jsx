@@ -41,7 +41,7 @@ const MyGigs = () => {
           <div className="h-8 w-32 rounded-lg animate-pulse" style={{ backgroundColor: 'var(--bg-accent)' }}></div>
           <div className="h-10 w-36 rounded-xl animate-pulse" style={{ backgroundColor: 'var(--bg-accent)' }}></div>
         </div>
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[1,2,3,4].map(i => (
             <div key={i} className="h-20 rounded-xl animate-pulse" style={{ backgroundColor: 'var(--bg-secondary)' }}></div>
           ))}
@@ -58,18 +58,18 @@ const MyGigs = () => {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>My Gigs</h2>
           <p className="text-sm mt-0.5" style={{ color: 'var(--text-secondary)' }}>
             {userGigs.length} {userGigs.length === 1 ? 'service' : 'services'} listed
           </p>
         </div>
-        <Link to="/create-gig">
+        <Link to="/create-gig" className="w-full sm:w-auto">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all"
             style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}
           >
             <Plus className="w-4 h-4" />
@@ -83,7 +83,7 @@ const MyGigs = () => {
         {[
           { label: 'Active', value: userGigs.length, icon: Package, accent: 'var(--button-action)' },
           { label: 'Orders', value: totalOrders, icon: TrendingUp, accent: '#3b82f6' },
-          { label: 'Earned', value: `$${totalEarnings}`, icon: Sparkles, accent: '#22c55e' },
+          { label: 'Earned', value: `$${totalEarnings}`, icon: Sparkles, accent: 'var(--button-action)' },
           { label: 'Rating', value: avgRating, icon: Star, accent: '#eab308' },
         ].map((stat) => (
           <div

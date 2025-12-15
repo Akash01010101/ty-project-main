@@ -525,6 +525,16 @@ body[data-theme="light"] {
   animation-delay: -10s;
 }
 
+/* Utility: hide scrollbars while still allowing scroll */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
 @keyframes aurora {
 
   0%,

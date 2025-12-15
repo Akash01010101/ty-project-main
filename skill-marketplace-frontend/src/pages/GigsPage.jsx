@@ -24,7 +24,7 @@ const GigsPage = () => {
 
   return (
     <div className="min-h-screen p-4">
-      <h2 className="text-3xl font-bold text-center text-white mb-8">
+      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8" style={{ color: 'var(--text-primary)' }}>
         Available Gigs
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -34,10 +34,10 @@ const GigsPage = () => {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 shadow-xl"
+            className="bg-white/5 backdrop-blur-lg rounded-2xl p-5 sm:p-6 border border-white/10 shadow-xl"
           >
-            <h3 className="text-xl font-bold text-white mb-2">{gig.title}</h3>
-            <p className="text-gray-300 mb-4">{gig.description}</p>
+            <h3 className="text-lg sm:text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{gig.title}</h3>
+            <p className="mb-4" style={{ color: 'var(--text-secondary)' }}>{gig.description}</p>
             <div className="flex flex-wrap gap-2 mb-4">
               {gig.skills.map((skill, index) => (
                 <span key={index} className="bg-purple-500/50 text-white px-2 py-1 rounded-full text-sm">
@@ -46,7 +46,7 @@ const GigsPage = () => {
               ))}
             </div>
             <div className="flex justify-between items-center">
-              <p className="text-lg font-bold text-white">${gig.price}</p>
+              <p className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>${gig.price}</p>
               <Link to={`/gig/${gig._id}`} className="text-purple-400 hover:underline">
                 View Details
               </Link>

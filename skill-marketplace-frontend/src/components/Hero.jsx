@@ -16,12 +16,12 @@ const Hero = () => {
   };
   return (
     <section
-      className="relative h-screen flex items-center justify-center text-center"
+      className="relative min-h-[100svh] flex items-center justify-center text-center py-16"
       style={{
         fontFamily: 'Circular, "Helvetica Neue", Helvetica, Arial, sans-serif',
       }}
     >
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6">
         <motion.h2
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -59,12 +59,12 @@ const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-          className="mt-10 flex justify-center gap-4"
+          className="mt-10 flex flex-col sm:flex-row justify-center gap-4"
         >
           <Button
             onClick={handleGetStarted}
             size="lg"
-            className="px-6 py-2.5 font-bold rounded-full hover:scale-105 transform transition-all duration-300"
+            className="w-full sm:w-auto px-6 py-2.5 font-bold rounded-full hover:scale-105 transform transition-all duration-300"
             style={{ backgroundColor: "var(--button-action)", color: "#fff" }}
           >
             Get Started
@@ -73,7 +73,7 @@ const Hero = () => {
             <Button
               variant="outline"
               size="lg"
-              className="px-6 py-2.5 backdrop-blur-md font-bold rounded-full border transform transition-all duration-300 hover:scale-105"
+              className="w-full sm:w-auto px-6 py-2.5 backdrop-blur-md font-bold rounded-full border transform transition-all duration-300 hover:scale-105"
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.1)",
                 color: "var(--text-primary)",

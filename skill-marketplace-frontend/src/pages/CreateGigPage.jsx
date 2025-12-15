@@ -93,7 +93,7 @@ const CreateGigPage = () => {
               />
               <p className="text-gray-500 text-xs mt-1">Separate skills with commas</p>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="price">
                 Price (USD)

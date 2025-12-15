@@ -91,9 +91,9 @@ const ManageOffersPage = () => {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 shadow-xl max-w-4xl mx-auto"
+        className="bg-white/5 backdrop-blur-lg rounded-2xl p-5 sm:p-8 border border-white/10 shadow-xl max-w-4xl mx-auto"
       >
-        <h2 className="text-3xl font-bold text-white mb-6">Manage Offers for Your Gigs</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">Manage Offers for Your Gigs</h2>
         {offers.length === 0 ? (
           <p className="text-gray-300">No offers received yet.</p>
         ) : (
@@ -111,12 +111,12 @@ const ManageOffersPage = () => {
                 <p className="text-gray-300 mb-2">Message: {offer.message}</p>
                 <p className="text-gray-400 text-sm">Status: {offer.status}</p>
                 {offer.status === 'pending' && (
-                  <div className="mt-4 flex gap-2">
+                  <div className="mt-4 flex flex-col sm:flex-row gap-2">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleAcceptOffer(offer._id)}
-                      className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full text-sm"
+                      className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full text-sm"
                     >
                       Accept
                     </motion.button>
@@ -124,7 +124,7 @@ const ManageOffersPage = () => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleRejectOffer(offer._id)}
-                      className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full text-sm"
+                      className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full text-sm"
                     >
                       Reject
                     </motion.button>

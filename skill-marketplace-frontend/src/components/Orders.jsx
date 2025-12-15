@@ -146,13 +146,13 @@ const Orders = () => {
         </div>
       </div>
 
-      <div className="glow-border backdrop-blur-lg rounded-lg min-h-[400px]\" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+      <div className="glow-border backdrop-blur-lg rounded-lg min-h-[400px]" style={{ backgroundColor: 'var(--bg-secondary)' }}>
         {loading ? (
           <div className="flex justify-center items-center h-full">
             <p style={{ color: 'var(--text-primary)' }}>Loading...</p>
           </div>
         ) : orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-8">
+          <div className="flex flex-col items-center justify-center py-12 px-5 sm:py-16 sm:px-8">
             <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: 'var(--button-secondary)' }}>
               <CheckCircle className="w-12 h-12" style={{ color: 'var(--text-secondary)' }} />
             </div>

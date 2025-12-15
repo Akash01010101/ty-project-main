@@ -51,7 +51,7 @@ const PortfolioCard = ({ item, onDelete }) => (
       </div>
     </div>
     
-    <div className="p-6">
+    <div className="p-5 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3">
         <h3 className="text-lg font-semibold mb-2 sm:mb-0" style={{ color: 'var(--text-primary)' }}>{item.title}</h3>
         <div className="flex items-center text-xs" style={{ color: 'var(--text-secondary)' }}>
@@ -249,7 +249,7 @@ const Portfolio = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glow-border backdrop-blur-lg rounded-lg p-6 mb-6"
+          className="glow-border backdrop-blur-lg rounded-lg p-5 sm:p-6 mb-6"
           style={{ backgroundColor: 'var(--bg-secondary)' }}
         >
           <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Add New Project</h3>
@@ -379,7 +379,7 @@ const Portfolio = () => {
         ) : portfolioItems.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="p-6">
+          <div className="p-5 sm:p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {portfolioItems.map((item) => (
                 <PortfolioCard key={item._id} item={item} onDelete={handleDeleteItem} />

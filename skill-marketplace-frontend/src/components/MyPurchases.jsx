@@ -178,7 +178,7 @@ const MyPurchases = () => {
               <p style={{ color: 'var(--text-primary)' }}>Loading...</p>
             </div>
           ) : orders.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 px-8">
+            <div className="flex flex-col items-center justify-center py-12 px-5 sm:py-16 sm:px-8">
               <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: 'var(--button-secondary)' }}>
                 <CheckCircle className="w-12 h-12" style={{ color: 'var(--text-secondary)' }} />
               </div>

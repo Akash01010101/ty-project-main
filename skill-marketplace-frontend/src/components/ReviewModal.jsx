@@ -32,7 +32,7 @@ const ReviewModal = ({ isOpen, onClose, onSubmit }) => {
               backdropFilter: 'blur(20px)',
             }}
           >
-            <div className="p-8">
+            <div className="p-5 sm:p-8">
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <h3 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Leave a Review</h3>
@@ -95,7 +95,7 @@ const ReviewModal = ({ isOpen, onClose, onSubmit }) => {
             </div>
 
             <div 
-              className="px-8 py-5 border-t"
+              className="px-5 sm:px-8 py-4 sm:py-5 border-t"
               style={{
                 backgroundColor: 'var(--bg-primary)',
                 borderColor: 'var(--border-color)',
@@ -103,11 +103,11 @@ const ReviewModal = ({ isOpen, onClose, onSubmit }) => {
                 borderBottomRightRadius: '1rem'
               }}
             >
-              <div className="flex justify-end space-x-4">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-6 py-2.5 text-sm font-semibold rounded-lg border transition-colors duration-200"
+                  className="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold rounded-lg border transition-colors duration-200"
                   style={{
                     color: 'var(--text-secondary)',
                     borderColor: 'var(--border-color)',
@@ -120,7 +120,7 @@ const ReviewModal = ({ isOpen, onClose, onSubmit }) => {
                   type="button"
                   onClick={handleSubmit}
                   disabled={rating === 0 || !comment}
-                  className="px-6 py-2.5 text-sm font-bold text-white rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto px-6 py-2.5 text-sm font-bold text-white rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ backgroundColor: 'var(--button-action)' }}
                 >
                   Submit & Clear Payment

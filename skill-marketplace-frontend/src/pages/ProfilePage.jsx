@@ -72,7 +72,7 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 shadow-xl">
+        <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-5 sm:p-8 border border-white/10 shadow-xl">
           <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-6 sm:space-y-0 sm:space-x-8">
             <img
               src={user.profilePicture.startsWith('http') ? user.profilePicture : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${user.profilePicture}`}
@@ -93,10 +93,10 @@ const ProfilePage = () => {
                 <span className="text-gray-500">•</span>
                 <p className="text-gray-400">{user.following.length} Following</p>
               </div>
-              <div className="mt-6 flex justify-center sm:justify-start space-x-4">
+              <div className="mt-6 flex flex-col sm:flex-row justify-center sm:justify-start gap-3 sm:gap-4 w-full">
                 <button
                   onClick={handleMessage}
-                  className="px-6 py-2 border rounded-lg flex items-center space-x-2 transition-colors"
+                  className="w-full sm:w-auto px-6 py-2 border rounded-lg flex items-center justify-center space-x-2 transition-colors"
                   style={{ color: 'var(--text-accent)', borderColor: 'var(--border-color)'}}
                 >
                   <MessageCircle size={20} />
@@ -105,7 +105,7 @@ const ProfilePage = () => {
                 {currentUser._id !== user._id && (
                   <button
                     onClick={handleFollow}
-                    className="px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+                    className="w-full sm:w-auto px-6 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors"
                     style={{ 
                       backgroundColor: isFollowing ? 'transparent' : 'var(--button-action)',
                       color: isFollowing ? 'var(--text-accent)' : 'white',
@@ -125,7 +125,7 @@ const ProfilePage = () => {
           <h3 className="text-2xl font-bold text-white mb-4">Gigs</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {gigs.map(gig => (
-              <div key={gig._id} className="bg-white/5 backdrop-blur-lg rounded-lg p-6 border border-white/10">
+              <div key={gig._id} className="bg-white/5 backdrop-blur-lg rounded-lg p-5 sm:p-6 border border-white/10">
                 <h4 className="font-bold text-lg text-white">{gig.title}</h4>
                 <p className="text-gray-400 mt-2">{gig.description}</p>
                 <div className="flex justify-between items-center mt-4">
@@ -144,7 +144,7 @@ const ProfilePage = () => {
           <h3 className="text-2xl font-bold text-white mb-4">Reviews</h3>
           <div className="space-y-6">
             {reviews.map(review => (
-              <div key={review._id} className="bg-white/5 backdrop-blur-lg rounded-lg p-6 border border-white/10">
+              <div key={review._id} className="bg-white/5 backdrop-blur-lg rounded-lg p-5 sm:p-6 border border-white/10">
                 <div className="flex items-start space-x-4">
                   <img
                     src={review.fromUser.profilePicture.startsWith('http') ? review.fromUser.profilePicture : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${review.fromUser.profilePicture}`}

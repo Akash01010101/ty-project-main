@@ -665,9 +665,9 @@ const Messages = () => {
       </div>
 
       {/* Stats Bar */}
-      <div className="grid grid-cols-3 gap-2 md:gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-3">
         {[
-          { label: 'Chats', labelFull: 'Conversations', value: conversations.length, icon: MessageCircle, accent: '#22c55e' },
+          { label: 'Chats', labelFull: 'Conversations', value: conversations.length, icon: MessageCircle, accent: 'var(--button-action)' },
           { label: 'Active', labelFull: 'Active Chats', value: conversations.filter(c => c.lastMessage).length, icon: Users, accent: '#3b82f6' },
           { label: 'Week', labelFull: 'This Week', value: conversations.filter(c => {
             const d = new Date(c.updatedAt);

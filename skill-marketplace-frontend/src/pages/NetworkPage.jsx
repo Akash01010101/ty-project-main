@@ -56,7 +56,7 @@ const NetworkPage = () => {
   return (
     <div className="space-y-6">
       <div className="border-b" style={{ borderColor: 'var(--border-color)'}}>
-        <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+        <nav className="-mb-px flex gap-4 sm:gap-8 overflow-x-auto whitespace-nowrap no-scrollbar" aria-label="Tabs">
           <button
             onClick={() => setActiveTab('search')}
             className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-all duration-200 ${

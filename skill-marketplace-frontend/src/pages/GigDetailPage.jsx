@@ -81,9 +81,9 @@ const GigDetailPage = () => {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 shadow-xl max-w-4xl mx-auto"
+        className="bg-white/5 backdrop-blur-lg rounded-2xl p-5 sm:p-8 border border-white/10 shadow-xl max-w-4xl mx-auto"
       >
-        <h2 className="text-3xl font-bold text-white mb-4">{gig.title}</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">{gig.title}</h2>
         <p className="text-gray-300 mb-6">{gig.description}</p>
         <div className="flex flex-wrap gap-2 mb-6">
           {gig.skills.map((skill, index) => (
@@ -92,9 +92,9 @@ const GigDetailPage = () => {
             </span>
           ))}
         </div>
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
           <p className="text-2xl font-bold text-white">${gig.price}</p>
-          <div className="text-right">
+          <div className="sm:text-right">
             <p className="text-gray-300">Created by:</p>
             <p className="text-white font-semibold">{gig.creator.name}</p>
           </div>
@@ -123,9 +123,9 @@ const GigDetailPage = () => {
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 50, opacity: 0 }}
-              className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/10 shadow-xl max-w-md w-full"
+              className="bg-white/10 backdrop-blur-lg rounded-2xl p-5 sm:p-8 border border-white/10 shadow-xl max-w-md w-full"
             >
-              <h3 className="text-2xl font-bold text-white mb-4">Send Offer for {gig.title}</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">Send Offer for {gig.title}</h3>
               <form onSubmit={handleSendOffer}>
                 <div className="mb-4">
                   <label htmlFor="offerPrice" className="block text-gray-300 text-sm font-bold mb-2">
@@ -155,12 +155,12 @@ const GigDetailPage = () => {
                     required
                   ></textarea>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <motion.button
                     type="submit"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+                    className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
                   >
                     Send Offer
                   </motion.button>
@@ -169,7 +169,7 @@ const GigDetailPage = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setShowOfferModal(false)}
-                    className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+                    className="w-full sm:w-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
                   >
                     Cancel
                   </motion.button>

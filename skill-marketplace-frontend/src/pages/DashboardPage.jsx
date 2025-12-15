@@ -495,6 +495,32 @@ const DashboardPage = () => {
                             ({gig.reviews || 0})
                           </span>
                         </div>
+
+                        {/* Contact Button */}
+                        {(() => {
+                          const target = gig.user || gig.creator;
+                          const recipientId = target?._id;
+                          const isSelf = recipientId && user?._id && recipientId === user._id;
+                          if (!recipientId || isSelf) return null;
+                          return (
+                            <button
+                              onClick={() =>
+                                navigate('/dashboard?tab=messages', {
+                                  state: {
+                                    recipientId,
+                                    recipientName: target?.name,
+                                    recipientProfilePicture: target?.profilePicture,
+                                  },
+                                })
+                              }
+                              className="mt-3 w-full px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 hover:opacity-90"
+                              style={{ backgroundColor: 'var(--button-action)', color: 'white' }}
+                            >
+                              <MessageSquare className="w-4 h-4" />
+                              <span className="text-sm font-medium">Contact</span>
+                            </button>
+                          );
+                        })()}
                       </div>
                     </motion.div>
                   ))}

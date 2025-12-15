@@ -97,8 +97,9 @@ const DashboardPage = () => {
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)', fontFamily: 'Circular, "Helvetica Neue", Helvetica, Arial, sans-serif' }}>
       {/* Header Navigation */}
-      <nav className="px-6 py-4 flex items-center justify-between border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-        <div className="flex items-center space-x-8">
+      <nav className="border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-8">
           {/* Logo */}
           <Link to="/dashboard" className="flex items-center">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center mr-2" style={{ backgroundColor: 'var(--button-action)' }}>
@@ -147,7 +148,7 @@ const DashboardPage = () => {
           >
             {sidebarOpen ? <X size={24} style={{ color: 'var(--text-primary)' }} /> : <Menu size={24} style={{ color: 'var(--text-primary)' }} />}
           </button>
-        </div>
+          </div>
 
         {/* Right Side - Theme Toggle & Profile */}
         <div className="flex items-center space-x-3">
@@ -271,6 +272,7 @@ const DashboardPage = () => {
               )}
             </AnimatePresence>
           </div>
+        </div>
         </div>
       </nav>
 

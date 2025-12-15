@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Star, MapPin, Clock, Filter, User, Home, Sparkles, Briefcase, BookOpen, MessageSquare, ShoppingCart, CreditCard, DollarSign, Search as SearchIcon, LogOut } from 'lucide-react';
+import { Star, MapPin, Clock, Filter, User, Home, Sparkles, Briefcase, BookOpen, MessageSquare, ShoppingCart, CreditCard, DollarSign, Search as SearchIcon, LogOut, Menu, X } from 'lucide-react';
 import MyGigs from '../components/MyGigs';
 import Portfolio from '../components/Portfolio';
 import Messages from '../components/Messages';
@@ -20,6 +20,7 @@ const DashboardPage = () => {
   const [gigs, setGigs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileStats, setProfileStats] = useState({
     rating: 0,
     totalGigs: 0,
@@ -73,10 +74,20 @@ const DashboardPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)', fontFamily: 'Circular, "Helvetica Neue", Helvetica, Arial, sans-serif' }}>
-      <div className="px-6 py-4 flex items-center justify-between border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-        <h1 className="text-3xl font-bold pl-20" style={{ color: 'var(--text-primary)' }}>Peerly</h1>
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-3">
+      <div className="px-4 md:px-6 py-4 flex items-center justify-between border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+        <div className="flex items-center">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="lg:hidden p-2 mr-2 rounded-md transition-all duration-200"
+            style={{ backgroundColor: 'var(--button-secondary)' }}
+          >
+            {sidebarOpen ? <X size={24} style={{ color: 'var(--text-primary)' }} /> : <Menu size={24} style={{ color: 'var(--text-primary)' }} />}
+          </button>
+          <h1 className="text-xl md:text-3xl font-bold lg:pl-20" style={{ color: 'var(--text-primary)' }}>Peerly</h1>
+        </div>
+        <div className="flex items-center space-x-2 md:space-x-4">
+          <div className="hidden sm:flex items-center space-x-3">
             <div className="w-10 h-10 rounded-full overflow-hidden" style={{ border: '2px solid var(--button-action)' }}>
               {user?.profilePicture ? (
                 <img 
@@ -92,7 +103,7 @@ const DashboardPage = () => {
                 </div>
               )}
             </div>
-            <div>
+            <div className="hidden md:block">
               <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{user?.name || 'User'}</p>
               <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{user?.university || 'State University'}</p>
             </div>
@@ -100,87 +111,166 @@ const DashboardPage = () => {
           <ThemeToggle />
           <button 
             onClick={logout}
-            className="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-2"
+            className="px-3 md:px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-2"
             style={{ 
               backgroundColor: 'var(--button-secondary)', 
               color: 'var(--text-secondary)' 
             }}
           >
             <LogOut size={16} />
-            <span>Logout</span>
+            <span className="hidden sm:inline">Logout</span>
           </button>
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
-        <div className="flex overflow-y-auto" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-          <div className="flex">
-            <nav className="w-48 p-4 border-r" style={{ borderColor: 'var(--border-color)' }}>
-              <div className="space-y-1">
-                {['Browse Gigs', 'AI Picks', 'My Gigs', 'Portfolio', 'Messages', 'Orders', 'My Purchases', 'Wallet', 'Network'].map(tabName => (
-                  <button
-                    key={tabName}
-                    onClick={() => setActiveTab(tabName)}
-                    className={`w-full flex items-center justify-between space-x-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 ${activeTab === tabName ? 'font-medium glow-border-static' : 'hover:bg-[var(--button-secondary)]'}`}
-                    style={{
-                      backgroundColor: activeTab === tabName ? 'var(--bg-primary)' : 'transparent',
-                      color: activeTab === tabName ? 'var(--text-primary)' : 'var(--text-secondary)'
-                    }}
-                  >
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Mobile Overlay */}
+        <AnimatePresence>
+          {sidebarOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Sidebar */}
+        <AnimatePresence>
+          {(sidebarOpen || typeof window !== 'undefined') && (
+            <motion.div
+              initial={{ x: -320 }}
+              animate={{ x: sidebarOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth >= 1024 ? 0 : -320) }}
+              exit={{ x: -320 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className={`fixed lg:relative z-50 lg:z-auto h-[calc(100vh-73px)] lg:h-auto overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+              style={{ backgroundColor: 'var(--bg-secondary)' }}
+            >
+              <div className="flex flex-col lg:flex-row">
+                <nav className="w-64 lg:w-48 p-4 border-r" style={{ borderColor: 'var(--border-color)' }}>
+                  {/* Mobile User Info */}
+                  <div className="lg:hidden mb-4 pb-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
                     <div className="flex items-center space-x-3">
-                      {tabName === 'Browse Gigs' && <Home size={18} />}
-                      {tabName === 'AI Picks' && <Sparkles size={18} />}
-                      {tabName === 'My Gigs' && <Briefcase size={18} />}
-                      {tabName === 'Portfolio' && <BookOpen size={18} />}
-                      {tabName === 'Messages' && <MessageSquare size={18} />}
-                      {tabName === 'Orders' && <ShoppingCart size={18} />}
-                      {tabName === 'My Purchases' && <CreditCard size={18} />}
-                      {tabName === 'Wallet' && <CreditCard size={18} />}
-                      {tabName === 'Network' && <SearchIcon size={18} />}
-                      <span>{tabName}</span>
+                      <div className="w-12 h-12 rounded-full overflow-hidden" style={{ border: '2px solid var(--button-action)' }}>
+                        {user?.profilePicture ? (
+                          <img 
+                            src={user.profilePicture.startsWith('http') 
+                              ? user.profilePicture 
+                              : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${user.profilePicture}`}
+                            alt="User Profile" 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                            <User size={24} style={{ color: 'var(--text-secondary)' }} />
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{user?.name || 'User'}</p>
+                        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{user?.university || 'State University'}</p>
+                      </div>
                     </div>
-                    {tabName === 'Messages' && unreadCount > 0 && (
-                      <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </nav>
-            {/* Profile & Stats Column */}
-            <div className="w-64 p-4 space-y-4">
-              <div className="glow-border rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-                <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Your Profile</h3>
-                <div className="flex items-center justify-center mb-3">
-                  <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                  <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>{profileStats.rating}/5.0</span>
-                  <span className="text-xs ml-1" style={{ color: 'var(--text-secondary)' }}>({profileStats.totalGigs} gigs)</span>
-                </div>
-                <div className="mb-4">
-                  <p className="text-xs mb-2 font-semibold" style={{ color: 'var(--text-secondary)' }}>Your Skills</p>
-                  <div className="flex flex-wrap gap-1">
-                    {user?.skills && user.skills.slice(0, 3).map((skill, index) => (
-                      <span key={index} className="px-2 py-0.5 text-xs rounded-full" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
-                        {skill}
-                      </span>
+                  </div>
+                  <div className="space-y-1">
+                    {['Browse Gigs', 'AI Picks', 'My Gigs', 'Portfolio', 'Messages', 'Orders', 'My Purchases', 'Wallet', 'Network'].map(tabName => (
+                      <button
+                        key={tabName}
+                        onClick={() => {
+                          setActiveTab(tabName);
+                          setSidebarOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between space-x-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 ${activeTab === tabName ? 'font-medium glow-border-static' : 'hover:bg-[var(--button-secondary)]'}`}
+                        style={{
+                          backgroundColor: activeTab === tabName ? 'var(--bg-primary)' : 'transparent',
+                          color: activeTab === tabName ? 'var(--text-primary)' : 'var(--text-secondary)'
+                        }}
+                      >
+                        <div className="flex items-center space-x-3">
+                          {tabName === 'Browse Gigs' && <Home size={18} />}
+                          {tabName === 'AI Picks' && <Sparkles size={18} />}
+                          {tabName === 'My Gigs' && <Briefcase size={18} />}
+                          {tabName === 'Portfolio' && <BookOpen size={18} />}
+                          {tabName === 'Messages' && <MessageSquare size={18} />}
+                          {tabName === 'Orders' && <ShoppingCart size={18} />}
+                          {tabName === 'My Purchases' && <CreditCard size={18} />}
+                          {tabName === 'Wallet' && <CreditCard size={18} />}
+                          {tabName === 'Network' && <SearchIcon size={18} />}
+                          <span>{tabName}</span>
+                        </div>
+                        {tabName === 'Messages' && unreadCount > 0 && (
+                          <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                            {unreadCount}
+                          </span>
+                        )}
+                      </button>
                     ))}
                   </div>
+                  {/* Mobile Profile Card */}
+                  <div className="lg:hidden mt-4 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                    <div className="glow-border rounded-lg p-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                      <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Your Profile</h3>
+                      <div className="flex items-center justify-center mb-3">
+                        <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                        <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>{profileStats.rating}/5.0</span>
+                        <span className="text-xs ml-1" style={{ color: 'var(--text-secondary)' }}>({profileStats.totalGigs} gigs)</span>
+                      </div>
+                      <div className="mb-4">
+                        <p className="text-xs mb-2 font-semibold" style={{ color: 'var(--text-secondary)' }}>Your Skills</p>
+                        <div className="flex flex-wrap gap-1">
+                          {user?.skills && user.skills.slice(0, 3).map((skill, index) => (
+                            <span key={index} className="px-2 py-0.5 text-xs rounded-full" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <Link to="/edit-profile" onClick={() => setSidebarOpen(false)}>
+                        <button className="w-full py-2 rounded-md text-sm font-medium transition-all duration-200" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
+                          Edit Profile
+                        </button>
+                      </Link>
+                    </div>
+                  </div>
+                </nav>
+                {/* Profile & Stats Column - Desktop Only */}
+                <div className="hidden lg:block w-64 p-4 space-y-4">
+                  <div className="glow-border rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                    <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Your Profile</h3>
+                    <div className="flex items-center justify-center mb-3">
+                      <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                      <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>{profileStats.rating}/5.0</span>
+                      <span className="text-xs ml-1" style={{ color: 'var(--text-secondary)' }}>({profileStats.totalGigs} gigs)</span>
+                    </div>
+                    <div className="mb-4">
+                      <p className="text-xs mb-2 font-semibold" style={{ color: 'var(--text-secondary)' }}>Your Skills</p>
+                      <div className="flex flex-wrap gap-1">
+                        {user?.skills && user.skills.slice(0, 3).map((skill, index) => (
+                          <span key={index} className="px-2 py-0.5 text-xs rounded-full" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <Link to="/edit-profile">
+                      <button className="w-full py-2 rounded-md text-sm font-medium transition-all duration-200" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
+                        Edit Profile
+                      </button>
+                    </Link>
+                  </div>
                 </div>
-                <Link to="/edit-profile">
-                  <button className="w-full py-2 rounded-md text-sm font-medium transition-all duration-200" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
-                    Edit Profile
-                  </button>
-                </Link>
               </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="flex-1 flex overflow-hidden border-none">
           <div className="flex-1 flex flex-col overflow-hidden">
             {(activeTab === 'Browse Gigs' || activeTab === 'AI Picks') && (
-              <div className="px-6 py-4 flex items-center gap-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+              <div className="px-4 md:px-6 py-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                 <div className="flex-1 max-w-2xl animated-spin-border">
                   <input
                     type="text"
@@ -198,7 +288,7 @@ const DashboardPage = () => {
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="px-3 py-2.5 rounded-md text-sm focus:outline-none"
+                    className="flex-1 sm:flex-none px-3 py-2.5 rounded-md text-sm focus:outline-none"
                     style={{
                       backgroundColor: 'var(--bg-primary)',
                       color: 'var(--text-primary)',
@@ -212,7 +302,7 @@ const DashboardPage = () => {
                 </div>
               </div>
             )}
-            <div className="flex-1 overflow-auto p-6 border-none" style={{ backgroundColor: 'var(--bg-primary)' }}>
+            <div className="flex-1 overflow-auto p-4 md:p-6 border-none" style={{ backgroundColor: 'var(--bg-primary)' }}>
               {activeTab === 'My Gigs' && <MyGigs />}
               {activeTab === 'Portfolio' && <Portfolio />}
               {activeTab === 'Messages' && <Messages />}

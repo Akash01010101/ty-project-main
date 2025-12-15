@@ -198,6 +198,63 @@ body[data-theme="light"] {
   background-color: transparent !important;
 }
 
+/* Pill variant (keeps the exact same animation; only changes shape/background) */
+.animated-spin-border.animated-spin-border-pill {
+  border-radius: 9999px;
+}
+
+.animated-spin-border.animated-spin-border-pill::after {
+  border-radius: 9999px;
+  background-color: var(--bg-secondary);
+}
+
+/* Hero Title (3D / multi-tone) */
+.hero-title-3d {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  letter-spacing: -0.03em;
+
+  /* 3-tone fill like the reference */
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0.86) 55%,
+    rgba(255, 255, 255, 0.68) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  /* Slight bevel/highlight on edges like the reference */
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.22),
+    0 2px 0 rgba(0, 0, 0, 0.18);
+}
+
+/* Soft deep drop shadow */
+.hero-title-3d::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  transform: translateY(18px);
+  color: rgba(0, 0, 0, 0.85);
+  filter: blur(26px);
+  opacity: 0.9;
+  z-index: -2;
+}
+
+/* Crisp extrusion under the text */
+.hero-title-3d::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  transform: translateY(4px);
+  color: rgba(0, 0, 0, 0.45);
+  opacity: 0.9;
+  z-index: -1;
+}
+
 /* Shining Gradient Border Styles */
 @keyframes borderGlow {
   0%, 100% {

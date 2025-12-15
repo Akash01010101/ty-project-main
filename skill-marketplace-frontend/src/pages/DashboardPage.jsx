@@ -1,7 +1,7 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Star, MapPin, Clock, Filter, User, Home, Sparkles, Briefcase, BookOpen, MessageSquare, ShoppingCart, CreditCard, DollarSign, Search as SearchIcon, LogOut, Menu, X } from 'lucide-react';
+import { Star, MapPin, Clock, Filter, User, Home, Sparkles, Briefcase, BookOpen, MessageSquare, ShoppingCart, CreditCard, DollarSign, Search as SearchIcon, LogOut, Menu, X, Code, Palette, Video, Pen, TrendingUp } from 'lucide-react';
 import MyGigs from '../components/MyGigs';
 import Portfolio from '../components/Portfolio';
 import Messages from '../components/Messages';
@@ -19,8 +19,11 @@ const DashboardPage = () => {
   const { logout, user, unreadCount } = useAuth();
   const [gigs, setGigs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const profileDropdownRef = useRef(null);
   const [profileStats, setProfileStats] = useState({
     rating: 0,
     totalGigs: 0,
@@ -37,14 +40,15 @@ const DashboardPage = () => {
     const urlParams = new URLSearchParams(location.search);
     const tab = urlParams.get('tab');
     switch (tab) {
+      case 'ai-picks': return 'AI Picks';
       case 'my-gigs': return 'My Gigs';
       case 'portfolio': return 'Portfolio';
       case 'messages': return 'Messages';
       case 'orders': return 'Orders';
       case 'my-purchases': return 'My Purchases';
       case 'wallet': return 'Wallet';
-      case 'network': return 'Network';
-      default: return 'Browse Gigs';
+      case 'network': return 'Search Users';
+      default: return 'Browse';
     }
   }, [location.search]);
 
@@ -65,30 +69,97 @@ const DashboardPage = () => {
         setLoading(false);
       }
     };
-    if (activeTab === 'Browse Gigs') {
+    if (activeTab === 'Browse' || activeTab === 'AI Picks') {
       fetchGigs();
     }
   }, [activeTab]);
 
-  const categories = ['All Categories', 'React Development', 'Math Tutoring', 'Video Editing', 'Graphic Design', 'Data Science', 'Writing'];
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
+        setProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const categories = [
+    { id: 'All', label: 'All', icon: null },
+    { id: 'Programming', label: 'Programming', icon: Code },
+    { id: 'Design', label: 'Design', icon: Palette },
+    { id: 'Video & Animation', label: 'Video & Animation', icon: Video },
+    { id: 'Writing', label: 'Writing', icon: Pen },
+    { id: 'Marketing', label: 'Marketing', icon: TrendingUp },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)', fontFamily: 'Circular, "Helvetica Neue", Helvetica, Arial, sans-serif' }}>
-      <div className="px-4 md:px-6 py-4 flex items-center justify-between border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-        <div className="flex items-center">
+      {/* Header Navigation */}
+      <nav className="px-6 py-4 flex items-center justify-between border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+        <div className="flex items-center space-x-8">
+          {/* Logo */}
+          <Link to="/dashboard" className="flex items-center">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center mr-2" style={{ backgroundColor: 'var(--button-action)' }}>
+              <span className="text-white font-bold text-xl">🍀</span>
+            </div>
+            <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Peerly</h1>
+          </Link>
+
+          {/* Desktop Navigation Links */}
+          <div className="hidden lg:flex items-center space-x-1">
+            {[
+              { name: 'Browse', tab: 'browse' },
+              { name: 'AI Picks', tab: 'ai-picks' },
+              { name: 'My Gigs', tab: 'my-gigs' },
+              { name: 'Messages', tab: 'messages', badge: unreadCount },
+              { name: 'Orders', tab: 'orders' },
+              { name: 'My Purchases', tab: 'my-purchases' },
+              { name: 'Wallet', tab: 'wallet' },
+              { name: 'Search Users', tab: 'network' },
+              { name: 'Portfolio', tab: 'portfolio' },
+            ].map((item) => (
+              <button
+                key={item.tab}
+                onClick={() => navigate(`/dashboard?tab=${item.tab}`)}
+                className="relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                style={{
+                  backgroundColor: activeTab === item.name ? 'var(--bg-primary)' : 'transparent',
+                  color: activeTab === item.name ? 'var(--text-primary)' : 'var(--text-secondary)',
+                }}
+              >
+                {item.name}
+                {item.badge > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+
           {/* Mobile Menu Button */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden p-2 mr-2 rounded-md transition-all duration-200"
+            className="lg:hidden p-2 rounded-md transition-all duration-200"
             style={{ backgroundColor: 'var(--button-secondary)' }}
           >
             {sidebarOpen ? <X size={24} style={{ color: 'var(--text-primary)' }} /> : <Menu size={24} style={{ color: 'var(--text-primary)' }} />}
           </button>
-          <h1 className="text-xl md:text-3xl font-bold lg:pl-20" style={{ color: 'var(--text-primary)' }}>Peerly</h1>
         </div>
-        <div className="flex items-center space-x-2 md:space-x-4">
-          <div className="hidden sm:flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden" style={{ border: '2px solid var(--button-action)' }}>
+
+        {/* Right Side - Theme Toggle & Profile */}
+        <div className="flex items-center space-x-3">
+          <ThemeToggle />
+          
+          {/* Profile Dropdown */}
+          <div className="relative" ref={profileDropdownRef}>
+            <button
+              onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+              className="w-10 h-10 rounded-full overflow-hidden transition-all duration-200 hover:ring-2"
+              style={{ border: '2px solid var(--button-action)', ringColor: 'var(--button-action)' }}
+            >
               {user?.profilePicture ? (
                 <img 
                   src={user.profilePicture.startsWith('http') 
@@ -102,59 +173,23 @@ const DashboardPage = () => {
                   <User size={20} style={{ color: 'var(--text-secondary)' }} />
                 </div>
               )}
-            </div>
-            <div className="hidden md:block">
-              <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{user?.name || 'User'}</p>
-              <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{user?.university || 'State University'}</p>
-            </div>
-          </div>
-          <ThemeToggle />
-          <button 
-            onClick={logout}
-            className="px-3 md:px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-2"
-            style={{ 
-              backgroundColor: 'var(--button-secondary)', 
-              color: 'var(--text-secondary)' 
-            }}
-          >
-            <LogOut size={16} />
-            <span className="hidden sm:inline">Logout</span>
-          </button>
-        </div>
-      </div>
+            </button>
 
-      <div className="flex flex-1 overflow-hidden relative">
-        {/* Mobile Overlay */}
-        <AnimatePresence>
-          {sidebarOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-              onClick={() => setSidebarOpen(false)}
-            />
-          )}
-        </AnimatePresence>
-
-        {/* Sidebar */}
-        <AnimatePresence>
-          {(sidebarOpen || typeof window !== 'undefined') && (
-            <motion.div
-              initial={{ x: -320 }}
-              animate={{ x: sidebarOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth >= 1024 ? 0 : -320) }}
-              exit={{ x: -320 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className={`fixed lg:relative z-50 lg:z-auto h-[calc(100vh-73px)] lg:h-auto overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
-              style={{ backgroundColor: 'var(--bg-secondary)' }}
-            >
-              <div className="flex flex-col lg:flex-row">
-                <nav className="w-64 lg:w-48 p-4 border-r" style={{ borderColor: 'var(--border-color)' }}>
-                  {/* Mobile User Info */}
-                  <div className="lg:hidden mb-4 pb-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 rounded-full overflow-hidden" style={{ border: '2px solid var(--button-action)' }}>
+            {/* Profile Dropdown Menu */}
+            <AnimatePresence>
+              {profileDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-0 mt-2 w-80 rounded-xl shadow-2xl overflow-hidden z-50"
+                  style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}
+                >
+                  {/* Profile Header */}
+                  <div className="p-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-16 h-16 rounded-full overflow-hidden" style={{ border: '2px solid var(--button-action)' }}>
                         {user?.profilePicture ? (
                           <img 
                             src={user.profilePicture.startsWith('http') 
@@ -165,298 +200,342 @@ const DashboardPage = () => {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                            <User size={24} style={{ color: 'var(--text-secondary)' }} />
+                            <User size={32} style={{ color: 'var(--text-secondary)' }} />
                           </div>
                         )}
                       </div>
                       <div>
-                        <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{user?.name || 'User'}</p>
-                        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{user?.university || 'State University'}</p>
+                        <p className="font-semibold text-base" style={{ color: 'var(--text-primary)' }}>{user?.name || 'User'}</p>
+                        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{user?.university || 'State University'}</p>
                       </div>
                     </div>
-                  </div>
-                  <div className="space-y-1">
-                    {['Browse Gigs', 'AI Picks', 'My Gigs', 'Portfolio', 'Messages', 'Orders', 'My Purchases', 'Wallet', 'Network'].map(tabName => (
-                      <button
-                        key={tabName}
-                        onClick={() => {
-                          setActiveTab(tabName);
-                          setSidebarOpen(false);
-                        }}
-                        className={`w-full flex items-center justify-between space-x-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 ${activeTab === tabName ? 'font-medium glow-border-static' : 'hover:bg-[var(--button-secondary)]'}`}
-                        style={{
-                          backgroundColor: activeTab === tabName ? 'var(--bg-primary)' : 'transparent',
-                          color: activeTab === tabName ? 'var(--text-primary)' : 'var(--text-secondary)'
-                        }}
-                      >
-                        <div className="flex items-center space-x-3">
-                          {tabName === 'Browse Gigs' && <Home size={18} />}
-                          {tabName === 'AI Picks' && <Sparkles size={18} />}
-                          {tabName === 'My Gigs' && <Briefcase size={18} />}
-                          {tabName === 'Portfolio' && <BookOpen size={18} />}
-                          {tabName === 'Messages' && <MessageSquare size={18} />}
-                          {tabName === 'Orders' && <ShoppingCart size={18} />}
-                          {tabName === 'My Purchases' && <CreditCard size={18} />}
-                          {tabName === 'Wallet' && <CreditCard size={18} />}
-                          {tabName === 'Network' && <SearchIcon size={18} />}
-                          <span>{tabName}</span>
-                        </div>
-                        {tabName === 'Messages' && unreadCount > 0 && (
-                          <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                            {unreadCount}
-                          </span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                  {/* Mobile Profile Card */}
-                  <div className="lg:hidden mt-4 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                    <div className="glow-border rounded-lg p-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                      <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Your Profile</h3>
-                      <div className="flex items-center justify-center mb-3">
-                        <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                    
+                    {/* Rating & Stats */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center">
+                        <Star className="w-4 h-4 text-yellow-400 mr-1" fill="#facc15" />
                         <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>{profileStats.rating}/5.0</span>
                         <span className="text-xs ml-1" style={{ color: 'var(--text-secondary)' }}>({profileStats.totalGigs} gigs)</span>
                       </div>
-                      <div className="mb-4">
+                    </div>
+
+                    {/* Skills */}
+                    {user?.skills && user.skills.length > 0 && (
+                      <div>
                         <p className="text-xs mb-2 font-semibold" style={{ color: 'var(--text-secondary)' }}>Your Skills</p>
                         <div className="flex flex-wrap gap-1">
-                          {user?.skills && user.skills.slice(0, 3).map((skill, index) => (
+                          {user.skills.slice(0, 4).map((skill, index) => (
                             <span key={index} className="px-2 py-0.5 text-xs rounded-full" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
                               {skill}
                             </span>
                           ))}
+                          {user.skills.length > 4 && (
+                            <span className="px-2 py-0.5 text-xs rounded-full" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-secondary)' }}>
+                              +{user.skills.length - 4}
+                            </span>
+                          )}
                         </div>
                       </div>
-                      <Link to="/edit-profile" onClick={() => setSidebarOpen(false)}>
-                        <button className="w-full py-2 rounded-md text-sm font-medium transition-all duration-200" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
-                          Edit Profile
-                        </button>
-                      </Link>
-                    </div>
+                    )}
                   </div>
-                </nav>
-                {/* Profile & Stats Column - Desktop Only */}
-                <div className="hidden lg:block w-64 p-4 space-y-4">
-                  <div className="glow-border rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-                    <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Your Profile</h3>
-                    <div className="flex items-center justify-center mb-3">
-                      <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                      <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>{profileStats.rating}/5.0</span>
-                      <span className="text-xs ml-1" style={{ color: 'var(--text-secondary)' }}>({profileStats.totalGigs} gigs)</span>
-                    </div>
-                    <div className="mb-4">
-                      <p className="text-xs mb-2 font-semibold" style={{ color: 'var(--text-secondary)' }}>Your Skills</p>
-                      <div className="flex flex-wrap gap-1">
-                        {user?.skills && user.skills.slice(0, 3).map((skill, index) => (
-                          <span key={index} className="px-2 py-0.5 text-xs rounded-full" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <Link to="/edit-profile">
-                      <button className="w-full py-2 rounded-md text-sm font-medium transition-all duration-200" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
+
+                  {/* Profile Actions */}
+                  <div className="p-2">
+                    <Link to="/edit-profile" onClick={() => setProfileDropdownOpen(false)}>
+                      <button className="w-full px-4 py-2.5 rounded-lg text-sm font-medium text-left transition-all duration-200 hover:bg-[var(--bg-primary)]" style={{ color: 'var(--text-primary)' }}>
+                        <User size={16} className="inline mr-2" />
                         Edit Profile
                       </button>
                     </Link>
+                    <button
+                      onClick={() => {
+                        navigate('/dashboard?tab=wallet');
+                        setProfileDropdownOpen(false);
+                      }}
+                      className="w-full px-4 py-2.5 rounded-lg text-sm font-medium text-left transition-all duration-200 hover:bg-[var(--bg-primary)]"
+                      style={{ color: 'var(--text-primary)' }}
+                    >
+                      <CreditCard size={16} className="inline mr-2" />
+                      Wallet
+                    </button>
+                    <button 
+                      onClick={logout}
+                      className="w-full px-4 py-2.5 rounded-lg text-sm font-medium text-left transition-all duration-200 hover:bg-red-500/10"
+                      style={{ color: '#ef4444' }}
+                    >
+                      <LogOut size={16} className="inline mr-2" />
+                      Logout
+                    </button>
                   </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="flex-1 flex overflow-hidden border-none">
-          <div className="flex-1 flex flex-col overflow-hidden">
-            {(activeTab === 'Browse Gigs' || activeTab === 'AI Picks') && (
-              <div className="px-4 md:px-6 py-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-                <div className="flex-1 max-w-2xl animated-spin-border">
-                  <input
-                    type="text"
-                    placeholder="Search gigs, skills, or keywords..."
-                    className="w-full px-4 py-2.5 rounded-[10px] text-sm focus:outline-none"
-                    style={{
-                      backgroundColor: 'var(--bg-primary)',
-                      color: 'var(--text-primary)',
-                      border: 'none'
-                    }}
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Filter size={18} style={{ color: 'var(--text-secondary)' }} />
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="flex-1 sm:flex-none px-3 py-2.5 rounded-md text-sm focus:outline-none"
-                    style={{
-                      backgroundColor: 'var(--bg-primary)',
-                      color: 'var(--text-primary)',
-                      border: 'none'
-                    }}
-                  >
-                    {categories.map((category) => (
-                      <option key={category} value={category}>{category}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            )}
-            <div className="flex-1 overflow-auto p-4 md:p-6 border-none" style={{ backgroundColor: 'var(--bg-primary)' }}>
-              {activeTab === 'My Gigs' && <MyGigs />}
-              {activeTab === 'Portfolio' && <Portfolio />}
-              {activeTab === 'Messages' && <Messages />}
-              {activeTab === 'Orders' && <Orders />}
-              {activeTab === 'My Purchases' && <MyPurchases />}
-              {activeTab === 'Wallet' && <WalletPage />}
-              {activeTab === 'Network' && <NetworkPage />}
-              {activeTab === 'Browse Gigs' && (
-                <>
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Discover Gigs</h2>
-                      <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{gigs.length} services available</p>
-                    </div>
-                  </div>
-                  {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                      {[1, 2, 3, 4, 5, 6].map((i) => (
-                        <div key={i} className="rounded-2xl p-5 animate-pulse" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-                          <div className="h-32 rounded-xl mb-4" style={{ backgroundColor: 'var(--bg-accent)' }}></div>
-                          <div className="h-4 rounded w-3/4 mb-2" style={{ backgroundColor: 'var(--bg-accent)' }}></div>
-                          <div className="h-3 rounded w-1/2" style={{ backgroundColor: 'var(--bg-accent)' }}></div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                      {gigs.map((gig, index) => (
-                        <motion.div
-                          key={gig._id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.05 }}
-                          whileHover={{ y: -5 }}
-                          className="group rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer"
-                          style={{
-                            backgroundColor: 'var(--bg-secondary)',
-                            border: '1px solid var(--border-color)'
-                          }}
-                        >
-                          {/* Gradient Header Banner */}
-                          <div 
-                            className="h-28 relative overflow-hidden"
-                            style={{
-                              background: `linear-gradient(135deg, var(--glow-color-1) 0%, var(--glow-color-2) 50%, var(--glow-color-3) 100%)`
-                            }}
-                          >
-                            {/* Decorative Pattern */}
-                            <div className="absolute inset-0 opacity-30">
-                              <div className="absolute top-0 left-0 w-32 h-32 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%)', transform: 'translate(-50%, -50%)' }}></div>
-                              <div className="absolute bottom-0 right-0 w-40 h-40 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)', transform: 'translate(30%, 30%)' }}></div>
-                              <div className="absolute top-1/2 left-1/2 w-24 h-24 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)', transform: 'translate(-50%, -50%)' }}></div>
-                            </div>
-                            {/* Mesh Grid Pattern */}
-                            <div className="absolute inset-0 opacity-10" style={{ 
-                              backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-                              backgroundSize: '20px 20px'
-                            }}></div>
-                            {/* Price Badge */}
-                            <div className="absolute top-3 left-3 px-3 py-1.5 rounded-xl text-sm font-bold backdrop-blur-md shadow-lg" style={{ backgroundColor: 'rgba(0,0,0,0.5)', color: '#fff' }}>
-                              ${gig.price}
-                            </div>
-                            {/* Duration Badge */}
-                            <div className="absolute top-3 right-3 px-2.5 py-1 rounded-xl text-xs font-medium backdrop-blur-md flex items-center" style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: '#fff' }}>
-                              <Clock className="w-3 h-3 mr-1" />
-                              {gig.duration}
-                            </div>
-                            {/* Skills at bottom */}
-                            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-                              <div className="flex items-center space-x-1.5 flex-wrap gap-1">
-                                {gig.skills?.slice(0, 3).map((skill, idx) => (
-                                  <span key={idx} className="px-2.5 py-1 rounded-lg text-xs font-medium backdrop-blur-md shadow-sm" style={{ backgroundColor: 'rgba(0,0,0,0.4)', color: '#fff' }}>
-                                    {skill}
-                                  </span>
-                                ))}
-                              </div>
-                              {gig.skills?.length > 3 && (
-                                <span className="px-2 py-1 rounded-lg text-xs font-medium backdrop-blur-md" style={{ backgroundColor: 'rgba(255,255,255,0.25)', color: '#fff' }}>
-                                  +{gig.skills.length - 3}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="p-5">
-                            {/* User Info */}
-                            <div className="flex items-center space-x-3 mb-4">
-                              <div className="relative">
-                                {gig.user?.profilePicture ? (
-                                  <img
-                                    src={gig.user.profilePicture.startsWith('http')
-                                      ? gig.user.profilePicture
-                                      : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${gig.user.profilePicture}`}
-                                    alt={gig.user?.name || 'User'}
-                                    className="w-11 h-11 rounded-full object-cover"
-                                    style={{ border: '1.5px solid var(--glow-color-1)' }}
-                                  />
-                                ) : (
-                                  <div className="w-11 h-11 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--bg-accent)', border: '1.5px solid var(--glow-color-1)' }}>
-                                    <User size={20} style={{ color: 'var(--text-secondary)' }} />
-                                  </div>
-                                )}
-                                <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--button-action)' }}>
-                                  <Star className="w-2.5 h-2.5 text-white" fill="white" />
-                                </div>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="font-semibold text-sm truncate" style={{ color: 'var(--text-primary)' }}>{gig.user?.name || 'Anonymous'}</p>
-                                <div className="flex items-center space-x-2 text-xs" style={{ color: 'var(--text-secondary)' }}>
-                                  <div className="flex items-center">
-                                    <Star className="w-3 h-3 text-yellow-400 mr-0.5" fill="#facc15" />
-                                    <span className="font-medium">{gig.rating.toFixed(1)}</span>
-                                  </div>
-                                  <span>•</span>
-                                  <span>{gig.reviews} reviews</span>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Gig Title & Description */}
-                            <h3 className="font-bold text-base mb-2 line-clamp-2 group-hover:text-[var(--button-action)] transition-colors" style={{ color: 'var(--text-primary)' }}>
-                              {gig.title}
-                            </h3>
-                            <p className="text-sm line-clamp-2 mb-4" style={{ color: 'var(--text-secondary)' }}>
-                              {gig.description}
-                            </p>
-
-                            {/* Price & CTA */}
-                            <div className="flex items-center justify-between pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
-                              <div>
-                                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>Starting at</span>
-                                <p className="text-xl font-bold" style={{ color: 'var(--button-action)' }}>${gig.price}</p>
-                              </div>
-                              <button 
-                                className="px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:opacity-90 hover:scale-105"
-                                style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}
-                                onClick={() => {
-                                  setActiveTab('Messages');
-                                  navigate('/dashboard?tab=messages', { state: { recipientId: gig.user._id, recipientName: gig.user.name, recipientProfilePicture: gig.user.profilePicture } });
-                                }}
-                              >
-                                Contact
-                              </button>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  )}
-                </>
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
           </div>
         </div>
+      </nav>
+
+      {/* Mobile Sidebar */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+            <motion.div
+              initial={{ x: -320 }}
+              animate={{ x: 0 }}
+              exit={{ x: -320 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="fixed left-0 top-0 bottom-0 w-80 z-50 overflow-y-auto lg:hidden"
+              style={{ backgroundColor: 'var(--bg-secondary)', borderRight: '1px solid var(--border-color)' }}
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>Menu</h2>
+                  <button onClick={() => setSidebarOpen(false)} className="p-2">
+                    <X size={24} style={{ color: 'var(--text-primary)' }} />
+                  </button>
+                </div>
+                
+                {/* Mobile Navigation */}
+                <nav className="space-y-2">
+                  {[
+                    { name: 'Browse', tab: 'browse' },
+                    { name: 'AI Picks', tab: 'ai-picks' },
+                    { name: 'My Gigs', tab: 'my-gigs' },
+                    { name: 'Messages', tab: 'messages', badge: unreadCount },
+                    { name: 'Orders', tab: 'orders' },
+                    { name: 'My Purchases', tab: 'my-purchases' },
+                    { name: 'Wallet', tab: 'wallet' },
+                    { name: 'Search Users', tab: 'network' },
+                    { name: 'Portfolio', tab: 'portfolio' },
+                  ].map((item) => (
+                    <button
+                      key={item.tab}
+                      onClick={() => {
+                        navigate(`/dashboard?tab=${item.tab}`);
+                        setSidebarOpen(false);
+                      }}
+                      className="relative w-full px-4 py-3 rounded-lg text-left font-medium transition-all duration-200"
+                      style={{
+                        backgroundColor: activeTab === item.name ? 'var(--bg-primary)' : 'transparent',
+                        color: activeTab === item.name ? 'var(--text-primary)' : 'var(--text-secondary)',
+                      }}
+                    >
+                      {item.name}
+                      {item.badge > 0 && (
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                          {item.badge}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </nav>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
+          {/* Browse / AI Picks Page */}
+          {(activeTab === 'Browse' || activeTab === 'AI Picks') && (
+            <>
+              {/* Hero Section */}
+              <div className="mb-8 text-center">
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/30 tracking-tighter drop-shadow-2xl" style={{ lineHeight: '1.05' }}>
+                  Discover Talent.
+                </h1>
+                <p className="text-base md:text-lg" style={{ color: 'var(--text-secondary)' }}>
+                  Curated student freelance services. Connect with the next generation of industry leaders today.
+                </p>
+              </div>
+
+              {/* Search Bar */}
+              <div className="mb-6 max-w-3xl mx-auto">
+                <div className="animated-spin-border animated-spin-border-pill">
+                  <div className="relative z-10 flex items-center gap-3 px-4 py-2">
+                    <SearchIcon size={20} style={{ color: 'var(--text-secondary)' }} />
+                    <input
+                      type="text"
+                      placeholder="Search for 'App Design'..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="flex-1 min-w-0 py-2 text-sm focus:outline-none"
+                      style={{ color: 'var(--text-primary)' }}
+                    />
+                    <button
+                      type="button"
+                      className="shrink-0 px-6 py-2 rounded-full font-medium transition-all duration-200 hover:opacity-90"
+                      style={{ backgroundColor: '#10b981', color: '#fff' }}
+                    >
+                      Search
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Category Filter Pills */}
+              <div className="mb-8 flex flex-wrap gap-2 justify-center">
+                {categories.map((category) => {
+                  const IconComponent = category.icon;
+                  return (
+                    <button
+                      key={category.id}
+                      onClick={() => setSelectedCategory(category.id)}
+                      className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center space-x-2"
+                      style={{
+                        backgroundColor: selectedCategory === category.id ? 'var(--bg-secondary)' : 'var(--bg-secondary)',
+                        color: selectedCategory === category.id ? 'var(--text-primary)' : 'var(--text-secondary)',
+                        border: `1px solid ${selectedCategory === category.id ? 'var(--button-action)' : 'var(--border-color)'}`,
+                      }}
+                    >
+                      {IconComponent && <IconComponent size={16} />}
+                      <span>{category.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Gigs Grid */}
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                    <div key={i} className="rounded-xl p-5 animate-pulse" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                      <div className="h-32 rounded-lg mb-4" style={{ backgroundColor: 'var(--bg-accent)' }}></div>
+                      <div className="h-4 rounded w-3/4 mb-2" style={{ backgroundColor: 'var(--bg-accent)' }}></div>
+                      <div className="h-3 rounded w-1/2" style={{ backgroundColor: 'var(--bg-accent)' }}></div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                  {gigs.map((gig, index) => (
+                    <motion.div
+                      key={gig._id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.03 }}
+                      className="group rounded-xl overflow-hidden transition-all duration-300 cursor-pointer hover:shadow-xl"
+                      style={{
+                        backgroundColor: 'var(--bg-secondary)',
+                        border: '1px solid var(--border-color)'
+                      }}
+                    >
+                      {/* User Info Header */}
+                      <div className="p-4 flex items-center space-x-3">
+                        <div className="relative">
+                          {gig.user?.profilePicture ? (
+                            <img
+                              src={gig.user.profilePicture.startsWith('http')
+                                ? gig.user.profilePicture
+                                : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${gig.user.profilePicture}`}
+                              alt={gig.user?.name || 'User'}
+                              className="w-10 h-10 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--bg-accent)' }}>
+                              <User size={20} style={{ color: 'var(--text-secondary)' }} />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm truncate" style={{ color: 'var(--text-primary)' }}>
+                            {gig.user?.name || 'Anonymous'}
+                          </p>
+                          <p className="text-xs truncate" style={{ color: 'var(--text-secondary)' }}>
+                            {gig.user?.university || gig.category || 'DESIGN'}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>From</p>
+                          <p className="text-sm font-bold" style={{ color: '#10b981' }}>
+                            ${gig.price}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Gig Content */}
+                      <div className="px-4 pb-4">
+                        <h3 className="font-bold text-base mb-2 line-clamp-2 group-hover:text-[var(--button-action)] transition-colors" style={{ color: 'var(--text-primary)' }}>
+                          {gig.title}
+                        </h3>
+                        <p className="text-sm line-clamp-2 mb-3" style={{ color: 'var(--text-secondary)' }}>
+                          {gig.description}
+                        </p>
+
+                        {/* Skills Tags */}
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          {gig.skills?.slice(0, 3).map((skill, idx) => (
+                            <span
+                              key={idx}
+                              className="px-2 py-0.5 rounded text-xs font-medium"
+                              style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-secondary)' }}
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Rating & Reviews */}
+                        <div className="flex items-center space-x-2">
+                          <Star className="w-4 h-4 text-yellow-400" fill="#facc15" />
+                          <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
+                            {gig.rating?.toFixed(1) || '5.0'}
+                          </span>
+                          <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                            ({gig.reviews || 0})
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+
+              {/* Load More Button */}
+              {!loading && gigs.length > 0 && (
+                <div className="mt-12 text-center">
+                  <button
+                    className="px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:opacity-80"
+                    style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
+                  >
+                    Load More Gigs ↓
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Other Tabs */}
+          {activeTab === 'My Gigs' && <MyGigs />}
+          {activeTab === 'Portfolio' && <Portfolio />}
+          {activeTab === 'Messages' && <Messages />}
+          {activeTab === 'Orders' && <Orders />}
+          {activeTab === 'My Purchases' && <MyPurchases />}
+          {activeTab === 'Wallet' && <WalletPage />}
+          {activeTab === 'Search Users' && <NetworkPage />}
+        </div>
+
+        {/* Footer */}
+        <footer className="mt-16 py-8 border-t text-center" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}>
+          <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
+            © 2024 Peerly Inc. Student Freelance Marketplace.
+          </p>
+          <div className="flex justify-center space-x-6 text-sm">
+            <Link to="/terms" style={{ color: 'var(--text-secondary)' }} className="hover:underline">Terms</Link>
+            <Link to="/privacy" style={{ color: 'var(--text-secondary)' }} className="hover:underline">Privacy</Link>
+            <Link to="/support" style={{ color: 'var(--text-secondary)' }} className="hover:underline">Support</Link>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)' }} className="hover:underline">Instagram</a>
+          </div>
+        </footer>
       </div>
     </div>
   );

@@ -28,7 +28,16 @@ export const SocketProvider = ({ children }) => {
       console.log('Socket disconnected');
     });
 
+    // Heartbeat to check connection status
+    const heartbeatInterval = setInterval(() => {
+      if (socket.current && !socket.current.connected) {
+        console.log('Socket disconnected, attempting to reconnect...');
+        socket.current.connect();
+      }
+    }, 3000);
+
     return () => {
+      clearInterval(heartbeatInterval);
       newSocket.disconnect();
     };
   }, []);

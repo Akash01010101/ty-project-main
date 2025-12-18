@@ -9,7 +9,8 @@ export const getMessages = (conversationId) => {
 };
 
 export const sendMessage = (conversationId, data) => {
-  return post(`/conversations/${conversationId}/messages`, data);
+  const isFormData = data instanceof FormData;
+  return post(`/conversations/${conversationId}/messages`, data, isFormData);
 };
 
 export const createConversation = (data) => {

@@ -27,6 +27,13 @@ const combinedFilter = (req, file, cb) => {
       console.log('File validation failed for resume:', req.fileValidationError);
       return cb(null, false);
     }
+  } else if (file.fieldname === 'messageFile') {
+    // Allow images, PDFs, Word docs, text files
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp|pdf|doc|docx|txt)$/i)) {
+      req.fileValidationError = 'Invalid file type for message attachment!';
+      console.log('File validation failed for messageFile:', req.fileValidationError);
+      return cb(null, false);
+    }
   }
   console.log('File validation passed for:', file.fieldname);
   cb(null, true);

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Send, Search, MoreVertical, Paperclip, Smile, FileText, MessageCircle, Users, Clock } from 'lucide-react';
+import { ArrowLeft, Send, Search, MoreVertical, Paperclip, Smile, FileText, MessageCircle, Users, Clock, X } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import CreateOfferForm from './CreateOfferForm';
@@ -201,6 +201,71 @@ const ChatMessage = ({ message, isOwnMessage, sender, onAccept, onDecline, onPay
     return <OfferMessage offer={message.offer} isOwnMessage={isOwnMessage} onAccept={onAccept} onDecline={onDecline} onCancelOffer={onCancelOffer} />;
   }
 
+  if (message.type === 'file') {
+    const isImage = message.fileName?.match(/\.(jpg|jpeg|png|gif|webp)$/i) || message.fileUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i);
+    const fullUrl = message.fileUrl?.startsWith('http')
+      ? message.fileUrl
+      : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${message.fileUrl}`;
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className={`flex mb-4 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+      >
+        <div className={`max-w-[70%] ${isOwnMessage ? 'order-2' : 'order-1'}`}>
+          <div
+            className={`p-1 rounded-2xl ${isOwnMessage ? 'text-white' : 'backdrop-blur-lg'}`}
+            style={{
+              backgroundColor: isOwnMessage ? 'var(--button-primary)' : 'var(--bg-accent)',
+              color: isOwnMessage ? 'var(--bg-primary)' : 'var(--text-primary)'
+            }}
+          >
+            {isImage ? (
+              <div className="overflow-hidden rounded-lg">
+                <img
+                  src={fullUrl}
+                  alt={message.fileName || 'Image'}
+                  className="max-w-full h-auto object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                  style={{ maxHeight: '300px' }}
+                  onClick={() => window.open(fullUrl, '_blank')}
+                />
+              </div>
+            ) : (
+              <a
+                href={fullUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 p-2 hover:underline"
+                style={{ color: 'inherit' }}
+              >
+                <Paperclip className="w-4 h-4" />
+                <span className="truncate">{message.fileName || 'Attachment'}</span>
+              </a>
+            )}
+            {message.text && <p className="mt-2 text-sm px-2">{message.text}</p>}
+          </div>
+          <div className={`flex items-center mt-1 space-x-2 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
+            <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+              {message.createdAt ? new Date(message.createdAt).toLocaleTimeString() : ''}
+            </span>
+          </div>
+        </div>
+
+        {!isOwnMessage && sender && (
+          <img
+            src={getProfilePictureUrl(sender.profilePicture)}
+            alt={sender.name || 'User'}
+            className="w-8 h-8 rounded-full object-cover order-1 mr-2"
+            onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/32?text=User';
+            }}
+          />
+        )}
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -246,11 +311,13 @@ const Messages = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [newMessage, setNewMessage] = useState('');
   const [showOfferForm, setShowOfferForm] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const { user: currentUser, unreadCount, setUnreadCount, fetchUnreadCount } = useAuth();
   const location = useLocation();
   const socket = useSocket();
   const chatContainerRef = useRef(null);
   const selectedConversationRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     selectedConversationRef.current = selectedConversation;
@@ -367,18 +434,35 @@ const Messages = () => {
     }
   };
 
+  const handleFileSelect = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || !selectedConversation) return;
+    if ((!newMessage.trim() && !selectedFile) || !selectedConversation) return;
 
-    const message = {
-      text: newMessage,
-    };
+    let messagePayload;
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('messageFile', selectedFile);
+      if (newMessage.trim()) formData.append('text', newMessage);
+      messagePayload = formData;
+    } else {
+      messagePayload = { text: newMessage };
+    }
 
     const receiver = selectedConversation.participants.find(p => p._id !== currentUser._id);
 
     try {
-      const data = await sendMessage(selectedConversation._id, message);
+      const data = await sendMessage(selectedConversation._id, messagePayload);
       const newMessageForState = {
         ...data,
         sender: currentUser
@@ -391,8 +475,10 @@ const Messages = () => {
 
       setChatMessages([...chatMessages, newMessageForState]);
       setNewMessage('');
+      handleRemoveFile();
     } catch (error) {
       console.error('Error sending message:', error);
+      alert('Failed to send message: ' + (error.message || 'Unknown error'));
     }
   };
 
@@ -596,12 +682,59 @@ const Messages = () => {
             <button onClick={() => handleCancelOffer(chatMessages.find(msg => msg.type === 'payment-prompt').offer._id)} className="text-xs text-red-500 hover:underline">Cancel Offer</button>
           </div>
         ) : (
-          <form onSubmit={handleSendMessage} className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+          <form onSubmit={handleSendMessage} className="glow-border-static backdrop-blur-lg rounded-lg p-4 relative" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+
+            <AnimatePresence>
+              {selectedFile && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  animate={{ opacity: 1, height: 'auto', marginBottom: 12 }}
+                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  className="mx-1 p-2 rounded-xl border flex items-center justify-between shadow-sm overflow-hidden"
+                  style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}
+                >
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    {selectedFile.type.startsWith('image/') ? (
+                      <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
+                        <img
+                          src={URL.createObjectURL(selectedFile)}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="p-2 rounded-lg flex-shrink-0" style={{ backgroundColor: 'var(--bg-accent)' }}>
+                        <Paperclip className="w-6 h-6" style={{ color: 'var(--text-accent)' }} />
+                      </div>
+                    )}
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>{selectedFile.name}</span>
+                      <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{(selectedFile.size / 1024).toFixed(1)} KB</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveFile}
+                    className="p-1.5 rounded-full transition-colors hover:bg-red-500/10 text-red-500 flex-shrink-0 ml-2"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div className="flex items-end space-x-3">
               <button
                 type="button"
+                onClick={() => fileInputRef.current?.click()}
                 className="p-2 rounded-lg transition-colors hover:scale-105"
-                style={{ color: 'var(--text-secondary)' }}
+                style={{ color: selectedFile ? 'var(--text-accent)' : 'var(--text-secondary)' }}
                 onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--button-secondary)'}
                 onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
               >
@@ -642,7 +775,7 @@ const Messages = () => {
 
               <button
                 type="submit"
-                disabled={!newMessage.trim()}
+                disabled={!newMessage.trim() && !selectedFile}
                 className="p-2 rounded-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 style={{ backgroundColor: 'var(--button-primary)', color: 'var(--bg-primary)' }}
               >

@@ -17,6 +17,8 @@ const io = new Server(server, {
     origin: '*',
     methods: ['GET', 'POST'],
   },
+  pingTimeout: 60000,
+  pingInterval: 25000,
 });
 
 let onlineUsers = [];
@@ -73,8 +75,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve s
 
 // Database connection
 mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log('Connected to MongoDB'))
-.catch((error) => console.error('MongoDB connection error:', error));
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((error) => console.error('MongoDB connection error:', error));
 
 // Routes
 const authRouter = require('./routes/auth');

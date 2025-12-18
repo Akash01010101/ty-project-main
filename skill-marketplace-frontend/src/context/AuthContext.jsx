@@ -101,7 +101,7 @@ const authReducer = (state, action) => {
         ...state,
         isLoading: action.payload
       };
-      
+
     case AUTH_ACTIONS.SET_UNREAD_COUNT:
       return {
         ...state,
@@ -123,7 +123,22 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (socket.current && state.user?._id) {
-      socket.current.emit('addUser', state.user._id);
+      const handleReconnection = () => {
+        console.log('Socket connected/reconnected. Emitting addUser:', state.user._id);
+        socket.current.emit('addUser', state.user._id);
+      };
+
+      // Listen for connect event (covers initial connect and reconnections)
+      socket.current.on('connect', handleReconnection);
+
+      // If already connected when this effect runs (e.g. user logs in after socket connects)
+      if (socket.current.connected) {
+        handleReconnection();
+      }
+
+      return () => {
+        socket.current.off('connect', handleReconnection);
+      };
     }
   }, [socket, state.user]);
 
@@ -199,9 +214,9 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       dispatch({ type: AUTH_ACTIONS.LOGIN_START });
-      
+
       const response = await authAPI.login(credentials);
-      
+
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
 
@@ -228,9 +243,9 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       dispatch({ type: AUTH_ACTIONS.REGISTER_START });
-      
+
       const response = await authAPI.register(userData);
-      
+
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
 
@@ -262,7 +277,7 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async (profileData) => {
     try {
       const response = await authAPI.updateProfile(profileData);
-      
+
       dispatch({
         type: AUTH_ACTIONS.UPDATE_PROFILE,
         payload: {
@@ -302,11 +317,11 @@ export const AuthProvider = ({ children }) => {
 // Custom hook to use auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  
+
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
-  
+
   return context;
 };
 

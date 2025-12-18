@@ -21,7 +21,7 @@ const createConversation = async (req, res) => {
     const { recipientId } = req.body;
     console.log('createConversation: req.user.userId', req.user.userId);
     console.log('createConversation: recipientId', recipientId);
-    
+
     const participants = [req.user.userId, recipientId];
 
     let conversation = await Conversation.findOne({
@@ -62,7 +62,7 @@ const getMessages = async (req, res) => {
         }
       })
       .sort({ createdAt: 'asc' });
-      
+
     res.json(messages);
   } catch (error) {
     console.error('Error in getMessages:', error);
@@ -75,19 +75,31 @@ const sendMessage = async (req, res) => {
     const { text } = req.body;
     const conversationId = req.params.id;
 
-    const message = new Message({
+    const messageData = {
       conversationId,
       sender: req.user.userId,
-      text,
       readBy: [req.user.userId],
-    });
+    };
+
+    if (req.file) {
+      messageData.type = 'file';
+      messageData.fileUrl = req.file.path.replace(/\\/g, '/'); // Normalize path for Windows
+      messageData.fileName = req.file.originalname;
+      // Optional: attach text if provided with file
+      if (text) messageData.text = text;
+    } else {
+      messageData.type = 'text';
+      messageData.text = text;
+    }
+
+    const message = new Message(messageData);
 
     await message.save();
 
     const conversation = await Conversation.findById(conversationId);
     conversation.lastMessage = message._id;
     await conversation.save();
-    
+
     // TODO: Emit message via socket.io
 
     res.status(201).json(message);

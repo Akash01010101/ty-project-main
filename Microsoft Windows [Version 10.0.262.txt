@@ -1,0 +1,889 @@
+Microsoft Windows [Version 10.0.26200.7171]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\AKASH JHA>ssh -p 8022 u0_a182@192.168.0.117
+u0_a182@192.168.0.117's password:
+Permission denied, please try again.
+u0_a182@192.168.0.117's password:
+Permission denied, please try again.
+u0_a182@192.168.0.117's password:
+Welcome to Termux!
+
+Docs:       https://termux.dev/docs
+Donate:     https://termux.dev/donate
+Community:  https://termux.dev/community
+
+Working with packages:
+
+ - Search:  pkg search <query>
+ - Install: pkg install <package>
+ - Upgrade: pkg upgrade
+
+Subscribing to additional repositories:
+
+ - Root:    pkg install root-repo
+ - X11:     pkg install x11-repo
+
+For fixing any repository issues,
+try 'termux-change-repo' command.
+
+Report issues at https://termux.dev/issues
+~ $ ls
+Placfy
+~ $ rmdir Placdy
+rmdir: failed to remove 'Placdy': No such file or directory
+~ $ rmdir Placfy
+rmdir: failed to remove 'Placfy': Directory not empty
+~ $ rmdir Placfy rm -r Placfy
+rmdir: invalid option -- 'r'
+Try 'rmdir --help' for more information.
+~ $ rm -rf Placfy
+~ $ ls
+backend
+~ $ cd backend
+~/backend $ npm install
+
+added 180 packages, and audited 181 packages in 13s
+
+25 packages are looking for funding
+  run `npm fund` for details
+
+2 vulnerabilities (1 moderate, 1 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+~/backend $ pm2 start server.js --name backend
+[PM2][ERROR] Script not found: /data/data/com.termux/files/home/backend/server.js
+~/backend $ pm2 start index.js --name backend
+[PM2] Starting /data/data/com.termux/files/home/backend/index.js in fork_mode (1 instance)
+[PM2] Done.
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 0    │ online    │ 0%       │ 8.2mb    │
+│ 1  │ cloudflared-backe… │ fork     │ 0    │ online    │ 0%       │ 20.8mb   │
+│ 3  │ cloudflared-front… │ fork     │ 0    │ online    │ 0%       │ 21.2mb   │
+│ 0  │ placfy-backend     │ fork     │ 0    │ online    │ 0%       │ 4.4mb    │
+│ 2  │ placfy-frontend    │ fork     │ 0    │ online    │ 0%       │ 4.6mb    │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ pm2 delete 0
+[PM2] Applying action deleteProcessId on app [0](ids: [ '0' ])
+[PM2] [placfy-backend](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 0    │ online    │ 0%       │ 76.3mb   │
+│ 1  │ cloudflared-backe… │ fork     │ 0    │ online    │ 0%       │ 20.8mb   │
+│ 3  │ cloudflared-front… │ fork     │ 0    │ online    │ 0%       │ 21.3mb   │
+│ 2  │ placfy-frontend    │ fork     │ 0    │ online    │ 0%       │ 4.6mb    │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ pm2 delete 1
+[PM2] Applying action deleteProcessId on app [1](ids: [ '1' ])
+[PM2] [cloudflared-backend](1) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 0    │ online    │ 0%       │ 76.3mb   │
+│ 3  │ cloudflared-front… │ fork     │ 0    │ online    │ 0%       │ 21.3mb   │
+│ 2  │ placfy-frontend    │ fork     │ 0    │ online    │ 0%       │ 4.6mb    │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ pm2 delete 2
+[PM2] Applying action deleteProcessId on app [2](ids: [ '2' ])
+[PM2] [placfy-frontend](2) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 0    │ online    │ 0%       │ 76.9mb   │
+│ 3  │ cloudflared-front… │ fork     │ 0    │ online    │ 0%       │ 21.3mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ pm2 delete 3
+[PM2] Applying action deleteProcessId on app [3](ids: [ '3' ])
+[PM2] [cloudflared-frontend](3) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 0    │ online    │ 0%       │ 62.7mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ pm2 logs 4
+[TAILING] Tailing last 15 lines for [4] process (change the value with --lines option)
+/data/data/com.termux/files/home/.pm2/logs/backend-error.log last 15 lines:
+/data/data/com.termux/files/home/.pm2/logs/backend-out.log last 15 lines:
+4|backend  | Server is running at http://localhost:9000
+4|backend  | Connected to MongoDB
+
+^C
+~/backend $ pkg install wget -y
+No mirror or mirror group selected. You might want to select one by running 'termux-change-repo'
+Testing the available mirrors:
+[*] (10) https://packages-cf.termux.dev/apt/termux-main: ok
+[*] (1) https://linux.domainesia.com/applications/termux/termux-main: ok
+[*] (1) https://termux.niranjan.co/termux-main: ok
+[*] (1) https://mirror.bardia.tech/termux/termux-main: bad
+[*] (1) https://mirrors.saswata.cc/termux/termux-main: ok
+[*] (1) https://mirrors.ravidwivedi.in/termux/termux-main: ok
+[*] (1) https://mirror.textcord.xyz/termux/termux-main: bad
+[*] (1) https://mirrors.krnk.org/apt/termux/termux-main: ok
+[*] (1) https://mirror.rinarin.dev/termux/termux-main: ok
+[*] (1) https://mirror.jeonnam.school/termux/termux-main: ok
+[*] (1) https://mirrors.nguyenhoang.cloud/termux/termux-main: ok
+[*] (1) https://mirrors.cbrx.io/apt/termux/termux-main: ok
+[*] (1) https://tmx.xvx.my.id/apt/termux-main: ok
+[*] (1) https://mirror.albony.in/termux/termux-main: ok
+[*] (1) https://mirror.twds.com.tw/termux/termux-main: ok
+[*] (1) https://mirror.nevacloud.com/applications/termux/termux-main: ok
+[*] (1) https://mirror.meowsmp.net/termux/termux-main: ok
+[*] (1) https://mirror.freedif.org/termux/termux-main: ok
+[*] (1) https://mirrors.in.sahilister.net/termux/termux-main/: ok
+[*] (1) https://mirror.iscas.ac.cn/termux/apt/termux-main: ok
+[*] (1) https://mirrors.sau.edu.cn/termux/apt/termux-main: ok
+[*] (1) https://mirrors.sdu.edu.cn/termux/termux-main: ok
+[*] (1) https://mirrors.aliyun.com/termux/termux-main: ok
+[*] (1) https://mirrors.cernet.edu.cn/termux/apt/termux-main: ok
+[*] (1) https://mirrors.cqupt.edu.cn/termux/termux-main: bad
+[*] (1) https://mirrors.sustech.edu.cn/termux/apt/termux-main: ok
+[*] (1) https://mirrors.bfsu.edu.cn/termux/apt/termux-main: ok
+[*] (1) https://mirrors.pku.edu.cn/termux/termux-main/: ok
+[*] (1) https://mirrors.hust.edu.cn/termux/apt/termux-main: ok
+[*] (1) https://mirrors.tuna.tsinghua.edu.cn/termux/apt/termux-main: ok
+[*] (1) https://mirror.sjtu.edu.cn/termux/termux-main/: ok
+[*] (1) https://mirror.nyist.edu.cn/termux/apt/termux-main: ok
+[*] (1) https://mirrors.ustc.edu.cn/termux/termux-main: ok
+[*] (1) https://mirrors.zju.edu.cn/termux/apt/termux-main: ok
+[*] (1) https://mirrors.nju.edu.cn/termux/apt/termux-main: ok
+[*] (4) https://grimler.se/termux/termux-main: ok
+[*] (1) https://mirror.polido.pt/termux/termux-main: bad
+[*] (1) https://termux.3san.dev/termux/termux-main: ok
+[*] (1) https://mirrors.medzik.dev/termux/termux-main: ok
+[*] (1) https://mirror.accum.se/mirror/termux.dev/termux-main: ok
+[*] (1) https://mirror.mwt.me/termux/main: ok
+[*] (1) https://ro.mirror.flokinet.net/termux/termux-main: ok
+[*] (1) https://md.mirrors.hacktegic.com/termux/termux-main: bad
+[*] (1) https://is.mirror.flokinet.net/termux/termux-main: ok
+[*] (1) https://mirror.termux.dev/termux-main: bad
+[*] (1) https://termux.mentality.rip/termux-main: ok
+[*] (1) https://nl.mirror.flokinet.net/termux/termux-main: ok
+[*] (1) https://termux.cdn.lumito.net/termux-main: ok
+[*] (1) https://mirror.leitecastro.com/termux/termux-main: bad
+[*] (1) https://mirror.bouwhuis.network/termux/termux-main: ok
+[*] (1) https://termux.librehat.com/apt/termux-main: ok
+[*] (1) https://mirror.autkin.net/termux/termux-main: bad
+[*] (1) https://mirror.sunred.org/termux/termux-main: ok
+[*] (1) https://packages.termux.dev/apt/termux-main: ok
+[*] (1) https://ftp.agdsn.de/termux/termux-main: ok
+[*] (1) https://ftp.fau.de/termux/termux-main: ok
+[*] (1) https://mirrors.cfe.re/termux/termux-main: bad
+[*] (1) https://mirrors.de.sahilister.net/termux/termux-main: ok
+[*] (1) https://gnlug.org/pub/termux/termux-main: ok
+[*] (1) https://mirror.mwt.me/termux/main: ok
+[*] (1) https://mirror.quantum5.ca/termux/termux-main: ok
+[*] (1) https://mirrors.utermux.dev/termux/termux-main: ok
+[*] (1) https://plug-mirror.rcac.purdue.edu/termux/termux-main: ok
+[*] (1) https://mirror.vern.cc/termux/termux-main: ok
+[*] (1) https://dl.kcubeterm.com/termux-main: bad
+[*] (1) https://termux.danyael.xyz/termux/termux-main: ok
+[*] (1) https://mirror.csclub.uwaterloo.ca/termux/termux-main: ok
+[*] (1) https://mirror.fcix.net/termux/termux-main: bad
+[*] (1) https://mirrors.middlendian.com/termux/termux-main: ok
+[*] (1) https://repository.su/termux/termux-main/: ok
+[*] (1) http://mirror.mephi.ru/termux/termux-main: ok
+Picking mirror: (45) /data/data/com.termux/files/usr/etc/termux/mirrors/europe/termux.3san.dev
+Get:1 https://termux.3san.dev/termux/termux-main stable InRelease [14.0 kB]
+Get:2 https://termux.3san.dev/termux/termux-main stable/main arm Packages [519 kB]
+Fetched 533 kB in 7s (77.5 kB/s)
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+7 packages can be upgraded. Run 'apt list --upgradable' to see them.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+wget is already the newest version (1.25.0-1).
+0 upgraded, 0 newly installed, 0 to remove and 7 not upgraded.
+~/backend $ wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-arm.zip
+--2025-12-07 19:12:37--  https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-arm.zip
+Resolving bin.equinox.io (bin.equinox.io)... 75.2.60.68, 35.71.179.82, 13.248.244.96, ...
+Connecting to bin.equinox.io (bin.equinox.io)|75.2.60.68|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 13138794 (13M) [application/octet-stream]
+Saving to: ‘ngrok-stable-linux-arm.zip’
+
+ngrok-stable-linux-arm.zip    100%[=================================================>]  12.53M   174KB/s    in 2m 28s
+
+2025-12-07 19:15:06 (86.7 KB/s) - ‘ngrok-stable-linux-arm.zip’ saved [13138794/13138794]
+
+~/backend $ unzip ngrok-stable-linux-arm.zip
+Archive:  ngrok-stable-linux-arm.zip
+  inflating: ngrok
+~/backend $ chmod +x ngrok
+~/backend $ ngrok config add-authtoken 2m6eA6OxIbb44U42ESFgQ262Qdz_2B5bwyd3ULa2kyrvHKWLF
+No command ngrok found, did you mean:
+ Command nproc in package coreutils
+ Command grog in package groff
+ Command gron in package gron
+ Command zrok in package zrok
+~/backend $ ./ngrok config add-authtoken 2m6eA6OxIbb44U42ESFgQ262Qdz_2B5bwyd3ULa2kyrvHKWLF
+NAME:
+   ngrok - tunnel local ports to public URLs and inspect traffic
+
+DESCRIPTION:
+    ngrok exposes local networked services behinds NATs and firewalls to the
+    public internet over a secure tunnel. Share local websites, build/test
+    webhook consumers and self-host personal services.
+    Detailed help for each command is available with 'ngrok help <command>'.
+    Open http://localhost:4040 for ngrok's web interface to inspect traffic.
+
+EXAMPLES:
+    ngrok http 80                    # secure public URL for port 80 web server
+    ngrok http -subdomain=baz 8080   # port 8080 available at baz.ngrok.io
+    ngrok http foo.dev:80            # tunnel to host:port instead of localhost
+    ngrok http https://localhost     # expose a local https server
+    ngrok tcp 22                     # tunnel arbitrary TCP traffic to port 22
+    ngrok tls -hostname=foo.com 443  # TLS traffic for foo.com to port 443
+    ngrok start foo bar baz          # start tunnels from the configuration file
+
+VERSION:
+   2.3.41
+
+AUTHOR:
+  inconshreveable - <alan@ngrok.com>
+
+COMMANDS:
+   authtoken    save authtoken to configuration file
+   credits      prints author and licensing information
+   http         start an HTTP tunnel
+   start        start tunnels by name from the configuration file
+   tcp          start a TCP tunnel
+   tls          start a TLS tunnel
+   update       update ngrok to the latest version
+   version      print the version string
+   help         Shows a list of commands or help for one command
+
+ERROR:  Unrecognized command: config
+~/backend $ wget https://ngrok-agent.s3.amazonaws.com/ngrok-agents/ngrok-v3-stable-linux-arm64.tgz
+--2025-12-07 19:16:04--  https://ngrok-agent.s3.amazonaws.com/ngrok-agents/ngrok-v3-stable-linux-arm64.tgz
+Resolving ngrok-agent.s3.amazonaws.com (ngrok-agent.s3.amazonaws.com)... 52.218.250.219, 52.92.147.137, 52.92.240.33, ...
+Connecting to ngrok-agent.s3.amazonaws.com (ngrok-agent.s3.amazonaws.com)|52.218.250.219|:443... connected.
+HTTP request sent, awaiting response... 404 Not Found
+2025-12-07 19:16:05 ERROR 404: Not Found.
+
+~/backend $ wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-arm64.tgz
+--2025-12-07 19:16:33--  https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-arm64.tgz
+Resolving bin.equinox.io (bin.equinox.io)... 13.248.244.96, 75.2.60.68, 35.71.179.82, ...
+Connecting to bin.equinox.io (bin.equinox.io)|13.248.244.96|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 10292787 (9.8M) [application/octet-stream]
+Saving to: ‘ngrok-v3-stable-linux-arm64.tgz’
+
+ngrok-v3-stable-linux-arm64.t 100%[=================================================>]   9.82M   109KB/s    in 1m 43s
+
+2025-12-07 19:18:18 (97.6 KB/s) - ‘ngrok-v3-stable-linux-arm64.tgz’ saved [10292787/10292787]
+
+~/backend $ tar -xvzf ngrok-v3-stable-linux-arm64.tgz
+ngrok
+~/backend $ chmod +x ngrok
+~/backend $ mv ngrok $PREFIX/bin/
+~/backend $ ngrok version
+ngrok version 3.34.0
+~/backend $ ngrok config add-authtoken 2m6eA6OxIbb44U42ESFgQ262Qdz_2B5bwyd3ULa2kyrvHKWLF
+Authtoken saved to configuration file: /data/data/com.termux/files/home/.config/ngrok/ngrok.yml
+~/backend $ pm2 start "ngrok http 9000" --name ngrok
+[PM2] Starting /data/data/com.termux/files/usr/bin/bash in fork_mode (1 instance)
+[PM2] Done.
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 0    │ online    │ 0%       │ 66.7mb   │
+│ 5  │ ngrok              │ fork     │ 0    │ online    │ 0%       │ 2.4mb    │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ pm2 logs 5
+[TAILING] Tailing last 15 lines for [5] process (change the value with --lines option)
+/data/data/com.termux/files/home/.pm2/logs/ngrok-out.log last 15 lines:
+/data/data/com.termux/files/home/.pm2/logs/ngrok-error.log last 15 lines:
+curl -s http://127.0.0.1:4040/api/tunnels | grep -o '"public_url":"[^"]*' | cut -d'"' -f4^C
+~/backend $ ^C
+~/backend $ curl -s http://127.0.0.1:4040/api/tunnels | grep -o '"public_url":"[^"]*' | cut -d'"' -f4
+~/backend $ pm2 delete 5
+[PM2] Applying action deleteProcessId on app [5](ids: [ '5' ])
+[PM2] [ngrok](5) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 0    │ online    │ 0%       │ 66.5mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ pm2 start bash --name ngrok -- -c "ngrok http 3000"
+[PM2] Starting /data/data/com.termux/files/usr/bin/bash in fork_mode (1 instance)
+[PM2] Done.
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 0    │ online    │ 0%       │ 66.7mb   │
+│ 6  │ ngrok              │ fork     │ 0    │ online    │ 0%       │ 2.5mb    │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ pm2 logs 6
+[TAILING] Tailing last 15 lines for [6] process (change the value with --lines option)
+/data/data/com.termux/files/home/.pm2/logs/ngrok-out.log last 15 lines:
+/data/data/com.termux/files/home/.pm2/logs/ngrok-error.log last 15 lines:
+cat ~/.pm2/logs/ngrok-out.log^C
+~/backend $ ^C
+~/backend $ cat ~/.pm2/logs/ngrok-out.log
+~/backend $ cat ~/.pm2/logs/ngrok-error.log
+~/backend $ ^C
+~/backend $ pm2 delete 6
+[PM2] Applying action deleteProcessId on app [6](ids: [ '6' ])
+[PM2] [ngrok](6) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 0    │ online    │ 0%       │ 66.9mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ ngrok http 9000
+^C~/backend curl https://connect.ngrok-agent.comom
+curl: (35) TLS connect error: error:0A000460:SSL routines::tlsv1 alert no application protocol
+~/backend $ uname -m
+armv8l
+~/backend $ rm -f ~/backend/ngrok
+~/backend $ rm -f $PREFIX/bin/ngrok
+~/backend $ rm -f ngrok
+~/backend $ which ngrok
+The program which is not installed. Install it by executing:
+ pkg install which
+~/backend $ wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-arm.tgz
+--2025-12-07 19:25:46--  https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-arm.tgz
+Resolving bin.equinox.io (bin.equinox.io)... 99.83.220.108, 35.71.179.82, 13.248.244.96, ...
+Connecting to bin.equinox.io (bin.equinox.io)|99.83.220.108|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 10717703 (10M) [application/octet-stream]
+Saving to: ‘ngrok-v3-stable-linux-arm.tgz’
+
+ngrok-v3-stable-linux-arm.tgz 100%[=================================================>]  10.22M   491KB/s    in 15s
+
+2025-12-07 19:26:03 (684 KB/s) - ‘ngrok-v3-stable-linux-arm.tgz’ saved [10717703/10717703]
+
+~/backend $ tar -xvzf ngrok-v3-stable-linux-arm.tgz
+ngrok
+~/backend $ chmod +x ngrok
+~/backend $ mv ngrok $PREFIX/bin/
+~/backend $ ngrok version
+ngrok version 3.34.0
+~/backend $ ngrok http 9000
+~/backend $ curl -I https://google.com
+HTTP/2 301
+location: https://www.google.com/
+content-type: text/html; charset=UTF-8
+content-security-policy-report-only: object-src 'none';base-uri 'self';script-src 'nonce-rGjsUX7YT6H5xSbLlXw3Sg' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other-hp
+date: Sun, 07 Dec 2025 13:56:55 GMT
+expires: Tue, 06 Jan 2026 13:56:55 GMT
+cache-control: public, max-age=2592000
+server: gws
+content-length: 220
+x-xss-protection: 0
+x-frame-options: SAMEORIGIN
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+
+~/backend $ end $ mv ngrok $PREFIX/bin/
+~/backend $ ngrok version
+ngrok version 3.34.0
+~/backend $ ngrok http 9000
+~/backend $ curl -I https://google.com
+HTTP/2 301
+location: https://www.google.com/
+content-type: text/html; charset=UTF-8
+content-security-policy-report-only: object-src 'none';base-uri 'self';script-src 'nonce-rGjsUX7YT6H5xSbLlXw3Sg' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other-hp
+date: Sun, 07 Dec 2025 13:56:55 GMT
+expires: Tue, 06 Jan 2026 13:56:55 GMT
+cache-control: public, max-age=2592000
+server: gws
+content-length: 220
+x-xss-protection: 0
+x-frame-options: SAMEORIGIN
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+
+~/backend $
+No command end found, did you mean:
+ Command env in package coreutils
+ Command ed in package ed
+ Command lnd in package lnd
+ Command send in package mailutils
+ Command send in package nmh
+bash: /data/data/com.termux/files/home/backend: Is a directory
+ERROR:  unknown command "3.34.0" for "ngrok version"
+bash: /data/data/com.termux/files/home/backend: Is a directory
+bash: /data/data/com.termux/files/home/backend: Is a directory
+bash: HTTP/2: No such file or directory
+location:: command not found
+content-type:: command not found
+content-security-policy-report-only:: command not found
+base-uri: command not found
+script-src: command not found
+report-uri: command not found
+No command date: found, did you mean:
+ Command date in package coreutils
+expires:: command not found
+cache-control:: command not found
+No command server: found, did you mean:
+ Command aserver in package alsa-lib
+ Command sserver in package krb5
+ Command mserver5 in package monetdb
+content-length:: command not found
+x-xss-protection:: command not found
+x-frame-options:: command not found
+alt-svc:: command not found
+bash: /data/data/com.termux/files/home/backend: Is a directory
+~/backend $
+~/backend $
+~/backend $
+~/backend $
+~/backend $ ping -c 3 connect.ngrok-agent.com
+PING connect.ngrok-agent.com (13.232.27.141) 56(84) bytes of data.
+64 bytes from ec2-13-232-27-141.ap-south-1.compute.amazonaws.com (13.232.27.141): icmp_seq=1 ttl=119 time=4.02 ms
+64 bytes from ec2-13-232-27-141.ap-south-1.compute.amazonaws.com (13.232.27.141): icmp_seq=2 ttl=119 time=3.86 ms
+64 bytes from ec2-13-232-27-141.ap-south-1.compute.amazonaws.com (13.232.27.141): icmp_seq=3 ttl=119 time=524 ms
+
+--- connect.ngrok-agent.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+rtt min/avg/max/mdev = 3.869/177.624/524.985/245.621 ms
+~/backend $ curl -v https://connect.ngrok-agent.com
+* Host connect.ngrok-agent.com:443 was resolved.
+* IPv6: (none)
+* IPv4: 13.232.27.141
+*   Trying 13.232.27.141:443...
+* ALPN: curl offers h2,http/1.1
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* SSL Trust Anchors:
+*   CAfile: /data/data/com.termux/files/usr/etc/tls/cert.pem
+*   CApath: /data/data/com.termux/files/usr/etc/tls/certs
+* TLSv1.3 (IN), TLS alert, no application protocol (632):
+* TLS connect error: error:0A000460:SSL routines::tlsv1 alert no application protocol
+* closing connection #0
+curl: (35) TLS connect error: error:0A000460:SSL routines::tlsv1 alert no application protocol
+~/backend $ uname -m
+armv8l
+~/backend $ wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm.tgz
+--2025-12-07 19:31:15--  https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm.tgz
+Resolving github.com (github.com)... 20.207.73.82
+Connecting to github.com (github.com)|20.207.73.82|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://github.com/cloudflare/cloudflared/releases/download/2025.11.1/cloudflared-linux-arm.tgz [following]
+--2025-12-07 19:31:16--  https://github.com/cloudflare/cloudflared/releases/download/2025.11.1/cloudflared-linux-arm.tgz
+Reusing existing connection to github.com:443.
+HTTP request sent, awaiting response... 404 Not Found
+2025-12-07 19:31:16 ERROR 404: Not Found.
+
+~/backend $ cloudflared
+unable to find config file
+~/backend $ cloudflared  -v
+cloudflared version 2025.11.1 (built 2025.11.07-18:19 UTC)
+~/backend $ pm2 start bash --name cloudflared -- -c "cloudflared tunnel --url http://localhost:9000"
+[PM2] Starting /data/data/com.termux/files/usr/bin/bash in fork_mode (1 instance)
+[PM2] Done.
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 0    │ online    │ 0%       │ 68.9mb   │
+│ 7  │ cloudflared        │ fork     │ 0    │ online    │ 0%       │ 2.4mb    │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ pm2 logs 7
+[TAILING] Tailing last 15 lines for [7] process (change the value with --lines option)
+/data/data/com.termux/files/home/.pm2/logs/cloudflared-out.log last 15 lines:
+/data/data/com.termux/files/home/.pm2/logs/cloudflared-error.log last 15 lines:
+7|cloudfla | 2025-12-07T14:02:36Z INF Thank you for trying Cloudflare Tunnel. Doing so, without a Cloudflare account, is a quick way to experiment and try it out. However, be aware that these account-less Tunnels have no uptime guarantee, are subject to the Cloudflare Online Services Terms of Use (https://www.cloudflare.com/website-terms/), and Cloudflare reserves the right to investigate your use of Tunnels for violations of such terms. If you intend to use Tunnels in production you should use a pre-created named tunnel by following: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps
+7|cloudfla | 2025-12-07T14:02:36Z INF Requesting new quick Tunnel on trycloudflare.com...
+
+7|cloudflared  | 2025-12-07T14:02:42Z INF +--------------------------------------------------------------------------------------------+
+7|cloudflared  | 2025-12-07T14:02:42Z INF |  Your quick Tunnel has been created! Visit it at (it may take some time to be reachable):  |
+7|cloudflared  | 2025-12-07T14:02:42Z INF |  https://wanting-locally-singles-ronald.trycloudflare.com                                  |
+7|cloudflared  | 2025-12-07T14:02:42Z INF +--------------------------------------------------------------------------------------------+
+7|cloudflared  | 2025-12-07T14:02:42Z INF Cannot determine default configuration path. No file [config.yml config.yaml] in [~/.cloudflared ~/.cloudflare-warp ~/cloudflare-warp /etc/cloudflared /usr/local/etc/cloudflared]
+7|cloudflared  | 2025-12-07T14:02:42Z INF Version 2025.11.1 (Checksum c824c2b38b2cf5f41293679a123456a433107bde666ee3fb7a6b4c66fbc44a67)
+7|cloudflared  | 2025-12-07T14:02:42Z INF GOOS: android, GOVersion: go1.25.3, GoArch: arm
+7|cloudflared  | 2025-12-07T14:02:42Z INF Settings: map[ha-connections:1 protocol:quic url:http://localhost:9000]
+7|cloudflared  | 2025-12-07T14:02:42Z INF Autoupdate frequency is set autoupdateFreq=86400000
+7|cloudflared  | 2025-12-07T14:02:42Z INF Generated Connector ID: 14e1475d-cd47-47d6-961c-60c825696457
+7|cloudflared  | 2025-12-07T14:02:42Z INF Initial protocol quic
+7|cloudflared  | 2025-12-07T14:02:42Z INF ICMP proxy will use 192.168.0.117 as source for IPv4
+7|cloudflared  | 2025-12-07T14:02:42Z INF ICMP proxy will use fe80::1207:b6ff:fe6a:1465 in zone wlan0 as source for IPv6
+7|cloudflared  | 2025-12-07T14:02:42Z WRN ICMP proxy feature is disabled error="cannot create ICMPv4 proxy: bind: permission denied nor ICMPv6 proxy: bind: permission denied"
+7|cloudflared  | 2025-12-07T14:02:42Z ERR Cannot determine default origin certificate path. No file cert.pem in [~/.cloudflared ~/.cloudflare-warp ~/cloudflare-warp /etc/cloudflared /usr/local/etc/cloudflared]. You need to specify the origin certificate path by specifying the origincert option in the configuration file, or set TUNNEL_ORIGIN_CERT environment variable originCertPath=
+7|cloudflared  | 2025-12-07T14:02:42Z INF ICMP proxy will use 192.168.0.117 as source for IPv4
+7|cloudflared  | 2025-12-07T14:02:42Z INF ICMP proxy will use fe80::1207:b6ff:fe6a:1465 in zone wlan0 as source for IPv6
+7|cloudflared  | 2025-12-07T14:02:42Z INF Starting metrics server on 127.0.0.1:20241/metrics
+7|cloudflared  | 2025-12-07T14:02:42Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.107
+7|cloudflared  | 2025-12-07T14:02:43Z INF Registered tunnel connection connIndex=0 connection=1ac27c3d-75bb-4647-b19e-02d4f2da139f event=0 ip=198.41.192.107 location=bom06 protocol=quic
+pm2 start bash --name cloudflared -- -c "cloudflared tunnel --url http://localhost:9000"ls ~/frontend^C
+~/backend $ ^C
+~/backend $ ls ~/frontend
+assets  index.html  vite.svg
+~/backend $ npm install -g serve
+
+changed 86 packages in 10s
+
+25 packages are looking for funding
+  run `npm fund` for details
+~/backend $ pm2 start bash --name frontend -- -c "serve -s ~/frontend -l 8080"
+[PM2] Starting /data/data/com.termux/files/usr/bin/bash in fork_mode (1 instance)
+[PM2] Done.
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 0    │ online    │ 0%       │ 69.9mb   │
+│ 7  │ cloudflared        │ fork     │ 0    │ online    │ 0%       │ 32.4mb   │
+│ 8  │ frontend           │ fork     │ 0    │ online    │ 0%       │ 2.5mb    │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ pm2 logs 8
+[TAILING] Tailing last 15 lines for [8] process (change the value with --lines option)
+/data/data/com.termux/files/home/.pm2/logs/frontend-error.log last 15 lines:
+/data/data/com.termux/files/home/.pm2/logs/frontend-out.log last 15 lines:
+8|frontend |  INFO  Accepting connections at http://localhost:8080
+
+^C^C
+~/backend $ pm2 start bash --name cloudflared-frontend -- -c "cloudflared tunnel --url http://localhost:8080"
+[PM2] Starting /data/data/com.termux/files/usr/bin/bash in fork_mode (1 instance)
+[PM2] Done.
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 0    │ online    │ 0%       │ 69.8mb   │
+│ 7  │ cloudflared        │ fork     │ 0    │ online    │ 0%       │ 32.4mb   │
+│ 9  │ cloudflared-front… │ fork     │ 0    │ online    │ 0%       │ 2.5mb    │
+│ 8  │ frontend           │ fork     │ 0    │ online    │ 0%       │ 58.9mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ pm2 logs 9
+[TAILING] Tailing last 15 lines for [9] process (change the value with --lines option)
+/data/data/com.termux/files/home/.pm2/logs/cloudflared-frontend-out.log last 15 lines:
+/data/data/com.termux/files/home/.pm2/logs/cloudflared-frontend-error.log last 15 lines:
+9|cloudfla | 2025-12-07T14:08:11Z INF Version 2025.11.1 (Checksum c824c2b38b2cf5f41293679a123456a433107bde666ee3fb7a6b4c66fbc44a67)
+9|cloudfla | 2025-12-07T14:08:11Z INF GOOS: android, GOVersion: go1.25.3, GoArch: arm
+9|cloudfla | 2025-12-07T14:08:11Z INF Settings: map[ha-connections:1 protocol:quic url:http://localhost:8080]
+9|cloudfla | 2025-12-07T14:08:11Z INF Autoupdate frequency is set autoupdateFreq=86400000
+9|cloudfla | 2025-12-07T14:08:11Z INF Generated Connector ID: e53b7dee-2c25-4a3c-bf18-a7fbbc46026f
+9|cloudfla | 2025-12-07T14:08:11Z INF Initial protocol quic
+9|cloudfla | 2025-12-07T14:08:11Z INF ICMP proxy will use 192.168.0.117 as source for IPv4
+9|cloudfla | 2025-12-07T14:08:11Z INF ICMP proxy will use fe80::1207:b6ff:fe6a:1465 in zone wlan0 as source for IPv6
+9|cloudfla | 2025-12-07T14:08:11Z WRN ICMP proxy feature is disabled error="cannot create ICMPv4 proxy: bind: permission denied nor ICMPv6 proxy: bind: permission denied"
+9|cloudfla | 2025-12-07T14:08:11Z ERR Cannot determine default origin certificate path. No file cert.pem in [~/.cloudflared ~/.cloudflare-warp ~/cloudflare-warp /etc/cloudflared /usr/local/etc/cloudflared]. You need to specify the origin certificate path by specifying the origincert option in the configuration file, or set TUNNEL_ORIGIN_CERT environment variable originCertPath=
+9|cloudfla | 2025-12-07T14:08:11Z INF ICMP proxy will use 192.168.0.117 as source for IPv4
+9|cloudfla | 2025-12-07T14:08:11Z INF ICMP proxy will use fe80::1207:b6ff:fe6a:1465 in zone wlan0 as source for IPv6
+9|cloudfla | 2025-12-07T14:08:11Z INF Starting metrics server on 127.0.0.1:20242/metrics
+9|cloudfla | 2025-12-07T14:08:11Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.7
+9|cloudfla | 2025-12-07T14:08:12Z INF Registered tunnel connection connIndex=0 connection=e4ee4528-6c90-43a2-9f18-2c66c9275dee event=0 ip=198.41.192.7 location=bom03 protocol=quic
+
+^C^C
+~/backend $ cat /data/data/com.termux/files/home/.pm2/logs/cloudflared-frontend-out.log
+~/backend $ pm2 logs 9 --lines 100
+[TAILING] Tailing last 100 lines for [9] process (change the value with --lines option)
+/data/data/com.termux/files/home/.pm2/logs/cloudflared-frontend-out.log last 100 lines:
+/data/data/com.termux/files/home/.pm2/logs/cloudflared-frontend-error.log last 100 lines:
+9|cloudfla | 2025-12-07T13:35:46Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:35:46Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:35:46Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:06Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:06Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:06Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:06Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:06Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:30Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:30Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:30Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:30Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:30Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:48Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:48Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:48Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:48Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:36:48Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:02Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:02Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:02Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:02Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:02Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:02Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:02Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:02Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:02Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:02Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:16Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:16Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:16Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:16Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:16Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:32Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:32Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:32Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:32Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:32Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:39Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:39Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:39Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:39Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:39Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:50Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:50Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:50Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:50Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:50Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:58Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:58Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:58Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:58Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:37:58Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:22Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:22Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:22Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:22Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:22Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:36Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:36Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:36Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:36Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:36Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:44Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:44Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:44Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:44Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:44Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:50Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:50Z ERR failed to run the datagram handler error="context canceled" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:50Z ERR failed to serve tunnel connection error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:50Z ERR Serve tunnel error error="control stream encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:38:50Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.57
+9|cloudfla | 2025-12-07T13:39:14Z INF Initiating graceful shutdown due to signal interrupt ...
+9|cloudfla | 2025-12-07T13:39:14Z ERR Connection terminated connIndex=0
+9|cloudfla | 2025-12-07T13:39:14Z ERR no more connections active and exiting
+9|cloudfla | 2025-12-07T13:39:14Z INF Tunnel server stopped
+9|cloudfla | 2025-12-07T13:39:14Z INF Metrics server stopped
+9|cloudfla | 2025-12-07T14:08:07Z INF Thank you for trying Cloudflare Tunnel. Doing so, without a Cloudflare account, is a quick way to experiment and try it out. However, be aware that these account-less Tunnels have no uptime guarantee, are subject to the Cloudflare Online Services Terms of Use (https://www.cloudflare.com/website-terms/), and Cloudflare reserves the right to investigate your use of Tunnels for violations of such terms. If you intend to use Tunnels in production you should use a pre-created named tunnel by following: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps
+9|cloudfla | 2025-12-07T14:08:07Z INF Requesting new quick Tunnel on trycloudflare.com...
+9|cloudfla | 2025-12-07T14:08:11Z INF +--------------------------------------------------------------------------------------------+
+9|cloudfla | 2025-12-07T14:08:11Z INF |  Your quick Tunnel has been created! Visit it at (it may take some time to be reachable):  |
+9|cloudfla | 2025-12-07T14:08:11Z INF |  https://temperature-tagged-hawk-initiatives.trycloudflare.com                             |
+9|cloudfla | 2025-12-07T14:08:11Z INF +--------------------------------------------------------------------------------------------+
+9|cloudfla | 2025-12-07T14:08:11Z INF Cannot determine default configuration path. No file [config.yml config.yaml] in [~/.cloudflared ~/.cloudflare-warp ~/cloudflare-warp /etc/cloudflared /usr/local/etc/cloudflared]
+9|cloudfla | 2025-12-07T14:08:11Z INF Version 2025.11.1 (Checksum c824c2b38b2cf5f41293679a123456a433107bde666ee3fb7a6b4c66fbc44a67)
+9|cloudfla | 2025-12-07T14:08:11Z INF GOOS: android, GOVersion: go1.25.3, GoArch: arm
+9|cloudfla | 2025-12-07T14:08:11Z INF Settings: map[ha-connections:1 protocol:quic url:http://localhost:8080]
+9|cloudfla | 2025-12-07T14:08:11Z INF Autoupdate frequency is set autoupdateFreq=86400000
+9|cloudfla | 2025-12-07T14:08:11Z INF Generated Connector ID: e53b7dee-2c25-4a3c-bf18-a7fbbc46026f
+9|cloudfla | 2025-12-07T14:08:11Z INF Initial protocol quic
+9|cloudfla | 2025-12-07T14:08:11Z INF ICMP proxy will use 192.168.0.117 as source for IPv4
+9|cloudfla | 2025-12-07T14:08:11Z INF ICMP proxy will use fe80::1207:b6ff:fe6a:1465 in zone wlan0 as source for IPv6
+9|cloudfla | 2025-12-07T14:08:11Z WRN ICMP proxy feature is disabled error="cannot create ICMPv4 proxy: bind: permission denied nor ICMPv6 proxy: bind: permission denied"
+9|cloudfla | 2025-12-07T14:08:11Z ERR Cannot determine default origin certificate path. No file cert.pem in [~/.cloudflared ~/.cloudflare-warp ~/cloudflare-warp /etc/cloudflared /usr/local/etc/cloudflared]. You need to specify the origin certificate path by specifying the origincert option in the configuration file, or set TUNNEL_ORIGIN_CERT environment variable originCertPath=
+9|cloudfla | 2025-12-07T14:08:11Z INF ICMP proxy will use 192.168.0.117 as source for IPv4
+9|cloudfla | 2025-12-07T14:08:11Z INF ICMP proxy will use fe80::1207:b6ff:fe6a:1465 in zone wlan0 as source for IPv6
+9|cloudfla | 2025-12-07T14:08:11Z INF Starting metrics server on 127.0.0.1:20242/metrics
+9|cloudfla | 2025-12-07T14:08:11Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.7
+9|cloudfla | 2025-12-07T14:08:12Z INF Registered tunnel connection connIndex=0 connection=e4ee4528-6c90-43a2-9f18-2c66c9275dee event=0 ip=198.41.192.7 location=bom03 protocol=quic
+
+^C
+~/backend $ ^C
+~/backend $ cd ../
+~ $ ls
+backend  frontend
+~ $ rm -rf
+~ $ rm -rf frontnd
+~ $ ls
+backend  frontend
+~ $ rm -rf /data/data/com.termux/files/home/frontend/*
+~ $ l
+dNo command l found, did you mean:
+ Command ld in package binutils
+ Command ld in package binutils-is-llvm
+ Command c in package c-script
+ Command [ in package coreutils
+ Command lp in package cups
+ Command dl in package gatling
+ Command k in package kona
+ Command lf in package lf
+ Command pl in package libgnustep-base
+ Command lr in package lr
+ Command lx in package lux-cli
+ Command ml in package mercury
+ Command al in package mono
+ Command lz in package mtools
+ Command ol in package ol
+ Command o in package orbiton
+ Command q in package q-dns-client
+ Command sl in package sl
+ Command ul in package util-linux
+ Command X in package xorg-server from the x11-repo repository
+~ $ ls
+backend  frontend
+~ $ cd frontend
+~/frontend $ ls
+~/frontend $ ls
+dist
+~/frontend $ cd ../
+~ $ rm -rf /data/data/com.termux/files/home/frontend/*
+~ $ cd ~/frontend
+~/frontend $ rm -rf /data/data/com.termux/files/home/frontend/*
+~/frontend $ ls
+~/frontend $ ls
+assets  index.html  vite.svg
+~/frontend $ cd ../baackend
+bash: cd: ../baackend: No such file or directory
+~/frontend $ cd ../backend
+~/backend $ vi index.js
+The program vi is not installed. Install it by executing:
+ pkg install busybox
+or
+ pkg install neovim
+or
+ pkg install vim
+or
+ pkg install vim-gtk, after running pkg install x11-repo
+or
+ pkg install vis
+~/backend $ pkg install vim
+No mirror or mirror group selected. You might want to select one by running 'termux-change-repo'
+Checking availability of current mirror:
+[*] https://termux.3san.dev/termux/termux-main: ok
+Hit:1 https://termux.3san.dev/termux/termux-main stable InRelease
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+7 packages can be upgraded. Run 'apt list --upgradable' to see them.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following additional packages will be installed:
+  xxd
+Suggested packages:
+  libluajit perl python ruby tcl
+The following NEW packages will be installed:
+  vim xxd
+0 upgraded, 2 newly installed, 0 to remove and 7 not upgraded.
+Need to get 6463 kB of archives.
+After this operation, 33.7 MB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 https://termux.3san.dev/termux/termux-main stable/main arm vim arm 9.1.1950 [6450 kB]
+Get:2 https://termux.3san.dev/termux/termux-main stable/main arm xxd arm 9.1.1950 [12.5 kB]
+Fetched 6463 kB in 29s (222 kB/s)
+Selecting previously unselected package vim.
+(Reading database ... 8749 files and directories currently installed.)
+Preparing to unpack .../archives/vim_9.1.1950_arm.deb ...
+Unpacking vim (9.1.1950) ...
+Selecting previously unselected package xxd.
+Preparing to unpack .../archives/xxd_9.1.1950_arm.deb ...
+Unpacking xxd (9.1.1950) ...
+Setting up vim (9.1.1950) ...
+update-alternatives: using /data/data/com.termux/files/usr/libexec/vim/vim to provide /data/data/com.termux/files/usr/bin/vim (vim) in auto mode
+update-alternatives: warning: skipping updating manpage database as 'makewhatis' command from 'mandoc' package is not installed
+update-alternatives: using /data/data/com.termux/files/usr/libexec/vim/ex to provide /data/data/com.termux/files/usr/bin/ex (ex) in auto mode
+update-alternatives: warning: skipping updating manpage database as 'makewhatis' command from 'mandoc' package is not installed
+update-alternatives: using /data/data/com.termux/files/usr/libexec/vim/view to provide /data/data/com.termux/files/usr/bin/view (view) in auto mode
+update-alternatives: warning: skipping updating manpage database as 'makewhatis' command from 'mandoc' package is not installed
+update-alternatives: using /data/data/com.termux/files/usr/libexec/vim/vimdiff to provide /data/data/com.termux/files/usr/bin/vimdiff (vimdiff) in auto mode
+update-alternatives: warning: skipping updating manpage database as 'makewhatis' command from 'mandoc' package is not installed
+update-alternatives: using /data/data/com.termux/files/usr/libexec/vim/vimtutor to provide /data/data/com.termux/files/usr/bin/vimtutor (vimtutor) in auto mode
+update-alternatives: warning: skipping updating manpage database as 'makewhatis' command from 'mandoc' package is not installed
+update-alternatives: using /data/data/com.termux/files/usr/bin/vim to provide /data/data/com.termux/files/usr/bin/vi (vi) in auto mode
+update-alternatives: warning: skipping updating manpage database as 'makewhatis' command from 'mandoc' package is not installed
+Setting up xxd (9.1.1950) ...
+~/backend $ vim index.js
+~/backend $ pm2 list
+pm2 ┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 0    │ online    │ 0%       │ 73.0mb   │
+│ 7  │ cloudflared        │ fork     │ 0    │ online    │ 0%       │ 33.0mb   │
+│ 9  │ cloudflared-front… │ fork     │ 0    │ online    │ 0%       │ 32.0mb   │
+│ 8  │ frontend           │ fork     │ 0    │ online    │ 0%       │ 61.4mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ pm2 restart 4
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [4](ids: [ '4' ])
+[PM2] [backend](4) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 1    │ online    │ 0%       │ 8.4mb    │
+│ 7  │ cloudflared        │ fork     │ 0    │ online    │ 0%       │ 33.0mb   │
+│ 9  │ cloudflared-front… │ fork     │ 0    │ online    │ 0%       │ 32.0mb   │
+│ 8  │ frontend           │ fork     │ 0    │ online    │ 0%       │ 61.4mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ cloudflared login
+A browser window should have opened at the following URL:
+
+https://dash.cloudflare.com/argotunnel?aud=&callback=https%3A%2F%2Flogin.cloudflareaccess.org%2F7du43bJYpB8qWUGY2To6YV-pevom0iQXM0KbPhOZyTU%3D
+
+If the browser failed to open, please visit the URL above directly in your browser.
+2025-12-07T14:36:59Z INF Waiting for login...
+2025-12-07T14:37:53Z INF Waiting for login...
+2025-12-07T14:38:48Z INF Waiting for login...
+2025-12-07T14:39:42Z INF Waiting for login...
+2025-12-07T14:40:36Z INF Waiting for login...
+2025-12-07T14:41:30Z INF Waiting for login...
+2025-12-07T14:42:25Z INF Waiting for login...
+2025-12-07T14:43:19Z INF Waiting for login...
+2025-12-07T14:44:13Z INF Waiting for login...
+2025-12-07T14:45:07Z INF Waiting for login...
+2025-12-07T14:45:07Z ERR Failed to write the certificate.
+
+Your browser will download the certificate instead. You will have to manually
+copy it to the following path:
+
+/data/data/com.termux/files/home/.cloudflared/cert.pem
+ error="Failed to fetch resource"
+Failed to fetch resource
+~/backend $ cloudflared login
+A browser window should have opened at the following URL:
+
+https://dash.cloudflare.com/argotunnel?aud=&callback=https%3A%2F%2Flogin.cloudflareaccess.org%2FwkE20ClCvU1bJJHXpNXuJNfCenc5LD6CkhZAYnyi9nA%3D
+
+If the browser failed to open, please visit the URL above directly in your browser.
+2025-12-07T15:14:06Z INF You have successfully logged in.
+If you wish to copy your credentials to a server, they have been saved to:
+/data/data/com.termux/files/home/.cloudflared/cert.pem
+
+~/backend $ pm2 list
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 4  │ backend            │ fork     │ 1    │ online    │ 0%       │ 74.7mb   │
+│ 7  │ cloudflared        │ fork     │ 0    │ online    │ 0%       │ 33.3mb   │
+│ 9  │ cloudflared-front… │ fork     │ 0    │ online    │ 0%       │ 32.5mb   │
+│ 8  │ frontend           │ fork     │ 0    │ online    │ 0%       │ 61.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+~/backend $ pm2 logs 8
+[TAILING] Tailing last 15 lines for [8] process (change the value with --lines option)
+/data/data/com.termux/files/home/.pm2/logs/frontend-error.log last 15 lines:
+/data/data/com.termux/files/home/.pm2/logs/frontend-out.log last 15 lines:
+8|frontend |  HTTP  12/7/2025 7:57:03 PM 127.0.0.1 Returned 200 in 14 ms
+8|frontend |  HTTP  12/7/2025 7:57:04 PM 127.0.0.1 GET /assets/index-CxZ5w93N.js
+8|frontend |  HTTP  12/7/2025 7:57:04 PM 127.0.0.1 GET /assets/index-DKTW0NCI.css
+8|frontend |  HTTP  12/7/2025 7:57:04 PM 127.0.0.1 Returned 304 in 15 ms
+8|frontend |  HTTP  12/7/2025 7:57:04 PM 127.0.0.1 Returned 200 in 40 ms
+8|frontend |  HTTP  12/7/2025 7:57:08 PM 127.0.0.1 GET /
+8|frontend |  HTTP  12/7/2025 7:57:08 PM 127.0.0.1 Returned 200 in 4 ms
+8|frontend |  HTTP  12/7/2025 7:57:09 PM 127.0.0.1 GET /assets/index-CxZ5w93N.js
+8|frontend |  HTTP  12/7/2025 7:57:09 PM 127.0.0.1 GET /assets/index-DKTW0NCI.css
+8|frontend |  HTTP  12/7/2025 7:57:09 PM 127.0.0.1 Returned 304 in 12 ms
+8|frontend |  HTTP  12/7/2025 7:57:09 PM 127.0.0.1 Returned 304 in 11 ms
+8|frontend |  HTTP  12/7/2025 7:57:19 PM 127.0.0.1 GET /vite.svg
+8|frontend |  HTTP  12/7/2025 7:57:19 PM 127.0.0.1 Returned 304 in 11 ms
+8|frontend |  HTTP  12/7/2025 7:57:32 PM 127.0.0.1 GET /assets/index-DKTW0NCI.css
+8|frontend |  HTTP  12/7/2025 7:57:32 PM 127.0.0.1 Returned 304 in 7 ms
+
+^C
+~/backend $ ^C
+~/backend $ vim /data/data/com.termux/files/home/.pm2/logs/frontend-out.log
+~/backend $ ^C
+~/backend $ cloudflared tunnel create backend-tunnel
+Tunnel credentials written to /data/data/com.termux/files/home/.cloudflared/5a27a5b7-d501-4186-876e-0b7104a1bf9c.json. cloudflared chose this file based on where your origin certificate was found. Keep this file secret. To revoke these credentials, delete the tunnel.
+
+Created tunnel backend-tunnel with id 5a27a5b7-d501-4186-876e-0b7104a1bf9c
+~/backend $ cloudflared tunnel create frontend-tunnel
+Tunnel credentials written to /data/data/com.termux/files/home/.cloudflared/bb38b3ba-26ee-469f-a08c-ea537a48e5c5.json. cloudflared chose this file based on where your origin certificate was found. Keep this file secret. To revoke these credentials, delete the tunnel.
+
+Created tunnel frontend-tunnel with id bb38b3ba-26ee-469f-a08c-ea537a48e5c5
+~/backend $ cd ~/.cloudflared
+~/.cloudflared $ nano backend.yml
+~/.cloudflared $ cat /data/data/com.termux/files/home/.cloudflared/5a27a5b7-d501-4186-876e-0b7104a1bf9c.json
+{"AccountTag":"cf40f61a028026adec1a3fce60374ec3","TunnelSecret":"LFy78XV6XwAwyncx11DqImzp5jyaaXWloiUMkEj/Bu4=","TunnelID":"5a27a5b7-d501-4186-876e-0b7104a1bf9c","Endpoint":""}~/.cloudflared $ cat /data/data/com.termux/files/home/.cloudflared/5a27a5b7-d501-4
+~/.cloudflared $ nano backend.yml
+~/.cloudflared $
+~/.cloudflared $ nano backend.yml
+~/.cloudflared $ nano frontend.yml
+~/.cloudflared $

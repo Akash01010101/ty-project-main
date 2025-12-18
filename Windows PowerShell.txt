@@ -1,0 +1,195 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Install the latest PowerShell for new features and improvements! https://aka.ms/PSWindows
+
+PS C:\Users\AKASH JHA> scp -P 8022 -r "C:\Users\AKASH JHA\Desktop\ty-project-main\backend" u0_a182@192.168.0.117:~
+u0_a182@192.168.0.117's password:
+.env                                                                                  100%  253     0.3KB/s   00:00
+cleanup.js                                                                            100% 1409    86.0KB/s   00:00
+conversation.js                                                                       100% 3682   256.8KB/s   00:00
+gig.js                                                                                100% 1164   227.3KB/s   00:00
+offer.js                                                                              100% 3604     3.5KB/s   00:00
+order.js                                                                              100% 3995   557.3KB/s   00:00
+payment.js                                                                            100% 1846     1.8KB/s   00:00
+portfolio.js                                                                          100%  815     0.8KB/s   00:00
+transaction.js                                                                        100% 1067   173.7KB/s   00:00
+user.js                                                                               100%   12KB 914.5KB/s   00:00
+index.js                                                                              100% 3118   435.0KB/s   00:00
+auth.js                                                                               100% 2007     2.0KB/s   00:00
+upload.js                                                                             100% 1374   268.4KB/s   00:00
+Conversation.js                                                                       100%  408     0.4KB/s   00:00
+Gig.js                                                                                100%  652    39.8KB/s   00:00
+Message.js                                                                            100%  967     0.9KB/s   00:00
+Offer.js                                                                              100%  817     0.8KB/s   00:00
+Order.js                                                                              100%  841   117.3KB/s   00:00
+Portfolio.js                                                                          100%  476     0.5KB/s   00:00
+Review.js                                                                             100%  591    36.1KB/s   00:00
+Transaction.js                                                                        100%  532    74.2KB/s   00:00
+User.js                                                                               100% 2412   147.2KB/s   00:00
+package-lock.json                                                                     100%   77KB   1.3MB/s   00:00
+package.json                                                                          100%  562     0.6KB/s   00:00
+auth.js                                                                               100% 2448   217.3KB/s   00:00
+conversations.js                                                                      100%  623    32.0KB/s   00:00
+gigs.js                                                                               100%  357   174.3KB/s   00:00
+offers.js                                                                             100%  386     0.4KB/s   00:00
+orders.js                                                                             100%  529     0.5KB/s   00:00
+payments.js                                                                           100%  336    65.6KB/s   00:00
+portfolio.js                                                                          100%  327     0.3KB/s   00:00
+transactions.js                                                                       100%  402     0.4KB/s   00:00
+users.js                                                                              100%  497     0.5KB/s   00:00
+1764077024733-Screenshot 2025-11-07 150547.png                                        100%  340KB   3.7MB/s   00:00
+1764077024748-sellwell.pdf                                                            100% 1652KB   5.0MB/s   00:00
+1764148522733-test cat.png                                                            100%   89KB   2.3MB/s   00:00
+1764148688467-test cat.png                                                            100%   89KB   1.4MB/s   00:00
+1764148761573-test cat.png                                                            100%   89KB   2.7MB/s   00:00
+1764148951033-Screenshot 2025-11-26 145203.png                                        100%  100KB   1.7MB/s   00:00
+1764149006758-Screenshot 2025-11-26 145203.png                                        100%  100KB   2.5MB/s   00:00
+1764149149491-test cat.png                                                            100%   89KB   2.2MB/s   00:00
+1764149804064-Screenshot 2025-11-26 145203.png                                        100%  100KB   2.3MB/s   00:00
+1764149804067-awd fixed code for exam.pdf                                             100%  544KB   3.4MB/s   00:00
+1764514639827-Screenshot 2025-02-01 214917.png                                        100%   22KB   1.9MB/s   00:00
+1764514639835-sellwell2.pdf                                                           100%  627KB   4.4MB/s   00:00
+1764591472860-Screenshot_20240723-132809_Instagram.jpg                                100%  205KB   4.0MB/s   00:00
+1764591472866-kaivlya.pdf                                                             100%  489KB   4.2MB/s   00:00
+1764769623621-IMG_20240723_153140_207.jpg                                             100%   31KB   2.8MB/s   00:00
+1764769623623-sellwell2.pdf                                                           100%  627KB   4.5MB/s   00:00
+1764773325651-Screenshot 2025-02-04 140503.png                                        100%   28KB   1.1MB/s   00:00
+1764773338413-Screenshot 2025-02-04 140503.png                                        100%   28KB 924.8KB/s   00:00
+PS C:\Users\AKASH JHA> scp -P 8022 -r "C:\Users\AKASH JHA\Desktop\ty-project-main\skill-marketplace-frontend\dist" u0_a182@192.168.0.117:~/frontend
+u0_a182@192.168.0.117's password:
+index-BGnBOwA8.js                                                                     100%  580KB   3.7MB/s   00:00
+index-DKTW0NCI.css                                                                    100%   48KB   3.2MB/s   00:00
+index.html                                                                            100%  538   175.1KB/s   00:00
+vite.svg                                                                              100% 1497   365.5KB/s   00:00
+PS C:\Users\AKASH JHA> scp -P 8022 -r "C:\Users\AKASH JHA\Desktop\ty-project-main\skill-marketplace-frontend\dist" u0_a182@192.168.0.117:~/frontend
+u0_a182@192.168.0.117's password:
+index-BGnBOwA8.js                                                                     100%  580KB   5.7MB/s   00:00
+index-DKTW0NCI.css                                                                    100%   48KB   2.8MB/s   00:00
+index.html                                                                            100%  538   131.4KB/s   00:00
+vite.svg                                                                              100% 1497   292.4KB/s   00:00
+PS C:\Users\AKASH JHA> ls
+
+
+    Directory: C:\Users\AKASH JHA
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        15-12-2024     11:56                .anaconda
+d-----        13-08-2025     15:45                .android
+d-----        19-11-2025     15:37                .azure
+d-----        18-11-2025     15:37                .azure-devops
+d-----        07-12-2025     19:33                .bito
+d-----        11-08-2025     19:24                .bitowingman
+d-----        06-09-2025     13:49                .cache
+d-----        21-02-2025     14:15                .codeverse
+d-----        15-12-2024     11:57                .conda
+d-----        03-07-2025     15:36                .config
+d-----        15-12-2024     11:56                .continuum
+d-----        29-07-2025     15:35                .dotnet
+d-----        23-05-2025     17:15                .expo
+d-----        26-01-2025     16:54                .freeproxy
+d-----        26-11-2025     14:16                .gemini
+d-----        23-07-2025     16:22                .gradle
+d-----        23-02-2024     15:54                .idlerc
+d-----        08-11-2025     17:45                .ionic
+d-----        11-08-2025     19:32                .javacpp
+d-----        11-08-2025     19:27                .jdks
+d-----        31-07-2025     15:27                .Ld9VirtualBox
+d-----        21-02-2025     14:15                .marscode
+d-----        09-11-2025     20:26                .nbi
+d-----        14-07-2025     13:30                .nuget
+d-----        16-07-2025     22:21                .redhat
+d-----        29-07-2024     17:32                .rest-client
+d-----        24-07-2025     15:05                .skiko
+d-----        04-12-2025     15:04                .ssh
+d-----        09-07-2025     19:13                .templateengine
+d-----        14-07-2025     15:27                .th-client
+d-----        07-05-2025     15:27                .trae
+d-----        07-05-2025     15:27                .trae-aicc
+d-----        26-11-2025     19:16                .TurboVPN
+d-----        07-10-2024     11:28                .VirtualBox
+d-----        28-05-2025     00:46                .virtualenvs
+d-----        16-12-2023     01:58                .vscode
+d-----        23-10-2025     10:43                .wakatime
+d-----        26-12-2024     19:09                .wdm
+d-----        15-10-2025     15:03                .wyliodrinstudio
+d-----        14-07-2025     20:48                AndroidStudioProjects
+d-----        12-01-2024     20:26                ansel
+d-----        26-10-2025     16:53                Apps
+d-----        21-02-2025     20:16                article-app
+d-----        11-10-2024     00:25                bash
+d-----        17-12-2024     14:52                Cisco Packet Tracer 8.2.2
+d-r---        11-01-2025     14:38                Contacts
+d-r---        05-12-2025     14:30                Desktop
+d-r---        04-12-2025     12:00                Documents
+d-r---        06-12-2025     20:28                Downloads
+d-----        03-11-2025     21:38                emt flutter
+d-----        18-11-2025     16:46                EmTrack%20Reports%20UI_NewAuth
+d-r---        11-01-2025     14:38                Favorites
+d-----        14-08-2025     00:33                glow-budget
+d-----        24-10-2024     18:27                gsap-cc-starter
+d-r---        11-01-2025     14:38                Links
+d-----        03-06-2025     21:48                Local Sites
+d-----        10-08-2025     12:22                logs
+d-----        10-08-2025     12:46                MinGW
+d-----        12-02-2025     14:57                Muse Hub
+d-r---        11-01-2025     14:38                Music
+d-----        03-11-2025     11:51                New folder
+d-----        15-09-2024     00:58                nodeproject
+dar--l        23-09-2025     00:15                OneDrive
+d-r---        08-11-2025     19:09                Pictures
+d-----        03-11-2025     11:50                placfy
+d-----        26-05-2025     18:45                Postman
+d-----        18-08-2025     12:54                public
+d-r---        11-01-2025     14:38                Saved Games
+d-r---        11-01-2025     14:38                Searches
+d-----        10-08-2025     12:47                sellwell
+d-----        14-07-2025     13:26                source
+d-r---        07-12-2025     07:51                Videos
+d-----        19-04-2024     21:15                VirtualBox VMs
+d-----        15-10-2025     15:04                WyliodrinSTUDIO
+d-----        21-03-2025     13:14                XSStrike
+d-----        13-12-2024     21:36                Zero-attacker
+d-----        10-08-2025     12:46                Zomboid
+-a----        14-12-2024     19:52           6579 -1.14-windows.xml
+-a----        07-03-2025     22:36            145 .appletviewer
+-a----        28-11-2025     17:40            637 .bash_history
+-a----        29-07-2025     21:03             16 .emulator_console_auth_token
+-a----        18-12-2023     13:58             61 .gitconfig
+-a----        18-11-2025     16:44             20 .lesshst
+-a----        06-08-2024     19:48            167 .node_repl_history
+-a----        23-07-2025     13:01             22 .npmrc
+-a----        06-10-2024     18:13            184 .packettracer
+-a----        27-04-2025     19:50           1902 .viminfo
+-a----        21-02-2025     15:04             63 .wakatime.cfg
+-a----        11-10-2024     10:42          15960 a.out
+-a----        07-05-2025     23:49            350 akash01010101s-pr.txt
+-a----        18-10-2025     15:42           1196 bash.exe.stackdump
+-a----        26-11-2025     17:37           3418 ci-cd-key.txt
+-a----        03-11-2025     21:46     1032403037 flutter.zip
+-a----        24-10-2024     18:23             88 package-lock.json
+-a----        13-10-2024     23:29            410 py.py
+-a----        18-02-2025     16:44            558 xyz.html
+-a----        11-10-2024     11:27             10 xyz.txt
+
+
+PS C:\Users\AKASH JHA> scp -P 8022 -r "C:\Users\AKASH JHA\Desktop\ty-project-main\skill-marketplace-frontend\dist" u0_a182@192.168.0.117:~/frontendscp -P 8022 -r "C:\Users\AKASH JHA\Desktop\ty-project-main\skill-marketplace-frontend\dist\*" u0_a182@192.168.0.117:~/frontend
+u0_a182@192.168.0.117's password:
+C:\windows\System32\OpenSSH\scp.exe: Connection closed
+PS C:\Users\AKASH JHA> ^C
+PS C:\Users\AKASH JHA> ^C
+PS C:\Users\AKASH JHA> scp -P 8022 -r "C:\Users\AKASH JHA\Desktop\ty-project-main\skill-marketplace-frontend\dist\*" u0_a182@192.168.0.117:~/frontend
+u0_a182@192.168.0.117's password:
+index-BGnBOwA8.js                                                                     100%  580KB   5.3MB/s   00:00
+index-DKTW0NCI.css                                                                    100%   48KB   2.3MB/s   00:00
+index.html                                                                            100%  538   105.1KB/s   00:00
+vite.svg                                                                              100% 1497   292.4KB/s   00:00
+PS C:\Users\AKASH JHA> scp -P 8022 -r "C:\Users\AKASH JHA\Desktop\ty-project-main\skill-marketplace-frontend\dist\*" u0_a182@192.168.0.117:~/frontend
+u0_a182@192.168.0.117's password:
+index-CxZ5w93N.js                                                                     100%  581KB   3.3MB/s   00:00
+index-DKTW0NCI.css                                                                    100%   48KB   3.0MB/s   00:00
+index.html                                                                            100%  538     0.5KB/s   00:00
+vite.svg                                                                              100% 1497   146.2KB/s   00:00
+PS C:\Users\AKASH JHA>

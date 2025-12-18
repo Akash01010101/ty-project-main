@@ -71,6 +71,18 @@ app.use((req, res, next) => {
   req.getUser = getUser;
   next();
 });
+// Add CORS headers for uploads so PDF.js can fetch the files
+app.use('/uploads', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Range');
+  res.header('Access-Control-Expose-Headers', 'Content-Length, Content-Range');
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static uploaded files
 
 // Database connection

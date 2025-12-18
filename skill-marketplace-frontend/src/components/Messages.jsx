@@ -15,7 +15,7 @@ const PaymentPromptMessage = ({ order, onPay, currentUser }) => (
     animate={{ opacity: 1, y: 0 }}
     className={`flex justify-center my-4`}
   >
-    <div className="w-full max-w-md p-4 rounded-lg border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)'}}>
+    <div className="w-full max-w-md p-4 rounded-lg border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
       <div className="flex items-center mb-3">
         <FileText className="w-5 h-5 mr-3" style={{ color: 'var(--text-accent)' }} />
         <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
@@ -29,10 +29,10 @@ const PaymentPromptMessage = ({ order, onPay, currentUser }) => (
           <div className="text-xl font-bold" style={{ color: 'var(--text-accent)' }}>${order.price}</div>
         </div>
         {currentUser._id === order.buyer._id && order.status === 'pending' && (
-          <button onClick={() => onPay(order)} className="px-4 py-2 text-sm font-medium text-white rounded-lg" style={{backgroundColor: 'var(--button-primary)'}}>Pay Now</button>
+          <button onClick={() => onPay(order)} className="px-4 py-2 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: 'var(--button-primary)' }}>Pay Now</button>
         )}
         {order.status !== 'pending' && (
-          <span className="text-xs px-2 py-1 rounded-full" style={{backgroundColor: 'var(--button-secondary)', color: 'var(--text-secondary)'}}>{order.status}</span>
+          <span className="text-xs px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--button-secondary)', color: 'var(--text-secondary)' }}>{order.status}</span>
         )}
       </div>
     </div>
@@ -69,7 +69,7 @@ const MessageItem = ({ message, isSelected, onClick, currentUser, index }) => {
       onClick={() => onClick(message)}
       className="group flex items-center gap-3 md:gap-4 p-3 md:p-4 mx-3 my-2 rounded-2xl cursor-pointer transition-all duration-300"
       style={{
-        backgroundColor: isSelected 
+        backgroundColor: isSelected
           ? 'var(--button-action)'
           : 'var(--bg-primary)',
         borderLeft: isSelected ? '3px solid var(--button-action)' : '3px solid transparent',
@@ -82,37 +82,37 @@ const MessageItem = ({ message, isSelected, onClick, currentUser, index }) => {
           src={getProfilePictureUrl(otherParticipant.profilePicture)}
           alt={otherParticipant.name || 'User'}
           className="w-12 h-12 md:w-14 md:h-14 rounded-2xl object-cover transition-transform duration-300 group-hover:scale-105"
-          style={{ 
+          style={{
             border: isSelected ? '2px solid rgba(255,255,255,0.4)' : '2px solid var(--border-color)'
           }}
           onError={(e) => { e.target.src = 'https://via.placeholder.com/48?text=User'; }}
         />
-        <div 
+        <div
           className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2"
-          style={{ 
+          style={{
             backgroundColor: '#22c55e',
             borderColor: 'var(--bg-secondary)'
           }}
         />
       </div>
-      
+
       {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between gap-2 mb-1.5">
-          <h3 
+          <h3
             className="font-semibold text-sm md:text-[15px] truncate"
             style={{ color: isSelected ? '#fff' : 'var(--text-primary)' }}
           >
             {otherParticipant.name || 'Unknown User'}
           </h3>
-          <span 
+          <span
             className="text-[11px] flex-shrink-0 font-medium"
             style={{ color: isSelected ? 'rgba(255,255,255,0.7)' : 'var(--text-secondary)' }}
           >
             {formatTime(message.updatedAt)}
           </span>
         </div>
-        <p 
+        <p
           className="text-xs md:text-[13px] truncate leading-relaxed"
           style={{ color: isSelected ? 'rgba(255,255,255,0.85)' : 'var(--text-secondary)' }}
         >
@@ -121,7 +121,7 @@ const MessageItem = ({ message, isSelected, onClick, currentUser, index }) => {
       </div>
 
       {/* Arrow indicator */}
-      <div 
+      <div
         className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0"
         style={{ color: isSelected ? '#fff' : 'var(--text-secondary)' }}
       >
@@ -132,7 +132,7 @@ const MessageItem = ({ message, isSelected, onClick, currentUser, index }) => {
 
       {/* Unread indicator */}
       {message.unreadCount > 0 && !isSelected && (
-        <div 
+        <div
           className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0"
           style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}
         >
@@ -150,7 +150,7 @@ const OfferMessage = ({ offer, isOwnMessage, onAccept, onDecline }) => (
     animate={{ opacity: 1, y: 0 }}
     className={`flex justify-center my-4`}
   >
-    <div className="glow-border w-full max-w-md p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-secondary)'}}>
+    <div className="glow-border w-full max-w-md p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-secondary)' }}>
       <div className="flex items-center mb-3">
         <FileText className="w-5 h-5 mr-3" style={{ color: 'var(--text-accent)' }} />
         <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
@@ -169,12 +169,12 @@ const OfferMessage = ({ offer, isOwnMessage, onAccept, onDecline }) => (
         </div>
         {offer.status === 'pending' && !isOwnMessage && (
           <div className="flex space-x-2">
-            <button onClick={() => onDecline(offer._id)} className="px-3 py-1 text-xs font-medium rounded" style={{backgroundColor: 'var(--button-secondary)', color: 'var(--text-secondary)'}}>Decline</button>
-            <button onClick={() => onAccept(offer._id)} className="px-3 py-1 text-xs font-medium text-white rounded" style={{backgroundColor: 'var(--button-primary)'}}>Accept</button>
+            <button onClick={() => onDecline(offer._id)} className="px-3 py-1 text-xs font-medium rounded" style={{ backgroundColor: 'var(--button-secondary)', color: 'var(--text-secondary)' }}>Decline</button>
+            <button onClick={() => onAccept(offer._id)} className="px-3 py-1 text-xs font-medium text-white rounded" style={{ backgroundColor: 'var(--button-primary)' }}>Accept</button>
           </div>
         )}
         {offer.status !== 'pending' && (
-          <span className="text-xs px-2 py-1 rounded-full" style={{backgroundColor: 'var(--button-secondary)', color: 'var(--text-secondary)'}}>{offer.status}</span>
+          <span className="text-xs px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--button-secondary)', color: 'var(--text-secondary)' }}>{offer.status}</span>
         )}
       </div>
     </div>
@@ -209,11 +209,10 @@ const ChatMessage = ({ message, isOwnMessage, sender, onAccept, onDecline, onPay
     >
       <div className={`max-w-[70%] ${isOwnMessage ? 'order-2' : 'order-1'}`}>
         <div
-          className={`px-4 py-2 rounded-2xl ${
-            isOwnMessage
-              ? 'text-white'
-              : 'backdrop-blur-lg'
-          }`}
+          className={`px-4 py-2 rounded-2xl ${isOwnMessage
+            ? 'text-white'
+            : 'backdrop-blur-lg'
+            }`}
           style={{
             backgroundColor: isOwnMessage ? 'var(--button-primary)' : 'var(--bg-accent)',
             color: isOwnMessage ? 'var(--bg-primary)' : 'var(--text-primary)'
@@ -225,7 +224,7 @@ const ChatMessage = ({ message, isOwnMessage, sender, onAccept, onDecline, onPay
           <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{message.createdAt ? new Date(message.createdAt).toLocaleTimeString() : ''}</span>
         </div>
       </div>
-      
+
       {!isOwnMessage && sender && (
         <img
           src={getProfilePictureUrl(sender.profilePicture)}
@@ -262,7 +261,7 @@ const Messages = () => {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [chatMessages]);
-  
+
   useEffect(() => {
     if (!socket.current) return;
 
@@ -305,13 +304,13 @@ const Messages = () => {
     };
     fetchConversations();
   }, []);
-  
+
   useEffect(() => {
     const startConversation = async () => {
       if (location.state && location.state.recipientId) {
         try {
           const conversation = await createConversation({ recipientId: location.state.recipientId });
-          
+
           setConversations(prev => {
             const existing = prev.find(c => c._id === conversation._id);
             if (existing) {
@@ -347,7 +346,7 @@ const Messages = () => {
   const handleDeclineOffer = async (offerId) => {
     try {
       await updateOfferStatus(offerId, 'declined');
-      const newMessages = chatMessages.map(msg => 
+      const newMessages = chatMessages.map(msg =>
         msg.offer?._id === offerId ? { ...msg, offer: { ...msg.offer, status: 'declined' } } : msg
       );
       setChatMessages(newMessages);
@@ -375,7 +374,7 @@ const Messages = () => {
     const message = {
       text: newMessage,
     };
-    
+
     const receiver = selectedConversation.participants.find(p => p._id !== currentUser._id);
 
     try {
@@ -384,7 +383,7 @@ const Messages = () => {
         ...data,
         sender: currentUser
       };
-      
+
       socket.current.emit('sendMessage', {
         receiverId: receiver._id,
         message: newMessageForState,
@@ -427,7 +426,7 @@ const Messages = () => {
   const handleCancelOffer = async (offerId) => {
     try {
       await updateOfferStatus(offerId, 'cancelled');
-      const newMessages = chatMessages.map(msg => 
+      const newMessages = chatMessages.map(msg =>
         msg.offer?._id === offerId ? { ...msg, offer: { ...msg.offer, status: 'cancelled' } } : msg
       );
       setChatMessages(newMessages);
@@ -454,7 +453,7 @@ const Messages = () => {
         });
         alert('Payment successful');
         // Refresh messages or update order status in UI
-        const newMessages = chatMessages.map(msg => 
+        const newMessages = chatMessages.map(msg =>
           msg.order?._id === order._id ? { ...msg, order: { ...msg.order, status: 'in-progress' } } : msg
         );
         setChatMessages(newMessages);
@@ -487,7 +486,7 @@ const Messages = () => {
 
   if (selectedConversation) {
     const otherParticipant = selectedConversation.participants?.find(p => p._id !== currentUser?._id);
-    
+
     // Helper function to get profile picture URL
     const getProfilePictureUrl = (profilePicture) => {
       if (!profilePicture) {
@@ -514,7 +513,7 @@ const Messages = () => {
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
-              
+
               <div className="relative">
                 <img
                   src={getProfilePictureUrl(otherParticipant?.profilePicture)}
@@ -528,21 +527,21 @@ const Messages = () => {
                   <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 rounded-full" style={{ borderColor: 'var(--bg-primary)' }}></div>
                 )} */}
               </div>
-              
+
               <div>
                 <h3 className="font-medium" style={{ color: 'var(--text-primary)' }}>{otherParticipant?.name || 'Unknown User'}</h3>
                 {/* <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{selectedMessage.project}</p> */}
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-2">
-              <button 
+              <button
                 onClick={() => setShowOfferForm(!showOfferForm)}
                 className="px-3 py-1.5 text-xs font-medium rounded-md border transition-all duration-200" style={{ color: 'var(--text-accent)', borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}>
                 {showOfferForm ? 'Cancel Offer' : 'Create Offer'}
               </button>
-              <button 
-                className="p-2 rounded-lg transition-colors hover:scale-105" 
+              <button
+                className="p-2 rounded-lg transition-colors hover:scale-105"
                 style={{ color: 'var(--text-secondary)' }}
                 onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--button-secondary)'}
                 onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
@@ -556,7 +555,7 @@ const Messages = () => {
         {/* Create Offer Form */}
         <AnimatePresence>
           {showOfferForm && (
-            <CreateOfferForm 
+            <CreateOfferForm
               onSendOffer={handleSendOffer}
               onCancel={() => setShowOfferForm(false)}
             />
@@ -564,34 +563,36 @@ const Messages = () => {
         </AnimatePresence>
 
         {/* Chat Messages */}
-        <div ref={chatContainerRef} className="glow-border backdrop-blur-lg rounded-lg min-h-[400px] max-h-[500px] overflow-y-auto p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-          {chatMessages.length === 0 ? (
-            <div className="flex items-center justify-center h-full">
-              <p style={{ color: 'var(--text-secondary)' }}>No messages yet. Start the conversation!</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {chatMessages.map((message) => (
-                <ChatMessage
-                  key={message._id}
-                  message={message}
-                  isOwnMessage={message.sender._id === currentUser._id}
-                  sender={message.sender}
-                  onAccept={handleAcceptOffer}
-                  onDecline={handleDeclineOffer}
-                  onPay={handlePayment}
-                  onCancelOffer={handleCancelOffer}
-                  currentUser={currentUser}
-                />
-              ))}
-            </div>
-          )}
+        <div className="glow-border backdrop-blur-lg rounded-lg min-h-[400px] max-h-[500px] flex flex-col" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+          <div ref={chatContainerRef} className="overflow-y-auto p-4 flex-1 min-h-0">
+            {chatMessages.length === 0 ? (
+              <div className="flex items-center justify-center h-full">
+                <p style={{ color: 'var(--text-secondary)' }}>No messages yet. Start the conversation!</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {chatMessages.map((message) => (
+                  <ChatMessage
+                    key={message._id}
+                    message={message}
+                    isOwnMessage={message.sender._id === currentUser._id}
+                    sender={message.sender}
+                    onAccept={handleAcceptOffer}
+                    onDecline={handleDeclineOffer}
+                    onPay={handlePayment}
+                    onCancelOffer={handleCancelOffer}
+                    currentUser={currentUser}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Message Input */}
         {isChatDisabled ? (
-          <div className="text-center p-4 border-t" style={{borderColor: 'var(--border-color)'}}>
-            <p className="text-sm" style={{color: 'var(--text-secondary)'}}>Payment is pending. The chat is disabled.</p>
+          <div className="text-center p-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Payment is pending. The chat is disabled.</p>
             <button onClick={() => handleCancelOffer(chatMessages.find(msg => msg.type === 'payment-prompt').offer._id)} className="text-xs text-red-500 hover:underline">Cancel Offer</button>
           </div>
         ) : (
@@ -606,7 +607,7 @@ const Messages = () => {
               >
                 <Paperclip className="w-5 h-5" />
               </button>
-              
+
               <div className="flex-1">
                 <textarea
                   value={newMessage}
@@ -628,7 +629,7 @@ const Messages = () => {
                   }}
                 />
               </div>
-              
+
               <button
                 type="button"
                 className="p-2 rounded-lg transition-colors hover:scale-105"
@@ -638,7 +639,7 @@ const Messages = () => {
               >
                 <Smile className="w-5 h-5" />
               </button>
-              
+
               <button
                 type="submit"
                 disabled={!newMessage.trim()}
@@ -669,24 +670,26 @@ const Messages = () => {
         {[
           { label: 'Chats', labelFull: 'Conversations', value: conversations.length, icon: MessageCircle, accent: 'var(--button-action)' },
           { label: 'Active', labelFull: 'Active Chats', value: conversations.filter(c => c.lastMessage).length, icon: Users, accent: '#3b82f6' },
-          { label: 'Week', labelFull: 'This Week', value: conversations.filter(c => {
-            const d = new Date(c.updatedAt);
-            const now = new Date();
-            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-            return d > weekAgo;
-          }).length, icon: Clock, accent: '#a855f7' },
+          {
+            label: 'Week', labelFull: 'This Week', value: conversations.filter(c => {
+              const d = new Date(c.updatedAt);
+              const now = new Date();
+              const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+              return d > weekAgo;
+            }).length, icon: Clock, accent: '#a855f7'
+          },
         ].map((stat) => (
           <div
             key={stat.label}
             className="flex items-center gap-2 md:gap-3 p-3 md:p-4 rounded-2xl transition-all hover:scale-[1.02]"
-            style={{ 
+            style={{
               backgroundColor: 'var(--bg-secondary)',
               border: '1px solid var(--border-color)'
             }}
           >
-            <div 
+            <div
               className="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ 
+              style={{
                 backgroundColor: `${stat.accent}15`,
               }}
             >
@@ -723,15 +726,15 @@ const Messages = () => {
       </div>
 
       {/* Messages List */}
-      <div 
+      <div
         className="relative rounded-2xl min-h-[320px] md:min-h-[420px] overflow-hidden"
-        style={{ 
+        style={{
           backgroundColor: 'var(--bg-secondary)',
           border: '1px solid var(--border-color)',
         }}
       >
         {/* Header bar inside */}
-        <div 
+        <div
           className="px-4 py-3 flex items-center justify-between"
           style={{ borderBottom: '1px solid var(--border-color)' }}
         >
@@ -743,12 +746,12 @@ const Messages = () => {
           </div>
           <span className="text-[10px] uppercase tracking-wider font-medium" style={{ color: 'var(--text-secondary)' }}>Recent</span>
         </div>
-        
+
         {filteredConversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 md:py-20 px-4">
-            <div 
+            <div
               className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center mb-5"
-              style={{ 
+              style={{
                 backgroundColor: 'var(--bg-accent)',
                 border: '1px solid var(--border-color)'
               }}

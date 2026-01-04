@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Calendar, DollarSign, User, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { getMySales, completeBySeller } from '../api/orders';
 import { useAuth } from '../context/AuthContext';
+import ConfirmationModal from './ConfirmationModal';
 
 // Order Card Component
 const OrderCard = ({ order, onMarkAsComplete }) => {
@@ -104,6 +105,13 @@ const OrderCard = ({ order, onMarkAsComplete }) => {
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [confirmation, setConfirmation] = useState({
+    isOpen: false,
+    type: null,
+    data: null,
+    title: '',
+    message: ''
+  });
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -120,7 +128,24 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
-  const handleMarkAsComplete = useCallback(async (orderId) => {
+  const openConfirmation = (type, data, title, message) => {
+    setConfirmation({ isOpen: true, type, data, title, message });
+  };
+
+  const closeConfirmation = () => {
+    setConfirmation({ isOpen: false, type: null, data: null, title: '', message: '' });
+  };
+
+  const handleConfirmAction = async () => {
+    const { type, data } = confirmation;
+    closeConfirmation();
+
+    if (type === 'COMPLETE_ORDER') {
+      await processCompleteOrder(data);
+    }
+  };
+
+  const processCompleteOrder = async (orderId) => {
     try {
       const response = await completeBySeller(orderId);
       setOrders(prevOrders =>
@@ -130,15 +155,31 @@ const Orders = () => {
             : order
         )
       );
-      alert('Order marked as complete!');
     } catch (error) {
       console.error('Error completing order:', error);
       alert('Failed to complete order.');
     }
+  };
+
+  const handleMarkAsComplete = useCallback((orderId) => {
+    setConfirmation({
+      isOpen: true,
+      type: 'COMPLETE_ORDER',
+      data: orderId,
+      title: 'Complete Order?',
+      message: 'Are you sure you want to mark this order as complete? This action cannot be undone.'
+    });
   }, []);
 
   return (
     <div className="space-y-6">
+      <ConfirmationModal
+        isOpen={confirmation.isOpen}
+        onClose={closeConfirmation}
+        onConfirm={handleConfirmAction}
+        title={confirmation.title}
+        message={confirmation.message}
+      />
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
           <h2 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>My Sales</h2>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { jwtDecode } from 'jwt-decode'; // To decode JWT token
+import ConfirmationModal from '../components/ConfirmationModal';
 
 const GigDetailPage = () => {
   const [gig, setGig] = useState(null);
@@ -9,6 +10,13 @@ const GigDetailPage = () => {
   const [offerPrice, setOfferPrice] = useState('');
   const [offerMessage, setOfferMessage] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
+  const [confirmation, setConfirmation] = useState({
+    isOpen: false,
+    type: null,
+    data: null,
+    title: '',
+    message: ''
+  });
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -39,8 +47,25 @@ const GigDetailPage = () => {
     fetchGig();
   }, [id]);
 
-  const handleSendOffer = async (e) => {
-    e.preventDefault();
+  const openConfirmation = (type, data, title, message) => {
+    setConfirmation({ isOpen: true, type, data, title, message });
+  };
+
+  const closeConfirmation = () => {
+    setConfirmation({ isOpen: false, type: null, data: null, title: '', message: '' });
+  };
+
+  const handleConfirmAction = async () => {
+    const { type, data } = confirmation;
+    closeConfirmation();
+
+    if (type === 'SEND_OFFER') {
+      await processSendOffer(data);
+    }
+  };
+
+  const processSendOffer = async (e) => {
+    if (e && e.preventDefault) e.preventDefault(); // Handle if called directly with event or just wrapped
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/offers`, {
         method: 'POST',
@@ -69,6 +94,16 @@ const GigDetailPage = () => {
     }
   };
 
+  const handleSendOffer = (e) => {
+    e.preventDefault();
+    openConfirmation(
+      'SEND_OFFER',
+      null, // No data needed to pass as state holds it
+      'Send Offer?',
+      'Are you sure you want to send this offer? This will initiate the hiring process.'
+    );
+  };
+
   if (!gig) {
     return <div>Loading...</div>;
   }
@@ -77,6 +112,13 @@ const GigDetailPage = () => {
 
   return (
     <div className="min-h-screen p-4">
+      <ConfirmationModal
+        isOpen={confirmation.isOpen}
+        onClose={closeConfirmation}
+        onConfirm={handleConfirmAction}
+        title={confirmation.title}
+        message={confirmation.message}
+      />
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}

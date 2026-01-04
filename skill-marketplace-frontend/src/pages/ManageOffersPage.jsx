@@ -1,10 +1,18 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { jwtDecode } from 'jwt-decode';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 const ManageOffersPage = () => {
   const [offers, setOffers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [confirmation, setConfirmation] = useState({
+    isOpen: false,
+    type: null,
+    data: null,
+    title: '',
+    message: ''
+  });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -40,7 +48,24 @@ const ManageOffersPage = () => {
     }
   }, [currentUser]);
 
-  const handleAcceptOffer = async (offerId) => {
+  const openConfirmation = (type, data, title, message) => {
+    setConfirmation({ isOpen: true, type, data, title, message });
+  };
+
+  const closeConfirmation = () => {
+    setConfirmation({ isOpen: false, type: null, data: null, title: '', message: '' });
+  };
+
+  const handleConfirmAction = async () => {
+    const { type, data } = confirmation;
+    closeConfirmation();
+
+    if (type === 'ACCEPT_OFFER') {
+      await processAcceptOffer(data);
+    }
+  };
+
+  const processAcceptOffer = async (offerId) => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/offers/${offerId}/accept`, {
         method: 'PUT',
@@ -59,6 +84,15 @@ const ManageOffersPage = () => {
     } catch (error) {
       // console.error('Error accepting offer', error);
     }
+  };
+
+  const handleAcceptOffer = (offerId) => {
+    openConfirmation(
+      'ACCEPT_OFFER',
+      offerId,
+      'Accept Offer?',
+      'Are you sure you want to accept this offer? By accepting, you agree to the terms and conditions.'
+    );
   };
 
   const handleRejectOffer = async (offerId) => {
@@ -87,6 +121,13 @@ const ManageOffersPage = () => {
 
   return (
     <div className="min-h-screen p-4">
+      <ConfirmationModal
+        isOpen={confirmation.isOpen}
+        onClose={closeConfirmation}
+        onConfirm={handleConfirmAction}
+        title={confirmation.title}
+        message={confirmation.message}
+      />
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}

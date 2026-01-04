@@ -5,9 +5,10 @@ import { Star, MessageCircle, UserPlus, FileText } from 'lucide-react';
 import { getUserProfile, followUser } from '../api/users';
 import { useAuth } from '../context/AuthContext';
 import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
-// Define the worker src. We use the CDN to likely avoid vite transform issues.
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// Use the bundled worker for pdfjs-dist v5+
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const CanvasPdfViewer = ({ url }) => {
   const canvasRef = useRef(null);
@@ -206,9 +207,12 @@ const ProfilePage = () => {
         </div>
 
         {user.resume && (() => {
-          const resumeUrl = user.resume.startsWith('http')
+          const resumeUrlRaw = user.resume.startsWith('http')
             ? user.resume
             : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${user.resume.replace(/\\/g, '/')}`;
+          // `pdfjs` fetches the URL directly; filenames with spaces (or other chars)
+          // must be URI-encoded to avoid "Invalid URL" / failed fetch.
+          const resumeUrl = encodeURI(resumeUrlRaw);
           const isPdf = user.resume.toLowerCase().endsWith('.pdf');
           const isImage = user.resume.match(/\.(jpg|jpeg|png|webp)$/i);
           const fileName = user.resume.split(/[/\\]/).pop();

@@ -4,6 +4,7 @@ import { ArrowLeft, Send, Search, MoreVertical, Paperclip, Smile, FileText, Mess
 import { useLocation } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import CreateOfferForm from './CreateOfferForm';
+import ConfirmationModal from './ConfirmationModal';
 import { getConversations, getMessages, sendMessage, createConversation, markAsRead } from '../api/messages';
 import { createOffer, updateOfferStatus } from '../api/offers';
 import { createRazorpayOrder, verifyPayment } from '../api/payments';
@@ -312,6 +313,13 @@ const Messages = () => {
   const [newMessage, setNewMessage] = useState('');
   const [showOfferForm, setShowOfferForm] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [confirmation, setConfirmation] = useState({
+    isOpen: false,
+    type: null,
+    data: null,
+    title: '',
+    message: ''
+  });
   const { user: currentUser, unreadCount, setUnreadCount, fetchUnreadCount } = useAuth();
   const location = useLocation();
   const socket = useSocket();
@@ -400,7 +408,34 @@ const Messages = () => {
     startConversation();
   }, [location.state, fetchUnreadCount]);
 
-  const handleAcceptOffer = async (offerId) => {
+  const openConfirmation = (type, data, title, message) => {
+    setConfirmation({ isOpen: true, type, data, title, message });
+  };
+
+  const closeConfirmation = () => {
+    setConfirmation({ isOpen: false, type: null, data: null, title: '', message: '' });
+  };
+
+  const handleConfirmAction = async () => {
+    const { type, data } = confirmation;
+    closeConfirmation();
+
+    switch (type) {
+      case 'SEND_OFFER':
+        await processSendOffer(data);
+        break;
+      case 'ACCEPT_OFFER':
+        await processAcceptOffer(data);
+        break;
+      case 'PAYMENT':
+        await processPayment(data);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const processAcceptOffer = async (offerId) => {
     try {
       await updateOfferStatus(offerId, 'accepted');
       const data = await getMessages(selectedConversation._id);
@@ -408,6 +443,15 @@ const Messages = () => {
     } catch (error) {
       console.error('Error accepting offer:', error);
     }
+  };
+
+  const handleAcceptOffer = (offerId) => {
+    openConfirmation(
+      'ACCEPT_OFFER',
+      offerId,
+      'Accept Offer?',
+      'Are you sure you want to accept this offer? By accepting, you agree to the terms and conditions.'
+    );
   };
 
   const handleDeclineOffer = async (offerId) => {
@@ -482,7 +526,7 @@ const Messages = () => {
     }
   };
 
-  const handleSendOffer = async (offerData) => {
+  const processSendOffer = async (offerData) => {
     if (!selectedConversation) return;
 
     const receiver = selectedConversation.participants.find(p => p._id !== currentUser._id);
@@ -509,6 +553,15 @@ const Messages = () => {
     }
   };
 
+  const handleSendOffer = (offerData) => {
+    openConfirmation(
+      'SEND_OFFER',
+      offerData,
+      'Send Offer?',
+      'Are you sure you want to send this offer? Please ensure all details are correct.'
+    );
+  };
+
   const handleCancelOffer = async (offerId) => {
     try {
       await updateOfferStatus(offerId, 'cancelled');
@@ -521,7 +574,7 @@ const Messages = () => {
     }
   };
 
-  const handlePayment = async (order) => {
+  const processPayment = async (order) => {
     const razorpayOrder = await createRazorpayOrder({ orderId: order._id });
 
     const options = {
@@ -551,6 +604,15 @@ const Messages = () => {
     };
     const rzp1 = new window.Razorpay(options);
     rzp1.open();
+  };
+
+  const handlePayment = (order) => {
+    openConfirmation(
+      'PAYMENT',
+      order,
+      'Proceed to Payment?',
+      `Are you sure you want to proceed with the payment of $${order.price}?`
+    );
   };
 
   const handleSearchChange = useCallback((e) => {
@@ -586,6 +648,13 @@ const Messages = () => {
 
     return (
       <div className="space-y-6">
+        <ConfirmationModal
+          isOpen={confirmation.isOpen}
+          onClose={closeConfirmation}
+          onConfirm={handleConfirmAction}
+          title={confirmation.title}
+          message={confirmation.message}
+        />
         {/* Chat Header */}
         <div className="glow-border-static backdrop-blur-lg rounded-lg p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           <div className="flex items-center justify-between">

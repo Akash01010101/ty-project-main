@@ -272,10 +272,15 @@ const updateProfile = async (req, res) => {
 
 const searchUsers = async (req, res) => {
   const { q } = req.query;
+  const searchRegex = { $regex: q || '', $options: 'i' };
 
   try {
     const users = await User.find({
-      name: { $regex: q || '', $options: 'i' },
+      $or: [
+        { name: searchRegex },
+        { skills: searchRegex },
+        { university: searchRegex }
+      ]
     });
     res.json(users);
   } catch (error) {

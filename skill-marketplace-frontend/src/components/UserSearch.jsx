@@ -6,17 +6,30 @@ import { followUser } from '../api/users';
 import { useAuth } from '../context/AuthContext';
 import UserItem from './UserItem';
 
-const PREDEFINED_SKILLS = [
-  'Fullstack Dev',
-  'Java',
-  'Cybersecurity',
-  'Accountant',
-  'Designing'
-];
+// Define skill categories with keywords for matching
+const SKILL_CATEGORIES = {
+  'Tech': [
+    'software', 'develop', 'program', 'stack', 'web', 'app', 'mobile', 'frontend', 'backend',
+    'java', 'script', 'python', 'c++', 'c#', 'ruby', 'go', 'swift', 'kotlin', 'php', 'html', 'css', 
+    'react', 'angular', 'vue', 'node', 'express', 'django', 'spring', 'sql', 'mongo', 'data', 'ai', 'ml', 'robotics'
+  ],
+  'Cybersecurity': [
+    'cyber', 'security', 'hack', 'penetration', 'forensic', 'vulnerability', 'cryptography', 'infosec', 'network security', 'cissp', 'ceh'
+  ],
+  'Commerce': [
+    'account', 'commerce', 'finance', 'audit', 'tax', 'tally', 'excel', 'business', 'sales', 'marketing', 'econ', 'cpa', 'ca', 'gst'
+  ],
+  'DevOps': [
+    'devops', 'cloud', 'aws', 'azure', 'google cloud', 'gcp', 'docker', 'kubernetes', 'jenkins', 'ci/cd', 'linux', 'server', 'terraform', 'ansible', 'deployment'
+  ],
+  'Designing': [
+    'design', 'ui', 'ux', 'graphic', 'art', 'logo', 'adobe', 'figma', 'sketch', 'photoshop', 'illustrator', 'video', 'animation', 'edit', 'creative'
+  ]
+};
 
 const UserSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSkill, setSelectedSkill] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -71,12 +84,20 @@ const UserSearch = () => {
 
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
-      const matchesSkill = selectedSkill === 'all' || 
-        user.skills?.some(skill => skill.toLowerCase().includes(selectedSkill.toLowerCase()));
-      
-      return matchesSkill;
+      // Filter by Category
+      if (selectedCategory === 'All') return true;
+
+      const keywords = SKILL_CATEGORIES[selectedCategory];
+      if (!keywords) return true;
+
+      // Check if user has any skill matching the category keywords
+      return user.skills?.some(skill => {
+        if (!skill || typeof skill !== 'string') return false;
+        const lowerSkill = skill.toLowerCase();
+        return keywords.some(keyword => lowerSkill.includes(keyword));
+      });
     });
-  }, [users, selectedSkill]);
+  }, [users, selectedCategory]);
 
   return (
     <div className="space-y-6">
@@ -108,8 +129,8 @@ const UserSearch = () => {
           <div className="flex items-center space-x-2 h-full">
             <Filter className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
             <select
-              value={selectedSkill}
-              onChange={(e) => setSelectedSkill(e.target.value)}
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
               className="w-full md:w-48 px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-300 text-sm"
               style={{
                 backgroundColor: 'var(--bg-secondary)',
@@ -117,9 +138,9 @@ const UserSearch = () => {
                 color: 'var(--text-primary)'
               }}
             >
-              <option value="all">All Skills</option>
-              {PREDEFINED_SKILLS.map((skill) => (
-                <option key={skill} value={skill}>{skill}</option>
+              <option value="All">All Skills</option>
+              {Object.keys(SKILL_CATEGORIES).map((category) => (
+                <option key={category} value={category}>{category}</option>
               ))}
             </select>
           </div>
@@ -140,7 +161,7 @@ const UserSearch = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>No users found</h3>
               <p className="text-center" style={{ color: 'var(--text-secondary)' }}>
-                {searchTerm || selectedSkill !== 'all'
+                {searchTerm || selectedCategory !== 'All'
                   ? 'Try adjusting your search criteria or filters'
                   : 'No users available at the moment'
                 }

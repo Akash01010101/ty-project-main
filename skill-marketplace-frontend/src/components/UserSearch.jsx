@@ -6,6 +6,14 @@ import { followUser } from '../api/users';
 import { useAuth } from '../context/AuthContext';
 import UserItem from './UserItem';
 
+const PREDEFINED_SKILLS = [
+  'Fullstack Dev',
+  'Java',
+  'Cybersecurity',
+  'Accountant',
+  'Designing'
+];
+
 const UserSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSkill, setSelectedSkill] = useState('all');
@@ -61,15 +69,10 @@ const UserSearch = () => {
     }
   }, [currentUser._id]);
 
-  const skillOptions = useMemo(() => {
-    const allSkills = users.flatMap(user => user.skills || []);
-    return ['all', ...new Set(allSkills)];
-  }, [users]);
-
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
       const matchesSkill = selectedSkill === 'all' || 
-        user.skills.some(skill => skill.toLowerCase().includes(selectedSkill.toLowerCase()));
+        user.skills?.some(skill => skill.toLowerCase().includes(selectedSkill.toLowerCase()));
       
       return matchesSkill;
     });
@@ -84,8 +87,8 @@ const UserSearch = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="md:col-span-1 animated-spin-border">
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex-grow animated-spin-border">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
             <input
@@ -101,13 +104,13 @@ const UserSearch = () => {
             />
           </div>
         </div>
-        <div className="md:col-span-1">
-          <div className="flex items-center space-x-2">
+        <div className="w-full md:w-auto">
+          <div className="flex items-center space-x-2 h-full">
             <Filter className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
             <select
               value={selectedSkill}
               onChange={(e) => setSelectedSkill(e.target.value)}
-              className="w-full px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-300"
+              className="w-full md:w-48 px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-300 text-sm"
               style={{
                 backgroundColor: 'var(--bg-secondary)',
                 borderColor: 'var(--border-color)',
@@ -115,7 +118,7 @@ const UserSearch = () => {
               }}
             >
               <option value="all">All Skills</option>
-              {skillOptions.slice(1).map((skill) => (
+              {PREDEFINED_SKILLS.map((skill) => (
                 <option key={skill} value={skill}>{skill}</option>
               ))}
             </select>

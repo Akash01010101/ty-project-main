@@ -97,19 +97,19 @@ const DashboardPage = () => {
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-primary)', fontFamily: 'Circular, "Helvetica Neue", Helvetica, Arial, sans-serif' }}>
       {/* Header Navigation */}
-      <nav className="border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 grid grid-cols-[auto,1fr,auto] items-center gap-3">
+      <nav className="border-b sticky top-0 z-50" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4">
           {/* Left - Logo */}
           <Link to="/dashboard" className="flex items-center shrink-0">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center mr-2" style={{ backgroundColor: 'var(--button-action)' }}>
               <span className="text-white font-bold text-xl">🍀</span>
             </div>
-            <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Peerly</h1>
+            <h1 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>Peerly</h1>
           </Link>
 
-          {/* Center - Desktop Navigation Links (scrolls on smaller desktops/tablets) */}
-          <div className="hidden lg:flex justify-center min-w-0">
-            <div className="flex items-center space-x-1 overflow-x-auto whitespace-nowrap no-scrollbar min-w-0">
+          {/* Center - Desktop Navigation Links */}
+          <div className="hidden lg:flex flex-1 justify-center min-w-0">
+            <div className="flex items-center space-x-1 overflow-x-auto whitespace-nowrap no-scrollbar">
               {[
                 { name: 'Browse', tab: 'browse' },
                 { name: 'AI Picks', tab: 'ai-picks' },
@@ -124,7 +124,7 @@ const DashboardPage = () => {
                 <button
                   key={item.tab}
                   onClick={() => navigate(`/dashboard?tab=${item.tab}`)}
-                  className="relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                  className="relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200"
                   style={{
                     backgroundColor: activeTab === item.name ? 'var(--bg-primary)' : 'transparent',
                     color: activeTab === item.name ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -132,7 +132,7 @@ const DashboardPage = () => {
                 >
                   {item.name}
                   {item.badge > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">
                       {item.badge}
                     </span>
                   )}
@@ -142,7 +142,7 @@ const DashboardPage = () => {
           </div>
 
           {/* Right - Theme Toggle, Mobile Menu, Profile */}
-          <div className="flex items-center justify-end gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <ThemeToggle />
 
             <button
@@ -150,127 +150,127 @@ const DashboardPage = () => {
               className="lg:hidden p-2 rounded-md transition-all duration-200"
               style={{ backgroundColor: 'var(--button-secondary)' }}
             >
-              {sidebarOpen ? <X size={24} style={{ color: 'var(--text-primary)' }} /> : <Menu size={24} style={{ color: 'var(--text-primary)' }} />}
+              {sidebarOpen ? <X size={20} style={{ color: 'var(--text-primary)' }} /> : <Menu size={20} style={{ color: 'var(--text-primary)' }} />}
             </button>
           
-          {/* Profile Dropdown */}
-          <div className="relative" ref={profileDropdownRef}>
-            <button
-              onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-              className="w-10 h-10 rounded-full overflow-hidden transition-all duration-200 hover:ring-2"
-              style={{ border: '2px solid var(--button-action)', ringColor: 'var(--button-action)' }}
-            >
-              {user?.profilePicture ? (
-                <img 
-                  src={user.profilePicture.startsWith('http') 
-                    ? user.profilePicture 
-                    : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${user.profilePicture}`}
-                  alt="User Profile" 
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-                  <User size={20} style={{ color: 'var(--text-secondary)' }} />
-                </div>
-              )}
-            </button>
+            {/* Profile Dropdown */}
+            <div className="relative" ref={profileDropdownRef}>
+              <button
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className="w-9 h-9 rounded-full overflow-hidden transition-all duration-200 hover:ring-2 flex-shrink-0"
+                style={{ border: '2px solid var(--button-action)', ringColor: 'var(--button-action)' }}
+              >
+                {user?.profilePicture ? (
+                  <img 
+                    src={user.profilePicture.startsWith('http') 
+                      ? user.profilePicture 
+                      : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${user.profilePicture}`}
+                    alt="User Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                    <User size={18} style={{ color: 'var(--text-secondary)' }} />
+                  </div>
+                )}
+              </button>
 
-            {/* Profile Dropdown Menu */}
-            <AnimatePresence>
-              {profileDropdownOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute right-0 mt-2 w-80 rounded-xl shadow-2xl overflow-hidden z-50"
-                  style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}
-                >
-                  {/* Profile Header */}
-                  <div className="p-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
-                    <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-16 h-16 rounded-full overflow-hidden" style={{ border: '2px solid var(--button-action)' }}>
-                        {user?.profilePicture ? (
-                          <img 
-                            src={user.profilePicture.startsWith('http') 
-                              ? user.profilePicture 
-                              : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${user.profilePicture}`}
-                            alt="User Profile" 
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
-                            <User size={32} style={{ color: 'var(--text-secondary)' }} />
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-base" style={{ color: 'var(--text-primary)' }}>{user?.name || 'User'}</p>
-                        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{user?.university || 'State University'}</p>
-                      </div>
-                    </div>
-                    
-                    {/* Rating & Stats */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center">
-                        <Star className="w-4 h-4 text-yellow-400 mr-1" fill="#facc15" />
-                        <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>{profileStats.rating}/5.0</span>
-                        <span className="text-xs ml-1" style={{ color: 'var(--text-secondary)' }}>({profileStats.totalGigs} gigs)</span>
-                      </div>
-                    </div>
-
-                    {/* Skills */}
-                    {user?.skills && user.skills.length > 0 && (
-                      <div>
-                        <p className="text-xs mb-2 font-semibold" style={{ color: 'var(--text-secondary)' }}>Your Skills</p>
-                        <div className="flex flex-wrap gap-1">
-                          {user.skills.slice(0, 4).map((skill, index) => (
-                            <span key={index} className="px-2 py-0.5 text-xs rounded-full" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
-                              {skill}
-                            </span>
-                          ))}
-                          {user.skills.length > 4 && (
-                            <span className="px-2 py-0.5 text-xs rounded-full" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-secondary)' }}>
-                              +{user.skills.length - 4}
-                            </span>
+              {/* Profile Dropdown Menu */}
+              <AnimatePresence>
+                {profileDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 mt-2 w-80 rounded-xl shadow-2xl overflow-hidden z-50"
+                    style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}
+                  >
+                    {/* Profile Header */}
+                    <div className="p-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
+                      <div className="flex items-center space-x-3 mb-3">
+                        <div className="w-16 h-16 rounded-full overflow-hidden" style={{ border: '2px solid var(--button-action)' }}>
+                          {user?.profilePicture ? (
+                            <img 
+                              src={user.profilePicture.startsWith('http') 
+                                ? user.profilePicture 
+                                : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${user.profilePicture}`}
+                              alt="User Profile" 
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                              <User size={32} style={{ color: 'var(--text-secondary)' }} />
+                            </div>
                           )}
                         </div>
+                        <div>
+                          <p className="font-semibold text-base" style={{ color: 'var(--text-primary)' }}>{user?.name || 'User'}</p>
+                          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{user?.university || 'State University'}</p>
+                        </div>
                       </div>
-                    )}
-                  </div>
+                      
+                      {/* Rating & Stats */}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center">
+                          <Star className="w-4 h-4 text-yellow-400 mr-1" fill="#facc15" />
+                          <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>{profileStats.rating}/5.0</span>
+                          <span className="text-xs ml-1" style={{ color: 'var(--text-secondary)' }}>({profileStats.totalGigs} gigs)</span>
+                        </div>
+                      </div>
 
-                  {/* Profile Actions */}
-                  <div className="p-2">
-                    <Link to="/edit-profile" onClick={() => setProfileDropdownOpen(false)}>
-                      <button className="w-full px-4 py-2.5 rounded-lg text-sm font-medium text-left transition-all duration-200 hover:bg-[var(--bg-primary)]" style={{ color: 'var(--text-primary)' }}>
-                        <User size={16} className="inline mr-2" />
-                        Edit Profile
+                      {/* Skills */}
+                      {user?.skills && user.skills.length > 0 && (
+                        <div>
+                          <p className="text-xs mb-2 font-semibold" style={{ color: 'var(--text-secondary)' }}>Your Skills</p>
+                          <div className="flex flex-wrap gap-1">
+                            {user.skills.slice(0, 4).map((skill, index) => (
+                              <span key={index} className="px-2 py-0.5 text-xs rounded-full" style={{ backgroundColor: 'var(--button-action)', color: '#fff' }}>
+                                {skill}
+                              </span>
+                            ))}
+                            {user.skills.length > 4 && (
+                              <span className="px-2 py-0.5 text-xs rounded-full" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-secondary)' }}>
+                                +{user.skills.length - 4}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Profile Actions */}
+                    <div className="p-2">
+                      <Link to="/edit-profile" onClick={() => setProfileDropdownOpen(false)}>
+                        <button className="w-full px-4 py-2.5 rounded-lg text-sm font-medium text-left transition-all duration-200 hover:bg-[var(--bg-primary)]" style={{ color: 'var(--text-primary)' }}>
+                          <User size={16} className="inline mr-2" />
+                          Edit Profile
+                        </button>
+                      </Link>
+                      <button
+                        onClick={() => {
+                          navigate('/dashboard?tab=wallet');
+                          setProfileDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2.5 rounded-lg text-sm font-medium text-left transition-all duration-200 hover:bg-[var(--bg-primary)]"
+                        style={{ color: 'var(--text-primary)' }}
+                      >
+                        <CreditCard size={16} className="inline mr-2" />
+                        Wallet
                       </button>
-                    </Link>
-                    <button
-                      onClick={() => {
-                        navigate('/dashboard?tab=wallet');
-                        setProfileDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2.5 rounded-lg text-sm font-medium text-left transition-all duration-200 hover:bg-[var(--bg-primary)]"
-                      style={{ color: 'var(--text-primary)' }}
-                    >
-                      <CreditCard size={16} className="inline mr-2" />
-                      Wallet
-                    </button>
-                    <button 
-                      onClick={logout}
-                      className="w-full px-4 py-2.5 rounded-lg text-sm font-medium text-left transition-all duration-200 hover:bg-red-500/10"
-                      style={{ color: '#ef4444' }}
-                    >
-                      <LogOut size={16} className="inline mr-2" />
-                      Logout
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                      <button 
+                        onClick={logout}
+                        className="w-full px-4 py-2.5 rounded-lg text-sm font-medium text-left transition-all duration-200 hover:bg-red-500/10"
+                        style={{ color: '#ef4444' }}
+                      >
+                        <LogOut size={16} className="inline mr-2" />
+                        Logout
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </nav>

@@ -342,7 +342,10 @@ const Messages = () => {
 
     const getMessageHandler = (data) => {
       if (data.conversationId === selectedConversationRef.current?._id) {
-        setChatMessages((prev) => [...prev, data]);
+        setChatMessages((prev) => {
+          if (prev.some((msg) => msg._id === data._id)) return prev;
+          return [...prev, data];
+        });
       } else {
         fetchUnreadCount();
       }
@@ -356,7 +359,11 @@ const Messages = () => {
         sender: data.sender,
         createdAt: data.offer.createdAt,
       };
-      setChatMessages((prev) => [...prev, newOfferMessage]);
+      // Prevent duplicate offer messages
+      setChatMessages((prev) => {
+        if (prev.some((msg) => msg._id === newOfferMessage._id)) return prev;
+        return [...prev, newOfferMessage];
+      });
     };
 
     socket.current.on('getMessage', getMessageHandler);
@@ -517,7 +524,10 @@ const Messages = () => {
         message: newMessageForState,
       });
 
-      setChatMessages([...chatMessages, newMessageForState]);
+      setChatMessages((prev) => {
+        if (prev.some((msg) => msg._id === newMessageForState._id)) return prev;
+        return [...prev, newMessageForState];
+      });
       setNewMessage('');
       handleRemoveFile();
     } catch (error) {
@@ -546,7 +556,10 @@ const Messages = () => {
         message: message, // Send the whole message
       });
 
-      setChatMessages(prev => [...prev, message]);
+      setChatMessages((prev) => {
+        if (prev.some((msg) => msg._id === message._id)) return prev;
+        return [...prev, message];
+      });
       setShowOfferForm(false);
     } catch (error) {
       console.error('Error sending offer:', error);

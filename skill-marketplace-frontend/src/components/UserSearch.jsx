@@ -1,5 +1,4 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, User, MapPin, Star, MessageCircle, UserPlus, Filter } from 'lucide-react';
 import { searchUsers } from '../api/dashboard';
@@ -17,11 +16,6 @@ const UserSearch = () => {
 
   useEffect(() => {
     const handleSearch = async () => {
-      if (searchTerm.trim() === '') {
-        setUsers([]);
-        return;
-      }
-
       setLoading(true);
       try {
         const data = await searchUsers(searchTerm);
@@ -145,7 +139,7 @@ const UserSearch = () => {
               <p className="text-center" style={{ color: 'var(--text-secondary)' }}>
                 {searchTerm || selectedSkill !== 'all'
                   ? 'Try adjusting your search criteria or filters'
-                  : 'Start searching to find talented people to connect with'
+                  : 'No users available at the moment'
                 }
               </p>
             </div>

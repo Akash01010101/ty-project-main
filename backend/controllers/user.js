@@ -275,7 +275,7 @@ const searchUsers = async (req, res) => {
 
   try {
     const users = await User.find({
-      name: { $regex: q, $options: 'i' },
+      name: { $regex: q || '', $options: 'i' },
     });
     res.json(users);
   } catch (error) {

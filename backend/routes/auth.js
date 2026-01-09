@@ -1,14 +1,27 @@
+/**
+ * Authentication Routes
+ * 
+ * Handles user registration, login, and profile management.
+ * SECURITY: Rate limited and input validated.
+ * 
+ * @module routes/auth
+ */
+
 const express = require('express');
 const router = express.Router();
 const { register, login, getProfile, updateProfile, getQuickStats } = require('../controllers/user');
 const { authenticate } = require('../middleware/auth');
-
 const { uploadFields } = require('../middleware/upload');
+
+// Security middleware
+const { authLimiter, sensitiveLimiter, uploadLimiter } = require('../middleware/rateLimiter');
+const { validateRegister, validateLogin, validateProfileUpdate } = require('../middleware/validation');
 
 // @route   POST /api/auth/register
 // @desc    Register a new user
 // @access  Public
-router.post('/register', (req, res, next) => {
+// SECURITY: Rate limited to prevent mass account creation
+router.post('/register', authLimiter, (req, res, next) => {
   uploadFields.fields([{ name: 'profilePicture', maxCount: 1 }, { name: 'resume', maxCount: 1 }])(req, res, (err) => {
     if (err) {
       if (err.code === 'LIMIT_UNEXPECTED_FILE') {
@@ -21,12 +34,13 @@ router.post('/register', (req, res, next) => {
     }
     next();
   });
-}, register);
+}, validateRegister, register);
 
 // @route   POST /api/auth/login
 // @desc    Login user
 // @access  Public
-router.post('/login', login);
+// SECURITY: Strict rate limiting to prevent brute force attacks
+router.post('/login', authLimiter, validateLogin, login);
 
 // @route   GET /api/auth/profile
 // @desc    Get current user profile
@@ -36,7 +50,8 @@ router.get('/profile', authenticate, getProfile);
 // @route   PUT /api/auth/profile
 // @desc    Update user profile
 // @access  Private
-router.put('/profile', authenticate, (req, res, next) => {
+// SECURITY: Rate limited for sensitive operations, file upload limit
+router.put('/profile', authenticate, sensitiveLimiter, uploadLimiter, (req, res, next) => {
   uploadFields.fields([{ name: 'profilePicture', maxCount: 1 }, { name: 'resume', maxCount: 1 }])(req, res, (err) => {
     if (err) {
       if (err.code === 'LIMIT_UNEXPECTED_FILE') {
@@ -49,7 +64,7 @@ router.put('/profile', authenticate, (req, res, next) => {
     }
     next();
   });
-}, updateProfile);
+}, validateProfileUpdate, updateProfile);
 
 // @route   GET /api/auth/quick-stats
 // @desc    Get quick stats for the dashboard

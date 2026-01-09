@@ -1,8 +1,18 @@
+/**
+ * Skill Marketplace Backend Server
+ * 
+ * Main entry point with security hardening applied.
+ * Implements OWASP best practices for API security.
+ * 
+ * @module index
+ */
+
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const path = require('path');
+const helmet = require('helmet');
 
 // Load environment variables from root directory
 dotenv.config({ path: path.resolve(__dirname, './.env') });
@@ -10,11 +20,15 @@ dotenv.config({ path: path.resolve(__dirname, './.env') });
 const http = require('http');
 const { Server } = require('socket.io');
 
+// Import security middleware
+const { globalLimiter } = require('./middleware/rateLimiter');
+const { sanitizeAll, preventNoSQLInjection } = require('./middleware/sanitize');
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: process.env.CORS_ORIGIN || '*',
     methods: ['GET', 'POST'],
   },
   pingTimeout: 60000,
@@ -60,17 +74,62 @@ io.on('connection', (socket) => {
 
 const port = process.env.PORT || 9000;
 
-// Middleware
-app.use(cors({
-  origin: '*', // Allow all origins
-  credentials: true
+// =============================================================================
+// SECURITY MIDDLEWARE
+// Applied in order of importance for security
+// =============================================================================
+
+// Helmet: Sets various HTTP headers for security (OWASP recommendation)
+// Protects against XSS, clickjacking, MIME sniffing, etc.
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+  crossOriginResourcePolicy: { policy: "cross-origin" }, // Allow file serving
 }));
-app.use(express.json());
+
+// Global rate limiting - applies to all routes
+// Prevents DDoS and brute force attacks
+app.use(globalLimiter);
+
+// CORS configuration
+// SECURITY: In production, specify exact allowed origins
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 86400, // Cache preflight for 24 hours
+}));
+
+// Body parsing with size limits to prevent DoS
+app.use(express.json({ 
+  limit: '10kb' // Limit JSON body size (OWASP recommendation)
+}));
+app.use(express.urlencoded({ 
+  extended: true, 
+  limit: '10kb' 
+}));
+
+// Input sanitization - cleans all incoming data
+// Prevents XSS and injection attacks
+app.use(sanitizeAll());
+
+// Prevent NoSQL injection attacks
+app.use(preventNoSQLInjection);
+
+// Attach socket.io instance to requests
 app.use((req, res, next) => {
   req.io = io;
   req.getUser = getUser;
   next();
 });
+
 // Add CORS headers for uploads so PDF.js can fetch the files
 app.use('/uploads', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');

@@ -123,22 +123,22 @@ const SignUpPage = () => {
   ];
 
   return (
-    <div className="min-h-screen py-8 px-4" style={{ backgroundColor: '#0a0e1a', fontFamily: 'Circular, sans-serif' }}>
+    <div className="min-h-screen py-8 px-4" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Circular, sans-serif' }}>
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <Link to="/" className="flex items-center">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center mr-3 shadow-lg" style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center mr-3 shadow-lg" style={{ backgroundColor: 'var(--button-primary)' }}>
               <span className="text-white font-bold text-2xl">🍀</span>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Peerly</h1>
+            <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Peerly</h1>
           </Link>
-          <p className="text-sm text-gray-400">
-            Already have an account? <Link to="/login" className="text-emerald-500 font-semibold hover:underline">Log in</Link>
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            Already have an account? <Link to="/login" className="font-semibold hover:underline" style={{ color: 'var(--button-primary)' }}>Log in</Link>
           </p>
         </div>
 
         {localError && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6 p-4 rounded-xl border border-red-900/30 bg-red-900/10 text-red-400 text-sm">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6 p-4 rounded-xl border bg-red-100 dark:bg-red-900/10 border-red-200 dark:border-red-900/30 text-red-600 dark:text-red-400 text-sm">
             {localError}
           </motion.div>
         )}
@@ -146,23 +146,23 @@ const SignUpPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* LEFT PANEL - PROGRESS */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="rounded-2xl p-6 shadow-xl" style={{ backgroundColor: '#1a1f2e', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-              <h2 className="text-xl font-bold text-white mb-8">Create Account</h2>
+            <div className="rounded-2xl p-6 shadow-xl border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+              <h2 className="text-xl font-bold mb-8" style={{ color: 'var(--text-primary)' }}>Create Account</h2>
               <div className="space-y-8">
                 {steps.map((s) => (
                   <div key={s.id} className="flex items-start gap-4">
                     <div 
                       className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${step >= s.id ? 'shadow-lg' : ''}`}
                       style={{ 
-                        background: step >= s.id ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : '#2d3548',
-                        color: step >= s.id ? 'white' : '#94a3b8'
+                        backgroundColor: step >= s.id ? 'var(--button-primary)' : 'var(--bg-accent)',
+                        color: step >= s.id ? 'white' : 'var(--text-secondary)'
                       }}
                     >
                       {step > s.id ? <CheckCircle2 size={20} /> : <s.icon size={20} />}
                     </div>
                     <div>
-                      <p className={`font-semibold text-sm ${step >= s.id ? 'text-white' : 'text-gray-500'}`}>{s.title}</p>
-                      <p className="text-xs text-gray-500">{s.desc}</p>
+                      <p className={`font-semibold text-sm`} style={{ color: step >= s.id ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{s.title}</p>
+                      <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{s.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -170,12 +170,12 @@ const SignUpPage = () => {
 
               {/* Profile Preview in Sidebar */}
               {step > 1 && (
-                <div className="mt-12 pt-8 border-t border-white/10 flex flex-col items-center">
-                  <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-emerald-500/20 mb-4 bg-[#2d3548] flex items-center justify-center">
-                    {profilePreview ? <img src={profilePreview} className="w-full h-full object-cover" /> : <User size={40} className="text-gray-600" />}
+                <div className="mt-12 pt-8 border-t flex flex-col items-center" style={{ borderColor: 'var(--border-color)' }}>
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-4 mb-4 flex items-center justify-center" style={{ borderColor: 'var(--button-primary)', backgroundColor: 'var(--bg-accent)' }}>
+                    {profilePreview ? <img src={profilePreview} className="w-full h-full object-cover" /> : <User size={40} style={{ color: 'var(--text-secondary)' }} />}
                   </div>
-                  <p className="text-white font-medium">{name || 'Your Name'}</p>
-                  <p className="text-xs text-gray-500">{university || 'Your University'}</p>
+                  <p className="font-medium" style={{ color: 'var(--text-primary)' }}>{name || 'Your Name'}</p>
+                  <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{university || 'Your University'}</p>
                 </div>
               )}
             </div>
@@ -187,43 +187,95 @@ const SignUpPage = () => {
               key={step}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="rounded-2xl p-8 shadow-lg"
-              style={{ backgroundColor: '#1a1f2e', border: '1px solid rgba(255, 255, 255, 0.1)' }}
+              className="rounded-2xl p-8 shadow-lg border"
+              style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}
             >
               <form onSubmit={onSubmit}>
                 {/* STEP 1: BASIC INFO */}
                 {step === 1 && (
                   <div className="space-y-6">
-                    <h3 className="text-xl font-bold text-white mb-6 border-b border-white/5 pb-4">Step 1: Account Details</h3>
+                    <h3 className="text-xl font-bold mb-6 border-b pb-4" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>Step 1: Account Details</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Full Name</label>
+                        <label className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Full Name</label>
                         <div className="relative">
-                          <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-                          <input type="text" name="name" value={name} onChange={onChange} placeholder="John Doe" className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#2d3548] border-none text-white text-sm focus:ring-2 focus:ring-emerald-500 outline-none" />
+                          <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-secondary)' }} />
+                          <input 
+                            type="text" 
+                            name="name" 
+                            value={name} 
+                            onChange={onChange} 
+                            placeholder="John Doe" 
+                            className="w-full pl-10 pr-4 py-3 rounded-xl text-sm focus:ring-2 focus:ring-opacity-50 outline-none border transition-all"
+                            style={{ 
+                              backgroundColor: 'var(--bg-primary)', 
+                              color: 'var(--text-primary)',
+                              borderColor: 'var(--border-color)',
+                              '--tw-ring-color': 'var(--button-primary)' 
+                            }} 
+                          />
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">University</label>
+                        <label className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>University</label>
                         <div className="relative">
-                          <GraduationCap size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-                          <input type="text" name="university" value={university} onChange={onChange} placeholder="State University" className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#2d3548] border-none text-white text-sm focus:ring-2 focus:ring-emerald-500 outline-none" />
+                          <GraduationCap size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-secondary)' }} />
+                          <input 
+                            type="text" 
+                            name="university" 
+                            value={university} 
+                            onChange={onChange} 
+                            placeholder="State University" 
+                            className="w-full pl-10 pr-4 py-3 rounded-xl text-sm focus:ring-2 focus:ring-opacity-50 outline-none border transition-all"
+                            style={{ 
+                              backgroundColor: 'var(--bg-primary)', 
+                              color: 'var(--text-primary)',
+                              borderColor: 'var(--border-color)',
+                              '--tw-ring-color': 'var(--button-primary)' 
+                            }} 
+                          />
                         </div>
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Email Address</label>
+                      <label className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Email Address</label>
                       <div className="relative">
-                        <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-                        <input type="email" name="email" value={email} onChange={onChange} placeholder="john@university.edu" className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#2d3548] border-none text-white text-sm focus:ring-2 focus:ring-emerald-500 outline-none" />
+                        <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-secondary)' }} />
+                        <input 
+                          type="email" 
+                          name="email" 
+                          value={email} 
+                          onChange={onChange} 
+                          placeholder="john@university.edu" 
+                          className="w-full pl-10 pr-4 py-3 rounded-xl text-sm focus:ring-2 focus:ring-opacity-50 outline-none border transition-all"
+                          style={{ 
+                            backgroundColor: 'var(--bg-primary)', 
+                            color: 'var(--text-primary)',
+                            borderColor: 'var(--border-color)',
+                            '--tw-ring-color': 'var(--button-primary)' 
+                          }} 
+                        />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Password</label>
+                      <label className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Password</label>
                       <div className="relative">
-                        <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-                        <input type={showPassword ? "text" : "password"} name="password" value={password} onChange={onChange} placeholder="••••••••" className="w-full pl-10 pr-12 py-3 rounded-xl bg-[#2d3548] border-none text-white text-sm focus:ring-2 focus:ring-emerald-500 outline-none" />
-                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+                        <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-secondary)' }} />
+                        <input 
+                          type={showPassword ? "text" : "password"} 
+                          name="password" 
+                          value={password} 
+                          onChange={onChange} 
+                          placeholder="••••••••" 
+                          className="w-full pl-10 pr-12 py-3 rounded-xl text-sm focus:ring-2 focus:ring-opacity-50 outline-none border transition-all"
+                          style={{ 
+                            backgroundColor: 'var(--bg-primary)', 
+                            color: 'var(--text-primary)',
+                            borderColor: 'var(--border-color)',
+                            '--tw-ring-color': 'var(--button-primary)' 
+                          }} 
+                        />
+                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-secondary)' }}>
                           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                       </div>
@@ -234,26 +286,69 @@ const SignUpPage = () => {
                 {/* STEP 2: EXPERIENCE */}
                 {step === 2 && (
                   <div className="space-y-6">
-                    <h3 className="text-xl font-bold text-white mb-6 border-b border-white/5 pb-4">Step 2: Experience</h3>
+                    <h3 className="text-xl font-bold mb-6 border-b pb-4" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>Step 2: Experience</h3>
                     <div className="space-y-4">
                       {experience.map((exp, index) => (
-                        <div key={index} className="p-5 rounded-2xl bg-[#2d3548] relative border border-white/5 group">
+                        <div key={index} className="p-5 rounded-2xl relative border group" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <input type="text" name="title" value={exp.title} onChange={(e) => handleExperienceChange(index, e)} placeholder="Job Title" className="w-full px-4 py-2.5 rounded-xl bg-[#1a1f2e] border-none text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
-                            <input type="text" name="company" value={exp.company} onChange={(e) => handleExperienceChange(index, e)} placeholder="Company" className="w-full px-4 py-2.5 rounded-xl bg-[#1a1f2e] border-none text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
+                            <input 
+                              type="text" 
+                              name="title" 
+                              value={exp.title} 
+                              onChange={(e) => handleExperienceChange(index, e)} 
+                              placeholder="Job Title" 
+                              className="w-full px-4 py-2.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-opacity-50 border"
+                              style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)', '--tw-ring-color': 'var(--button-primary)' }} 
+                            />
+                            <input 
+                              type="text" 
+                              name="company" 
+                              value={exp.company} 
+                              onChange={(e) => handleExperienceChange(index, e)} 
+                              placeholder="Company" 
+                              className="w-full px-4 py-2.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-opacity-50 border"
+                              style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)', '--tw-ring-color': 'var(--button-primary)' }} 
+                            />
                           </div>
                           <div className="grid grid-cols-2 gap-4 mb-4">
-                            <input type="date" name="from" value={exp.from} onChange={(e) => handleExperienceChange(index, e)} className="w-full px-4 py-2.5 rounded-xl bg-[#1a1f2e] border-none text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
-                            <input type="date" name="to" value={exp.to} onChange={(e) => handleExperienceChange(index, e)} className="w-full px-4 py-2.5 rounded-xl bg-[#1a1f2e] border-none text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
+                            <input 
+                              type="date" 
+                              name="from" 
+                              value={exp.from} 
+                              onChange={(e) => handleExperienceChange(index, e)} 
+                              className="w-full px-4 py-2.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-opacity-50 border"
+                              style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)', '--tw-ring-color': 'var(--button-primary)' }} 
+                            />
+                            <input 
+                              type="date" 
+                              name="to" 
+                              value={exp.to} 
+                              onChange={(e) => handleExperienceChange(index, e)} 
+                              className="w-full px-4 py-2.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-opacity-50 border"
+                              style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)', '--tw-ring-color': 'var(--button-primary)' }} 
+                            />
                           </div>
-                          <textarea name="description" value={exp.description} onChange={(e) => handleExperienceChange(index, e)} placeholder="What did you do?" rows={2} className="w-full px-4 py-2.5 rounded-xl bg-[#1a1f2e] border-none text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500 resize-none" />
-                          <button type="button" onClick={() => removeExperienceField(index)} className="absolute top-4 right-4 text-red-400 hover:bg-red-500/10 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                          <textarea 
+                            name="description" 
+                            value={exp.description} 
+                            onChange={(e) => handleExperienceChange(index, e)} 
+                            placeholder="What did you do?" 
+                            rows={2} 
+                            className="w-full px-4 py-2.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-opacity-50 border resize-none"
+                            style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)', '--tw-ring-color': 'var(--button-primary)' }} 
+                          />
+                          <button type="button" onClick={() => removeExperienceField(index)} className="absolute top-4 right-4 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/10 text-red-400">
                             <Trash2 size={16} />
                           </button>
                         </div>
                       ))}
                     </div>
-                    <button type="button" onClick={addExperienceField} className="w-full py-3 rounded-xl border-2 border-dashed border-white/10 text-gray-400 hover:border-emerald-500/50 hover:text-emerald-500 transition-all flex items-center justify-center gap-2 text-sm font-medium">
+                    <button 
+                      type="button" 
+                      onClick={addExperienceField} 
+                      className="w-full py-3 rounded-xl border-2 border-dashed transition-all flex items-center justify-center gap-2 text-sm font-medium"
+                      style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}
+                    >
                       <Plus size={18} /> Add Experience
                     </button>
                   </div>
@@ -262,34 +357,48 @@ const SignUpPage = () => {
                 {/* STEP 3: SKILLS & EDUCATION */}
                 {step === 3 && (
                   <div className="space-y-8">
-                    <h3 className="text-xl font-bold text-white mb-6 border-b border-white/5 pb-4">Step 3: Final Details</h3>
+                    <h3 className="text-xl font-bold mb-6 border-b pb-4" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>Step 3: Final Details</h3>
                     
                     {/* Profile Picture Upload */}
                     <div className="flex flex-col items-center gap-4">
                       <div className="relative">
-                        <div className="w-24 h-24 rounded-full overflow-hidden bg-[#2d3548] border-2 border-emerald-500/30 flex items-center justify-center">
-                          {profilePreview ? <img src={profilePreview} className="w-full h-full object-cover" /> : <Camera size={32} className="text-gray-500" />}
+                        <div className="w-24 h-24 rounded-full overflow-hidden border-2 flex items-center justify-center" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
+                          {profilePreview ? <img src={profilePreview} className="w-full h-full object-cover" /> : <Camera size={32} style={{ color: 'var(--text-secondary)' }} />}
                         </div>
-                        <label className="absolute bottom-0 right-0 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:scale-110 transition-transform">
-                          <Upload size={14} className="text-white" />
+                        <label 
+                          className="absolute bottom-0 right-0 w-8 h-8 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:scale-110 transition-transform text-white"
+                          style={{ backgroundColor: 'var(--button-primary)' }}
+                        >
+                          <Upload size={14} />
                           <input type="file" name="profilePicture" accept="image/*" onChange={handleFileChange} className="hidden" />
                         </label>
                       </div>
-                      <p className="text-xs text-gray-500">Upload a profile picture</p>
+                      <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Upload a profile picture</p>
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Skills (comma separated)</label>
-                      <input type="text" name="skills" value={skills} onChange={onChange} placeholder="React, UI Design, Marketing..." className="w-full px-4 py-3 rounded-xl bg-[#2d3548] border-none text-white text-sm focus:ring-2 focus:ring-emerald-500 outline-none" />
+                      <label className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Skills (comma separated)</label>
+                      <input 
+                        type="text" 
+                        name="skills" 
+                        value={skills} 
+                        onChange={onChange} 
+                        placeholder="React, UI Design, Marketing..." 
+                        className="w-full px-4 py-3 rounded-xl text-sm focus:ring-2 focus:ring-opacity-50 outline-none border"
+                        style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)', '--tw-ring-color': 'var(--button-primary)' }} 
+                      />
                     </div>
 
                     {/* Resume Upload */}
                     <div className="space-y-2">
-                      <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Resume (PDF)</label>
+                      <label className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Resume (PDF)</label>
                       <label className="block w-full cursor-pointer">
-                        <div className="w-full py-6 rounded-xl border-2 border-dashed border-white/10 bg-[#2d3548]/50 flex flex-col items-center justify-center gap-2 hover:border-emerald-500/50 transition-colors">
-                          <FileText size={24} className="text-gray-500" />
-                          <span className="text-sm text-gray-400">{resume ? resume.name : 'Upload PDF Resume'}</span>
+                        <div 
+                          className="w-full py-6 rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-2 transition-colors hover:border-opacity-100 border-opacity-50"
+                          style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--text-secondary)' }}
+                        >
+                          <FileText size={24} style={{ color: 'var(--text-secondary)' }} />
+                          <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{resume ? resume.name : 'Upload PDF Resume'}</span>
                           <input type="file" name="resume" accept="application/pdf" onChange={handleFileChange} className="hidden" />
                         </div>
                       </label>
@@ -297,19 +406,40 @@ const SignUpPage = () => {
 
                     {/* Education Array */}
                     <div className="space-y-4 pt-4">
-                      <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">Education History</p>
+                      <p className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Education History</p>
                       {education.map((edu, index) => (
-                        <div key={index} className="p-5 rounded-2xl bg-[#2d3548] relative border border-white/5 group">
+                        <div key={index} className="p-5 rounded-2xl relative border group" style={{ backgroundColor: 'var(--bg-accent)', borderColor: 'var(--border-color)' }}>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input type="text" name="school" value={edu.school} onChange={(e) => handleEducationChange(index, e)} placeholder="School/College" className="w-full px-4 py-2.5 rounded-xl bg-[#1a1f2e] border-none text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
-                            <input type="text" name="degree" value={edu.degree} onChange={(e) => handleEducationChange(index, e)} placeholder="Degree" className="w-full px-4 py-2.5 rounded-xl bg-[#1a1f2e] border-none text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500" />
+                            <input 
+                              type="text" 
+                              name="school" 
+                              value={edu.school} 
+                              onChange={(e) => handleEducationChange(index, e)} 
+                              placeholder="School/College" 
+                              className="w-full px-4 py-2.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-opacity-50 border"
+                              style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)', '--tw-ring-color': 'var(--button-primary)' }} 
+                            />
+                            <input 
+                              type="text" 
+                              name="degree" 
+                              value={edu.degree} 
+                              onChange={(e) => handleEducationChange(index, e)} 
+                              placeholder="Degree" 
+                              className="w-full px-4 py-2.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-opacity-50 border"
+                              style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', borderColor: 'var(--border-color)', '--tw-ring-color': 'var(--button-primary)' }} 
+                            />
                           </div>
-                          <button type="button" onClick={() => removeEducationField(index)} className="absolute top-4 right-4 text-red-400 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button type="button" onClick={() => removeEducationField(index)} className="absolute top-4 right-4 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity text-red-400">
                             <X size={16} />
                           </button>
                         </div>
                       ))}
-                      <button type="button" onClick={addEducationField} className="w-full py-3 rounded-xl border border-white/5 bg-[#2d3548]/30 text-gray-400 hover:text-white transition-all text-sm">
+                      <button 
+                        type="button" 
+                        onClick={addEducationField} 
+                        className="w-full py-3 rounded-xl border transition-all text-sm hover:opacity-80"
+                        style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-accent)', color: 'var(--text-secondary)' }}
+                      >
                         + Add Education
                       </button>
                     </div>
@@ -317,18 +447,33 @@ const SignUpPage = () => {
                 )}
 
                 {/* NAVIGATION BUTTONS */}
-                <div className="mt-10 pt-6 border-t border-white/5 flex gap-4">
+                <div className="mt-10 pt-6 border-t flex gap-4" style={{ borderColor: 'var(--border-color)' }}>
                   {step > 1 && (
-                    <button type="button" onClick={prevStep} className="flex-1 py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all bg-[#2d3548] text-white hover:bg-[#3f495e]">
+                    <button 
+                      type="button" 
+                      onClick={prevStep} 
+                      className="flex-1 py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all hover:opacity-90"
+                      style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-primary)' }}
+                    >
                       <ArrowLeft size={18} /> Back
                     </button>
                   )}
                   {step < 3 ? (
-                    <button type="button" onClick={nextStep} className="flex-1 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg" style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white' }}>
+                    <button 
+                      type="button" 
+                      onClick={nextStep} 
+                      className="flex-1 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg text-white"
+                      style={{ backgroundColor: 'var(--button-primary)' }}
+                    >
                       Continue <ArrowRight size={18} />
                     </button>
                   ) : (
-                    <button type="submit" disabled={isLoading} className="flex-1 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white' }}>
+                    <button 
+                      type="submit" 
+                      disabled={isLoading} 
+                      className="flex-1 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg disabled:opacity-50 text-white"
+                      style={{ backgroundColor: 'var(--button-primary)' }}
+                    >
                       {isLoading ? "Creating Account..." : "Complete Sign Up"}
                     </button>
                   )}

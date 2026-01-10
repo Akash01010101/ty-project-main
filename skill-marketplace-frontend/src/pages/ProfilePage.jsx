@@ -271,6 +271,44 @@ const ProfilePage = () => {
           );
         })()}
 
+        {/* Experience Section */}
+        {user.experience && user.experience.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-2xl font-bold text-white mb-4">Experience</h3>
+            <div className="space-y-4">
+              {user.experience.map((exp, index) => (
+                <div key={index} className="bg-white/5 backdrop-blur-lg rounded-lg p-5 sm:p-6 border border-white/10">
+                  <h4 className="font-bold text-lg text-white">{exp.title}</h4>
+                  <p className="text-gray-400 font-medium">{exp.company}</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {new Date(exp.from).toLocaleDateString()} - {exp.current || !exp.to ? 'Present' : new Date(exp.to).toLocaleDateString()}
+                  </p>
+                  {exp.description && <p className="text-gray-300 mt-2">{exp.description}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Education Section */}
+        {user.education && user.education.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-2xl font-bold text-white mb-4">Education</h3>
+            <div className="space-y-4">
+              {user.education.map((edu, index) => (
+                <div key={index} className="bg-white/5 backdrop-blur-lg rounded-lg p-5 sm:p-6 border border-white/10">
+                  <h4 className="font-bold text-lg text-white">{edu.school}</h4>
+                  <p className="text-gray-400 font-medium">{edu.degree}{edu.fieldofstudy ? `, ${edu.fieldofstudy}` : ''}</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {new Date(edu.from).toLocaleDateString()} - {edu.current || !edu.to ? 'Present' : new Date(edu.to).toLocaleDateString()}
+                  </p>
+                  {edu.description && <p className="text-gray-300 mt-2">{edu.description}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {gigs.length > 0 && (
           <div className="mt-8">
             <h3 className="text-2xl font-bold text-white mb-4">Gigs</h3>

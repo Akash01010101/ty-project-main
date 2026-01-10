@@ -219,6 +219,30 @@ const DashboardPage = () => {
                         </div>
                       </div>
 
+                      {/* Experience & Education Details */}
+                      {(user?.experience?.length > 0 || user?.education?.length > 0) && (
+                        <div className="mb-3 space-y-2 border-b pb-3" style={{ borderColor: 'var(--border-color)' }}>
+                          {user.experience?.map((exp, i) => (
+                            <div key={`exp-${i}`} className="flex items-start text-xs">
+                              <Briefcase size={12} className="mr-2 mt-0.5 shrink-0" style={{ color: 'var(--text-accent)' }} />
+                              <div>
+                                <p className="font-medium" style={{ color: 'var(--text-primary)' }}>{exp.title}</p>
+                                <p style={{ color: 'var(--text-secondary)' }}>{exp.company}</p>
+                              </div>
+                            </div>
+                          ))}
+                          {user.education?.map((edu, i) => (
+                            <div key={`edu-${i}`} className="flex items-start text-xs">
+                              <BookOpen size={12} className="mr-2 mt-0.5 shrink-0" style={{ color: 'var(--text-accent)' }} />
+                              <div>
+                                <p className="font-medium" style={{ color: 'var(--text-primary)' }}>{edu.degree}</p>
+                                <p style={{ color: 'var(--text-secondary)' }}>{edu.school}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
                       {/* Skills */}
                       {user?.skills && user.skills.length > 0 && (
                         <div>
@@ -351,7 +375,7 @@ const DashboardPage = () => {
             <>
               {/* Hero Section */}
               <div className="mb-8 text-center">
-                <h1 className="hero-title-contrast text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/30 tracking-tighter drop-shadow-2xl" style={{ lineHeight: '1.05' }}>
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-4 tracking-tighter drop-shadow-2xl text-gray-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-b dark:from-white dark:via-white dark:to-white/30" style={{ lineHeight: '1.05' }}>
                   Discover Talent.
                 </h1>
                 <p className="text-base md:text-lg" style={{ color: 'var(--text-secondary)' }}>

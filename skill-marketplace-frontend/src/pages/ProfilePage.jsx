@@ -1,91 +1,81 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { Star, MessageCircle, UserPlus, FileText } from 'lucide-react';
 import { getUserProfile, followUser } from '../api/users';
 import { useAuth } from '../context/AuthContext';
-import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+import { Document, Page, pdfjs } from 'react-pdf';
 
-// Use the bundled worker for pdfjs-dist v5+
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+// Configure PDF.js worker to use the version matching the react-pdf library
+// This resolves the "API version does not match Worker version" error
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-const CanvasPdfViewer = ({ url }) => {
-  const canvasRef = useRef(null);
+const PdfViewer = ({ url }) => {
+  const [numPages, setNumPages] = useState(null);
+  const [containerWidth, setContainerWidth] = useState(null);
+  const containerRef = useRef(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  const onResize = new ResizeObserver((entries) => {
+    if (!entries || entries.length === 0) return;
+    setContainerWidth(entries[0].contentRect.width);
+  });
 
   useEffect(() => {
-    let active = true;
-    const renderPdf = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const loadingTask = pdfjsLib.getDocument(url);
-        const pdf = await loadingTask.promise;
-
-        if (!active) return;
-
-        const page = await pdf.getPage(1);
-
-        if (!active) return;
-
-        const viewport = page.getViewport({ scale: 1.5 });
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        const context = canvas.getContext('2d');
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-
-        const renderContext = {
-          canvasContext: context,
-          viewport: viewport,
-        };
-
-        await page.render(renderContext).promise;
-        setLoading(false);
-      } catch (err) {
-        console.error('Error rendering PDF:', err);
-        if (active) setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    if (url) {
-      renderPdf();
+    if (containerRef.current) {
+      onResize.observe(containerRef.current);
     }
+    return () => onResize.disconnect();
+  }, []);
 
-    return () => { active = false; };
-  }, [url]);
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center h-[500px] text-gray-400">
-        <FileText size={48} className="mb-3 opacity-50" />
-        <p className="text-center mb-4">Could not render PDF preview.</p>
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:opacity-90"
-          style={{ backgroundColor: 'var(--button-action)', color: 'white' }}
-        >
-          Open PDF
-        </a>
-      </div>
-    );
+  function onDocumentLoadSuccess({ numPages }) {
+    setNumPages(numPages);
+    setLoading(false);
   }
 
   return (
-    <div className="w-full flex justify-center bg-gray-900 overflow-auto max-h-[600px] p-4 relative">
-      {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-900/80 z-10">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2" style={{ borderColor: 'var(--button-action)' }}></div>
+    <div 
+      ref={containerRef} 
+      className="w-full flex flex-col items-center bg-gray-900 rounded-lg overflow-hidden min-h-[400px] border border-white/10 relative"
+      onContextMenu={(e) => e.preventDefault()}
+    >
+      <Document
+        file={url}
+        onLoadSuccess={onDocumentLoadSuccess}
+        loading={
+          <div className="flex items-center justify-center h-[400px] w-full">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+          </div>
+        }
+        error={
+          <div className="flex flex-col items-center justify-center h-[400px] text-gray-400 p-6">
+            <FileText size={48} className="mb-3 opacity-50" />
+            <p className="text-center mb-4">Could not render PDF preview.</p>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:opacity-90 bg-purple-600 text-white"
+            >
+              Download PDF
+            </a>
+          </div>
+        }
+        className="flex flex-col items-center"
+      >
+        <Page 
+          pageNumber={1} 
+          width={containerWidth ? Math.min(containerWidth, 800) : undefined}
+          renderTextLayer={false}
+          renderAnnotationLayer={false}
+          className="shadow-xl my-4"
+        />
+      </Document>
+      
+      {!loading && numPages && (
+        <div className="bg-gray-800 text-gray-300 text-xs py-2 px-4 rounded-full mb-4">
+          Page 1 of {numPages}
         </div>
       )}
-      <canvas ref={canvasRef} className="shadow-lg max-w-full h-auto" />
     </div>
   );
 };
@@ -251,7 +241,7 @@ const ProfilePage = () => {
                 {/* Preview Area */}
                 <div className="w-full rounded-lg overflow-hidden border border-white/10 bg-gray-900">
                   {isPdf ? (
-                    <CanvasPdfViewer url={resumeUrl} />
+                    <PdfViewer url={resumeUrl} />
                   ) : isImage ? (
                     <img
                       src={resumeUrl}

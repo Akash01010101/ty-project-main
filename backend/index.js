@@ -100,10 +100,17 @@ app.use(globalLimiter);
 // CORS configuration
 // SECURITY: In production, specify exact allowed origins
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
-  credentials: true,
+  // Dynamically allow the origin that made the request
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    callback(null, true);
+  },
+  credentials: true, // Allow cookies/headers
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  // Add 'Range' to allowed headers (CRITICAL for PDFs)
+  allowedHeaders: ['Content-Type', 'Authorization', 'Range'], 
+  exposedHeaders: ['Content-Length', 'Content-Range'], // Expose headers needed for PDF progress bars
   maxAge: 86400, // Cache preflight for 24 hours
 }));
 
@@ -130,19 +137,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// Add CORS headers for uploads so PDF.js can fetch the files
-app.use('/uploads', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Range');
-  res.header('Access-Control-Expose-Headers', 'Content-Length, Content-Range');
-
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
+// Serve static uploaded files with specific headers to prevent auto-download
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders: (res, filePath) => {
+    if (path.extname(filePath).toLowerCase() === '.pdf') {
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'inline');
+    }
   }
-  next();
-});
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static uploaded files
+}));
 
 // Database connection
 mongoose.connect(process.env.MONGO_URI)

@@ -95,7 +95,7 @@ const ProfilePage = () => {
         const data = await getUserProfile(id);
         setProfile({
           ...data,
-          isFollowing: data.user.followers.includes(currentUser._id),
+          isFollowing: data.user.followers.includes(currentUser?._id),
         });
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -103,8 +103,11 @@ const ProfilePage = () => {
         setLoading(false);
       }
     };
-    fetchProfile();
-  }, [id, currentUser._id]);
+    
+    if (id && currentUser) {
+      fetchProfile();
+    }
+  }, [id, currentUser?._id]);
 
   const handleFollow = async () => {
     try {
@@ -135,14 +138,39 @@ const ProfilePage = () => {
   };
 
   if (loading) {
-    return <div className="text-center py-12">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin mb-4" style={{ borderColor: 'var(--button-action)' }}></div>
+          <p style={{ color: 'var(--text-secondary)' }}>Loading profile...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!profile) {
-    return <div className="text-center py-12">User not found.</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="text-center">
+          <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>User not found</h2>
+          <p style={{ color: 'var(--text-secondary)' }}>The profile you're looking for doesn't exist.</p>
+        </div>
+      </div>
+    );
   }
 
   const { user, gigs, reviews, isFollowing } = profile;
+
+  // Helper function to get profile picture URL
+  const getProfilePictureUrl = (profilePicture) => {
+    if (!profilePicture) return null;
+    if (profilePicture.startsWith('http')) return profilePicture;
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:9000';
+    return `${apiUrl}/${profilePicture.replace(/\\/g, '/')}`;
+  };
+
+  const profilePicUrl = getProfilePictureUrl(user.profilePicture) || 
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&size=128`;
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ backgroundColor: 'var(--bg-primary)' }}>
@@ -150,10 +178,13 @@ const ProfilePage = () => {
         <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-5 sm:p-8 border border-white/10 shadow-xl">
           <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-6 sm:space-y-0 sm:space-x-8">
             <img
-              src={user.profilePicture.startsWith('http') ? user.profilePicture : `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${user.profilePicture}`}
+              src={profilePicUrl}
               alt={user.name}
               className="w-32 h-32 rounded-full object-cover ring-4"
               style={{ ringColor: 'var(--button-action)' }}
+              onError={(e) => {
+                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&size=128`;
+              }}
             />
             <div className="flex-1 text-center sm:text-left">
               <h2 className="text-3xl font-bold text-white">{user.name}</h2>
@@ -161,12 +192,12 @@ const ProfilePage = () => {
               <div className="flex justify-center sm:justify-start items-center space-x-4 mt-4">
                 <div className="flex items-center text-yellow-400">
                   <Star className="w-5 h-5 mr-1" />
-                  <span className="font-bold">{user.rating.toFixed(1)}</span>
+                  <span className="font-bold">{user.rating?.toFixed(1) || '0.0'}</span>
                 </div>
                 <span className="text-gray-500">•</span>
-                <p className="text-gray-400">{user.followers.length} Followers</p>
+                <p className="text-gray-400">{user.followers?.length || 0} Followers</p>
                 <span className="text-gray-500">•</span>
-                <p className="text-gray-400">{user.following.length} Following</p>
+                <p className="text-gray-400">{user.following?.length || 0} Following</p>
               </div>
               <div className="mt-6 flex flex-col sm:flex-row justify-center sm:justify-start gap-3 sm:gap-4 w-full">
                 <button
@@ -177,7 +208,7 @@ const ProfilePage = () => {
                   <MessageCircle size={20} />
                   <span>Message</span>
                 </button>
-                {currentUser._id !== user._id && (
+                {currentUser?._id !== user._id && (
                   <button
                     onClick={handleFollow}
                     className="w-full sm:w-auto px-6 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors"

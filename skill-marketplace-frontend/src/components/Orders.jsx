@@ -108,7 +108,7 @@ const OrderCard = ({ order, onMarkAsComplete, onViewDetails }) => {
 
       {/* Footer: Price & Actions */}
       <div className="flex items-center justify-between mt-auto pt-2">
-        <span className="text-lg font-bold" style={{ color: '#22c55e' }}>
+        <span className="text-lg font-bold" style={{ color: 'var(--text-accent)' }}>
           $ {order.price?.toFixed(2) || '0.00'}
         </span>
         
@@ -117,7 +117,7 @@ const OrderCard = ({ order, onMarkAsComplete, onViewDetails }) => {
             <button
               onClick={() => onMarkAsComplete(order._id)}
               className="text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
-              style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}
+              style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', color: 'var(--text-accent)' }}
             >
               Complete
             </button>
@@ -316,7 +316,7 @@ const Orders = () => {
           <div className="w-px h-10 bg-[var(--border-color)] hidden sm:block"></div>
           <div className="text-center">
             <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>This Month</p>
-            <p className="text-xl font-bold" style={{ color: '#22c55e' }}>+${stats.thisMonthEarnings.toLocaleString()}</p>
+            <p className="text-xl font-bold" style={{ color: 'var(--text-accent)' }}>+${stats.thisMonthEarnings.toLocaleString()}</p>
           </div>
         </div>
       </div>
@@ -331,9 +331,9 @@ const Orders = () => {
               onClick={() => setActiveFilter(filter.key)}
               className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200"
               style={{
-                backgroundColor: activeFilter === filter.key ? '#22c55e' : 'var(--bg-secondary)',
-                color: activeFilter === filter.key ? '#000' : 'var(--text-secondary)',
-                border: `1px solid ${activeFilter === filter.key ? '#22c55e' : 'var(--border-color)'}`,
+                backgroundColor: activeFilter === filter.key ? 'var(--button-primary)' : 'var(--bg-secondary)',
+                color: activeFilter === filter.key ? '#fff' : 'var(--text-secondary)',
+                border: `1px solid ${activeFilter === filter.key ? 'var(--button-primary)' : 'var(--border-color)'}`,
               }}
             >
               {filter.label}
@@ -363,7 +363,7 @@ const Orders = () => {
       <div className="min-h-[400px]">
         {loading ? (
           <div className="flex flex-col justify-center items-center h-64 space-y-4">
-            <div className="w-10 h-10 border-4 border-[#22c55e] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-10 h-10 border-4 border-[var(--button-primary)] border-t-transparent rounded-full animate-spin"></div>
             <p style={{ color: 'var(--text-secondary)' }}>Loading sales...</p>
           </div>
         ) : paginatedOrders.length === 0 ? (
@@ -416,8 +416,8 @@ const Orders = () => {
                 onClick={() => setCurrentPage(page)}
                 className="w-9 h-9 rounded-lg text-sm font-medium transition-all"
                 style={{
-                  backgroundColor: currentPage === page ? '#22c55e' : 'var(--bg-secondary)',
-                  color: currentPage === page ? '#000' : 'var(--text-secondary)',
+                  backgroundColor: currentPage === page ? 'var(--button-primary)' : 'var(--bg-secondary)',
+                  color: currentPage === page ? '#fff' : 'var(--text-secondary)',
                 }}
               >
                 {page}

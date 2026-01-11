@@ -88,9 +88,31 @@ const updateOfferStatus = async (req, res) => {
       return res.json({ offer });
 
     } else if (status === 'cancelled') {
-      if (offer.fromUser.toString() !== req.user.userId.toString()) {
+      const isSender = offer.fromUser.toString() === req.user.userId.toString();
+      const isRecipient = offer.toUser.toString() === req.user.userId.toString();
+
+      if (!isSender && !isRecipient) {
         return res.status(401).json({ msg: 'User not authorized to cancel this offer' });
       }
+
+      if (offer.status === 'accepted') {
+        if (offer.order) {
+          const order = await Order.findById(offer.order);
+          if (order) {
+            if (order.status === 'pending') {
+              await Order.findByIdAndDelete(offer.order);
+              offer.order = undefined;
+            } else {
+              return res.status(400).json({ msg: 'Cannot cancel offer with active/completed order' });
+            }
+          }
+        }
+      } else if (offer.status === 'pending') {
+        if (!isSender) {
+          return res.status(401).json({ msg: 'User not authorized to cancel this offer' });
+        }
+      }
+
       offer.status = 'cancelled';
       await offer.save();
       return res.json({ offer });

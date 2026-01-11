@@ -156,54 +156,71 @@ const ChatMessage = ({ message, isOwnMessage, sender, onAccept, onDecline, onPay
     return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  return (
-    <div className={`flex w-full mb-1 px-4 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
-      <div 
-        className={`relative max-w-[85%] sm:max-w-[70%] md:max-w-[60%] px-3 py-1.5 shadow-sm text-sm group
-          ${isOwnMessage 
-            ? 'rounded-l-lg rounded-br-lg rounded-tr-none' 
-            : 'rounded-r-lg rounded-bl-lg rounded-tl-none bg-[var(--bg-secondary)]'
-          }`}
-        style={isOwnMessage ? { backgroundColor: 'var(--button-primary)', color: '#fff' } : { color: 'var(--text-primary)' }}
-      >
-        {isImage ? (
-          <div className="mb-1 mt-1 overflow-hidden rounded shadow-inner">
-            <img
-              src={fullUrl}
-              alt={message.fileName || 'Image'}
-              className="max-w-full h-auto object-cover cursor-pointer"
-              style={{ maxHeight: '300px' }}
-              onClick={() => window.open(fullUrl, '_blank')}
-            />
-          </div>
-        ) : isFile ? (
-          <a
-            href={fullUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`flex items-center gap-3 p-3 rounded-lg mb-1 border transition-colors ${isOwnMessage ? 'bg-white/10 border-white/20 hover:bg-white/20' : 'bg-[var(--bg-primary)] border-[var(--border-color)] hover:bg-[var(--bg-accent)]'}`}
-          >
-            <div className={`p-2 rounded-full ${isOwnMessage ? 'bg-white/20' : 'bg-[var(--button-primary)]/10'}`}>
-              <Paperclip size={16} className={isOwnMessage ? 'text-white' : 'text-[var(--button-primary)]'} />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-xs font-bold truncate">{message.fileName || 'Attachment'}</span>
-              <span className="text-[10px] opacity-70 uppercase font-black">Download</span>
-            </div>
-          </a>
-        ) : null}
+  const getSenderProfileUrl = () => {
+    if (!sender?.profilePicture) return `https://ui-avatars.com/api/?name=${encodeURIComponent(sender?.name || 'User')}&background=random`;
+    if (sender.profilePicture.startsWith('http')) return sender.profilePicture;
+    return `${import.meta.env.VITE_API_URL || 'http://localhost:9000'}/${sender.profilePicture}`;
+  };
 
-        <div className="flex flex-col relative pb-3">
-          {message.text && (
-            <span className="whitespace-pre-wrap leading-relaxed pr-10">{message.text}</span>
-          )}
-          <div className={`absolute bottom-0 right-0 flex items-center gap-1 ${isOwnMessage ? 'text-white/70' : 'text-[var(--text-secondary)] opacity-70'}`}>
-            <span className="text-[10px] font-medium">
-              {message.createdAt ? formatTime(message.createdAt) : ''}
-            </span>
-            {isOwnMessage && (
-              <CheckCheck size={14} className={message.readBy?.length > 1 ? 'text-blue-300' : 'text-white/70'} />
+  return (
+    <div className={`flex w-full mb-2 px-4 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
+      <div className={`flex max-w-[85%] sm:max-w-[75%] md:max-w-[70%] items-end gap-2 ${isOwnMessage ? 'flex-row-reverse' : 'flex-row'}`}>
+        
+        {/* Avatar */}
+        <img
+          src={getSenderProfileUrl()}
+          alt={sender?.name || 'User'}
+          className="w-8 h-8 rounded-full object-cover shadow-sm mb-1 flex-shrink-0"
+          onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(sender?.name || 'User')}&background=random`; }}
+        />
+
+        <div 
+          className={`relative px-3 py-2 shadow-sm text-sm group min-w-[60px]
+            ${isOwnMessage 
+              ? 'rounded-2xl rounded-tr-sm' 
+              : 'rounded-2xl rounded-tl-sm bg-[var(--bg-secondary)]'
+            }`}
+          style={isOwnMessage ? { backgroundColor: 'var(--button-primary)', color: '#fff' } : { color: 'var(--text-primary)' }}
+        >
+          {isImage ? (
+            <div className="mb-1 mt-1 overflow-hidden rounded-lg shadow-inner">
+              <img
+                src={fullUrl}
+                alt={message.fileName || 'Image'}
+                className="max-w-full h-auto object-cover cursor-pointer"
+                style={{ maxHeight: '300px' }}
+                onClick={() => window.open(fullUrl, '_blank')}
+              />
+            </div>
+          ) : isFile ? (
+            <a
+              href={fullUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`flex items-center gap-3 p-3 rounded-lg mb-1 border transition-colors ${isOwnMessage ? 'bg-white/10 border-white/20 hover:bg-white/20' : 'bg-[var(--bg-primary)] border-[var(--border-color)] hover:bg-[var(--bg-accent)]'}`}
+            >
+              <div className={`p-2 rounded-full ${isOwnMessage ? 'bg-white/20' : 'bg-[var(--button-primary)]/10'}`}>
+                <Paperclip size={16} className={isOwnMessage ? 'text-white' : 'text-[var(--button-primary)]'} />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs font-bold truncate">{message.fileName || 'Attachment'}</span>
+                <span className="text-[10px] opacity-70 uppercase font-black">Download</span>
+              </div>
+            </a>
+          ) : null}
+
+          <div className="flex flex-col relative">
+            {message.text && (
+              <span className="whitespace-pre-wrap leading-relaxed pb-1">{message.text}</span>
             )}
+            <div className={`flex items-center justify-end gap-1 mt-0.5 ${isOwnMessage ? 'text-white/70' : 'text-[var(--text-secondary)] opacity-70'}`}>
+              <span className="text-[9px] font-medium leading-none">
+                {message.createdAt ? formatTime(message.createdAt) : ''}
+              </span>
+              {isOwnMessage && (
+                <CheckCheck size={12} className={message.readBy?.length > 1 ? 'text-blue-200' : 'text-white/70'} />
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -568,7 +585,7 @@ const Messages = () => {
               )}
             </AnimatePresence>
 
-            <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-1 relative bg-opacity-50" ref={chatContainerRef} style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")', backgroundBlendMode: 'overlay' }}>
+            <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-1 relative" ref={chatContainerRef} style={{ backgroundImage: 'radial-gradient(var(--text-secondary) 1px, transparent 1px)', backgroundSize: '20px 20px', opacity: 0.9 }}>
               {chatMessages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-[var(--text-secondary)] opacity-40">
                   <div className="p-6 rounded-full bg-[var(--bg-secondary)] mb-4 border border-[var(--border-color)]">
@@ -586,7 +603,7 @@ const Messages = () => {
             <div className="p-3 md:p-4 bg-[var(--bg-secondary)] border-t border-[var(--border-color)] z-10 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
               {isChatDisabled ? (
                 <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-center text-xs font-bold text-red-500 uppercase tracking-widest">
-                  Order pending payment. <button onClick={() => handleCancelOffer(chatMessages.find(m => m.type === 'offer')?.offer?._id)} className="ml-2 underline hover:opacity-80">Cancel Offer</button>
+                  Order pending payment. <button onClick={() => handleCancelOffer(chatMessages.find(m => m.type === 'offer' && m.offer?.status === 'accepted' && m.offer?.order?.status === 'pending')?.offer?._id)} className="ml-2 underline hover:opacity-80">Cancel Offer</button>
                 </div>
               ) : (
                 <div className="flex items-end gap-3">

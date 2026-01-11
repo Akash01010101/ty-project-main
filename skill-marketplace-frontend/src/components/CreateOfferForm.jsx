@@ -40,6 +40,7 @@ const CreateOfferForm = ({ onSendOffer, onCancel }) => {
             onChange={onChange}
             placeholder="Describe the work to be done..."
             required
+            minLength={10}
             rows={3}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 resize-none transition-all duration-300"
             style={{
@@ -48,6 +49,7 @@ const CreateOfferForm = ({ onSendOffer, onCancel }) => {
               color: 'var(--text-primary)'
             }}
           />
+          <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>Minimum 10 characters required.</p>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>

@@ -30,6 +30,10 @@ const fetchApi = async (url, options = {}, isFormData = false) => {
     throw new Error(errorMessage);
   }
 
+  if (response.status === 204) {
+    return null;
+  }
+
   return response.json();
 };
 

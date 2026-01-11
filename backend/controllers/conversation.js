@@ -9,7 +9,27 @@ const getConversations = async (req, res) => {
       .populate('lastMessage')
       .sort({ updatedAt: -1 });
 
-    res.json(conversations);
+    // Deduplicate conversations based on participants
+    const uniqueConversations = [];
+    const seenParticipants = new Set();
+
+    for (const conv of conversations) {
+      // For 1-on-1 chats, identify by the other participant
+      const otherParticipants = conv.participants.filter(p => p._id.toString() !== req.user.userId);
+      
+      if (otherParticipants.length === 1) {
+        const otherId = otherParticipants[0]._id.toString();
+        if (!seenParticipants.has(otherId)) {
+          seenParticipants.add(otherId);
+          uniqueConversations.push(conv);
+        }
+      } else {
+        // For group chats or edge cases, include them (or implement specific logic if needed)
+        uniqueConversations.push(conv);
+      }
+    }
+
+    res.json(uniqueConversations);
   } catch (error) {
     console.error(error);
     res.status(500).send('Server Error');

@@ -175,19 +175,20 @@ const ChatMessage = ({ message, isOwnMessage, sender, onAccept, onDecline, onPay
         />
 
         <div 
-          className={`relative px-3 py-2 shadow-sm text-sm group min-w-[60px]
+          className={`relative text-sm group min-w-[60px] overflow-hidden
+            ${(isImage && !message.text) ? 'p-0 shadow-none border-0 bg-transparent' : 'px-3 py-2 shadow-sm'}
             ${isOwnMessage 
               ? 'rounded-2xl rounded-tr-sm' 
-              : 'rounded-2xl rounded-tl-sm bg-[var(--bg-secondary)]'
+              : `rounded-2xl rounded-tl-sm ${!(isImage && !message.text) ? 'bg-[var(--bg-secondary)]' : ''}`
             }`}
-          style={isOwnMessage ? { backgroundColor: 'var(--button-primary)', color: '#fff' } : { color: 'var(--text-primary)' }}
+          style={isOwnMessage ? { backgroundColor: (isImage && !message.text) ? 'transparent' : 'var(--button-primary)', color: '#fff' } : { color: 'var(--text-primary)' }}
         >
           {isImage ? (
-            <div className="mb-1 mt-1 overflow-hidden rounded-lg shadow-inner">
+            <div className={`border-0 ${message.text ? "mb-2 rounded-xl overflow-hidden" : ""}`}>
               <img
                 src={fullUrl}
                 alt={message.fileName || 'Image'}
-                className="max-w-full h-auto object-cover cursor-pointer"
+                className="max-w-full h-auto object-cover cursor-pointer block border-0 shadow-none"
                 style={{ maxHeight: '300px' }}
                 onClick={() => window.open(fullUrl, '_blank')}
               />

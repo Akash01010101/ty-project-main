@@ -3,11 +3,13 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Plus, Star, Edit, Trash2, Share2, Eye, TrendingUp, ShoppingCart, DollarSign, Search, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { getMyGigs } from '../api/dashboard';
+import { getMySales } from '../api/orders';
 
 const ITEMS_PER_PAGE = 5;
 
 const MyGigs = () => {
   const [userGigs, setUserGigs] = useState([]);
+  const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
@@ -15,17 +17,21 @@ const MyGigs = () => {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
 
   useEffect(() => {
-    const fetchGigs = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getMyGigs();
-        setUserGigs(data);
+        const [gigsData, salesData] = await Promise.all([
+          getMyGigs(),
+          getMySales()
+        ]);
+        setUserGigs(gigsData);
+        setSales(salesData);
       } catch (error) {
-        console.error('Error fetching gigs:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchGigs();
+    fetchData();
   }, []);
 
   const handleDeleteGig = (gigId) => {
@@ -34,7 +40,9 @@ const MyGigs = () => {
 
   // Calculate stats
   const stats = useMemo(() => {
-    const totalEarnings = userGigs.reduce((total, gig) => total + ((gig.price || 0) * (gig.orders || 0)), 0);
+    const totalEarnings = sales
+      .filter(o => o.status === 'completed' || o.status === 'completed-by-seller')
+      .reduce((sum, o) => sum + (o.price || 0), 0);
     const totalImpressions = userGigs.reduce((total, gig) => total + (gig.impressions || 0), 0);
     const activeOrders = userGigs.reduce((total, gig) => total + (gig.activeOrders || 0), 0);
     const pendingApproval = userGigs.filter(gig => gig.status === 'Pending').length;
@@ -44,7 +52,7 @@ const MyGigs = () => {
       : '0.0';
 
     return { totalEarnings, totalImpressions, activeOrders, pendingApproval, avgRating, totalReviews };
-  }, [userGigs]);
+  }, [userGigs, sales]);
 
   // Filter and sort gigs
   const filteredGigs = useMemo(() => {

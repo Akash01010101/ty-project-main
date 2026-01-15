@@ -171,6 +171,8 @@ const offerRouter = require('./routes/offers');
 app.use('/api/offers', offerRouter);
 const paymentRouter = require('./routes/payments');
 app.use('/api/payments', paymentRouter);
+const chatRouter = require('./routes/chat');
+app.use('/api/chat', chatRouter);
 
 app.get('/', (req, res) => {
   res.json({ message: 'SkillMarketPlace API Server' });
